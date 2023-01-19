@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+    {% block title %} Buscar Pessoas {% endblock %}
+
+    {% load static %}
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'profile.css' %}">
+    {% endblock %}
+
+    {% block page %}
+        <div class="div-friend-list">
+            <h2> Pessoas para se conectar: </h2>
+            {% for friend in friends %}
+
+            <div class="div-friend">
+                <div class="div-icon">
+                    <img  class="friend-icon" src="{{ friend.profile.image.url }}" onclick="location.href='/profiles/id={{ friend.id }}/'">
+                    <a> {{ friend.username }} </a>
+                </div>
+                <button class="btn-add-friend" onclick="location.href='/profiles/follow={{ friend.id }}'">
+                <i class="fa-solid fa-user-plus"></i> Conectar </button>
+            </div>
+
+            {% endfor %}
+        </div>
+
+    {% endblock %}

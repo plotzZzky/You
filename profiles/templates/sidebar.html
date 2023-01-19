@@ -1,0 +1,32 @@
+<div class="side-bar" id="sideBar">
+    <img src="{{ user.profile.image.url }}" id="profileImg">
+    <a id="profileNick"> {{ user.username }}</a>
+
+
+    {% if you %}
+        <button class="follow-btn" onclick="location.href='/profiles/follow={{ user.id }}'">
+            <i class="fa-solid fa-user-plus"></i>
+            {% if user in you.profile.friends.all %}
+                <a class="followText"> Desconectar </a>
+            {% else %}
+                <a class="followText"> Conectar </a>
+            {% endif %}
+        </button>
+    {% endif %}
+
+    <div class="div-links-profile">
+        {% if not you %}
+            <a class="profile-link" onclick="loadAdd({{ user.id }})"> Novo post </a>
+        {% endif %}
+        <a class="profile-link" onclick=" loadImages({{ user.id }})"> Imagens </a>
+        <a class="profile-link" onclick=" loadPosts({{ user.id }})"> Pensamentos </a>
+        <a class="profile-link" onclick="loadFriends({{ user.id }})"> Conexões </a>
+        {% if not you %}
+            <a class="profile-link" onclick="loadEdit({{ user.id }})"> Ajustes </a>
+        {% endif %}
+        <div class="user-icon">
+            <i class="fa-solid fa-user fa-lg"></i>
+        </div>
+    </div>
+
+</div>

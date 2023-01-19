@@ -1,0 +1,15 @@
+        <div class="edit-content">
+            <a class="title"> Editar perfil: </a>
+            <div class="div-form-edit">
+                <form method="POST" enctype="multipart/form-data" action="/users/config/">
+                    {% csrf_token %}
+                    {{ form.username }}
+                    {{ form.email }}
+                    {{ form.password1 }}
+                    {{ form.password2 }}
+                    {{ form.image }}
+                    <img src="" id="imgPreview" class="image-preview" onclick="$('#imageField').click();">
+                    <input type="submit" value="Salvar" class="submit-input">
+                </form>
+            </div>
+        </div>

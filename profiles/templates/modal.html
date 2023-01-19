@@ -1,0 +1,42 @@
+
+
+        <div class="modal-close"><i onclick="closeModal();" class="fa-solid fa-xmark fa-2xl"></i></div>
+
+        <div class="div-modal-preview">
+            <div class="view-div">
+                <div class="post-user-div">
+                    <img class="user-picture" id="userPicture" src="{{ post.user.profile.image.url }}">
+                    <a class="userNick" id="userNick"> {{ post.user.username }}</a>
+                </div>
+                <img class="imgPreview " src="{{ post.image.url }}" id="viewImage">
+                <pre class="image-description" id="viewDesc"> {{ post.text }}</pre>
+
+                <div class="post-buttons">
+                    <button id="btnDelete" class="post-delete" onclick="location.href='/profiles/post/del={{ post.id }}/'">
+                        <i class="fa-solid fa-trash"></i></button>
+                    <button id="btnLike" class="btnLike" onclick="location.href='/profiles/post/like={{ post.id }}/'">
+                        <a class="likeText" id="likeText">{{ post.likes.count }}</a>
+
+                        {% if user in post.likes.all %}
+                            <i id="heartIcon" class="fa-solid fa-heart"></i>
+                        {% else %}
+                            <i id="heartIcon" class="fa-regular fa-heart"></i>
+                        {% endif %}
+                        </button>
+                    <a class="modalDate" id="viewDate">{{ post.date }}</a>
+                </div>
+            </div>
+
+            <div class="div-view-comments">
+                <div id="viewComments">
+                    {% include "comments.html" %}
+
+                </div>
+                <div class="comment-div-input">
+                    <form action="/profiles/post/comment/add={{ post.id }}" method="POST" id="newComment">
+                        {% csrf_token %}
+                        <input type="text" placeholder="Comentario" class="input-comment" name="text">
+                    </form>
+                </div>
+            </div>
+       </div>

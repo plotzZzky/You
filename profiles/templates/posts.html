@@ -1,0 +1,43 @@
+     {% if posts %}
+        <div id="timeline">
+
+        {% for item in posts %}
+            <div class="div-post-card">
+                <div class="post-user-div">
+                    <img class="user-picture" src="{{ item.user.profile.image.url }}">
+                    <a class="userNick" onclick="location.href='/profiles/id={{ item.user.id }}/';"> {{ item.user.username }}</a>
+                </div>
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" class="imgView" onclick="showModal({{ item.id }});">
+                {% endif %}
+                <pre class="post-desc"> {{ item.text }} </pre>
+
+                <div class="post-buttons">
+                    {% if user.username == item.user.username %}
+                        <button class="post-delete" onclick="location.href='/profiles/post/del={{ item.id }}/';">
+                        <i class="fa-solid fa-trash"></i></button>
+                    {% else %}
+                        <button class="post-delete" style="visibility: hidden;"></button>
+                    {% endif %}
+                    <button class="btnLike" onclick="location.href='/profiles/post/like={{ item.id }}/';">
+                        <a class="likeText"> {{ item.likes.count }} </a>
+                        {% if user in item.likes.all %}
+                            <i class="fa-solid fa-heart"></i>
+                        {% else %}
+                            <i class="fa-regular fa-heart"></i>
+                        {% endif %}
+                    </button>
+                    <a class="date"> {{ item.date }} </a>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+        <a class="post-nothing"> Ainda não há nada por aqui, adicione algo </a>
+    {% endif %}
+
+    <div class="view-modal" id="viewModal">
+
+    </div>

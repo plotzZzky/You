@@ -1,0 +1,17 @@
+{% if comments %}
+    {% for comment in comments %}
+        <div class="div-comment">
+            <div class="post-user-div">
+                <img class="user-picture" src="{{ comment.user.profile.image.url }}">
+                <a>{{ comment.user.username }}</a>
+            </div>
+            <a class="comment-text"> {{ comment.text }}</a>
+            <div class="comment-btns">
+                <a class="comment-del-text" onclick="location.href='/profiles/post/comment/del={{ comment.id }}'"> Delete </a>
+                <a class="comment-date"> {{ comment.date }}</a>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <a> Não há comentarios por enquanto </a>
+{% endif %}

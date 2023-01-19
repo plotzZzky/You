@@ -1,0 +1,17 @@
+# ignore archives
+*.log
+*.json
+*.kdbx
+*.sqlite3
+
+#ignore folders
+./*
+.idea/*
+__pycache__/*
+.test
+/users/migrations/*
+/profiles/migrations/*
+/core/migrations/*
+/venv/*
+/media/posts/*
+/media/profile/*

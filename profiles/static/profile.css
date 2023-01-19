@@ -1,0 +1,220 @@
+.side-bar {
+    position: fixed;
+    width: 148px;
+    height: 91%;
+    top: 60px;
+    left: -148px;
+    padding: 8px;
+    background-color: #8869C2;
+    border-radius: 8px;
+    box-shadow: 8px 0px 12px 0px rgba(0,0,0,0.2);
+    z-index: 90;
+}
+
+.side-bar:hover {
+    left: -10px;
+    transition-duration: 0.3s;
+}
+
+.side-bar:hover .user-icon {
+    display: none;
+    transition-duration: 0.3s
+}
+
+.user-icon {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 45%;
+    right: -20px;
+    background-color: #8869C2;
+    color: white;
+    border-radius: 50%;
+}
+
+.user-icon i{
+    margin-left: 11px;
+    margin-top: 18px;
+}
+
+#profileImg {
+    width: 120px;
+    height: 120px;
+    margin: auto;
+    border-radius: 50%;
+}
+
+#profileNick {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.follow-btn {
+    width: 80%;
+    height: 32px;
+    margin: 10%;
+    border: none;
+    border-radius: 4px;
+}
+
+.followText {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.div-links-profile {
+    width: 90%;
+    height: auto;
+    margin-top: 64px;
+    display: inline-flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.profile-link {
+    font-size: 18px;
+    padding: 8px;
+    cursor: pointer;
+    color: Inherit;
+    text-decoration: none;
+}
+
+.profile-link:hover {
+    font-size: 20px;
+    color: white;
+}
+
+.profile-view {
+    width: 96%;
+    height: auto;
+    min-height: 90vh;
+    margin: auto;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 20px 20px;
+    display: none;
+}
+
+.post-nothing {
+    color: white;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+/* Friends */
+.div-friend-list {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: auto;
+    margin: auto;
+    margin-top: 2%;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.div-friend {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    height: 48px;
+    margin: 1%;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 4px;
+    border: 1px solid lightgrey;
+}
+
+.div-icon {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    height: auto;
+    margin: 0px;
+}
+
+.friend-icon {
+    float: left;
+    width: 48px;
+    height: 48px;
+    margin: 0px;
+    margin-right: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.btn-add-friend {
+    width: 120px;
+    height: 48px
+    margin: 0;
+    padding: 8px;
+    background-color: #8869C2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Edit profile */
+.edit-content {
+	width: 384px;
+	height: 100%;
+    margin: auto;
+    margin-top: 4%;
+    padding: 8px;
+    padding-top: 16px;
+    border-radius: 4px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 4px 12px 0 rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    background-color: white;
+}
+
+.div-form-edit {
+    width: 100%;
+    height: auto;
+    margin: auto;
+    margin-top: 24px;
+}
+
+#imageField {
+    display: none;
+}
+
+.image-preview {
+    width: 128px;
+    height: 128px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.input-edit-profile,
+input[type=email],
+input[type=password] {
+    width: 90%;
+    height: 24px;
+    margin: 1%;
+    margin-left: 4%;
+    margin-right: 4%;
+    border: none;
+    background-color: lightgrey;
+    padding-left: 4px;
+    outline: none;
+}
+
+.submit-input {
+    width: 30%;
+    height: 32px;
+    margin: 6%;
+    margin-right: 30%;
+    margin-left: 30%;
+    padding: 8px;
+    font-size: 16px;
+    background-color:  #8869C2;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 5px 12px 0 rgba(0, 0, 0, 0.12);
+    color: white;
+    border: none;
+    border-radius: 4px;
+}

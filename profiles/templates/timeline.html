@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+    {% block title %} Posts {% endblock %}
+
+    {% load static %}
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'posts.css' %}">
+        <script type="text/javascript" src="{% static 'js/posts.js' %}" ></script>
+    {% endblock %}
+
+    {% block page %}
+
+    {% include "posts.html" %}
+
+
+    {% endblock %}
