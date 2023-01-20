@@ -1,7 +1,12 @@
 html, body {
     margin: 0px;
     background-color: #333;
-    font-family: Verdana;
+    font-family: Oswald;
+    font-size: 18px;
+}
+
+*{
+    font-family: Oswald;
     font-size: 18px;
 }
 
@@ -31,7 +36,7 @@ html, body {
 }
 
 .dropdown .dropbtn {
-    width: 140px;
+    width: 120px;
     border: none;
     outline: none;
     color: white;
@@ -55,7 +60,7 @@ html, body {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 140px;
+    min-width: 120px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 2;
 }
@@ -81,14 +86,15 @@ html, body {
 .title{
     text-align: center;
     font-size: 32px;
-    color: grey;
-    font-family: Inherit;
+    color: #8869C2;
+    font-family: Oswald;
+    font-weight: bold;
 }
 
 .content {
     width: 100%;
     height: auto;
-    min-height: 93vh;
+    min-height: 92vh;
     margin: auto;
     margin-top: 50px;
     padding-top: 20px;

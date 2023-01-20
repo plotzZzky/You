@@ -96,11 +96,11 @@
 
 .post-desc {
     width: 400px;
-    height: 24px;
+    height: 32px;
     margin: 4px;
     text-align: center;
     border: 1px solid lightgrey;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .post-nothing {
@@ -216,7 +216,7 @@
 
 .comment-text {
     text-align: left;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .comment-btns {

@@ -16,13 +16,13 @@
 
     <div class="div-links-profile">
         {% if not you %}
-            <a class="profile-link" onclick="loadAdd({{ user.id }})"> Novo post </a>
+            <a class="profile-link" onclick="loadAdd({{ user.id }})"><i class="fa-solid fa-file"></i> Novo post </a>
         {% endif %}
-        <a class="profile-link" onclick=" loadImages({{ user.id }})"> Imagens </a>
-        <a class="profile-link" onclick=" loadPosts({{ user.id }})"> Pensamentos </a>
-        <a class="profile-link" onclick="loadFriends({{ user.id }})"> Conexões </a>
+        <a class="profile-link" onclick=" loadImages({{ user.id }})"><i class="fa-solid fa-image"></i> Imagens </a>
+        <a class="profile-link" onclick=" loadPosts({{ user.id }})"><i class="fa-solid fa-comment"></i> Pensamentos </a>
+        <a class="profile-link" onclick="loadFriends({{ user.id }})"><i class="fa-solid fa-user-group"></i> Conexões </a>
         {% if not you %}
-            <a class="profile-link" onclick="loadEdit({{ user.id }})"> Ajustes </a>
+            <a class="profile-link" onclick="loadEdit({{ user.id }})"><i class="fa-solid fa-gears"></i> Ajustes </a>
         {% endif %}
         <div class="user-icon">
             <i class="fa-solid fa-user fa-lg"></i>
