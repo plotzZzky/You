@@ -27,7 +27,7 @@
                             <i class="fa-regular fa-heart"></i>
                         {% endif %}
                     </button>
-                    <a class="date"> {{ item.date }} </a>
+                    <a class="date"> {{ item.date|date:"d/m/Y" }} </a>
                 </div>
             </div>
         {% endfor %}
@@ -38,6 +38,7 @@
         <a class="post-nothing"> Ainda não há nada por aqui, adicione algo </a>
     {% endif %}
 
-    <div class="view-modal" id="viewModal">
 
-    </div>
+     <div class="view-modal" id="viewModal">
+
+     </div>

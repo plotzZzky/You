@@ -9,9 +9,6 @@
 .idea/*
 __pycache__/*
 .test
-/users/migrations/*
-/profiles/migrations/*
-/core/migrations/*
+*/migrations/*
 /venv/*
 /media/posts/*
-/media/profile/*

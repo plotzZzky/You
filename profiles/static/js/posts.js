@@ -7,6 +7,13 @@ function previewImage() {
 }
 
 
+function set(id) {
+    $.get('http://127.0.0.1:8000/profiles/modal/id=' + id + '/', function(result){
+        $("#viewModal").html(result);
+    });
+}
+
+
 function showModal(id) {
     let modal = $('#viewModal');
     if ( modal.is('visible')) {
@@ -26,18 +33,8 @@ function closeModal() {
 }
 
 
-$(document).ready(function(){
-    $("#viewModal").click(function(){
-        closeModal()
-    });
-   $("#viewModal *").click(function(e) {
-        e.stopPropagation();
-   });
+$(document).click(function(event) {
+  if (!$(event.target).closest("#modalPreview, .div-post-card").length) {
+    closeModal();
+  }
 });
-
-
-function set(id) {
-    $.get('http://127.0.0.1:8000/profiles/modal/id=' + id + '/', function(result){
-        $("#viewModal").html(result);
-    });
-}

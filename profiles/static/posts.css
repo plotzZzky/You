@@ -124,15 +124,6 @@
     z-index: 999;
 }
 
-.modal-close {
-    width: 32px;
-    height: 32px;
-    position: absolute;
-    top: 2%;
-    right: 16%;
-    color: white;
-}
-
 .div-modal-preview{
     width: 1200px;
     height: 920px;

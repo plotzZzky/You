@@ -11,8 +11,8 @@ from .forms import PostForm
 @login_required()
 def show_your_profile(request):
     user = request.user
-    posts = Post.objects.filter(user=user, image='').order_by("-id")  #type: ignore
-    data = {'user': user,'posts': posts}
+    posts = Post.objects.filter(user=user).exclude(image='').order_by("-id")  # type: ignore
+    data = {'user': user, 'posts': posts}
     return render(request, 'profile.html', data)
 
 
@@ -28,18 +28,18 @@ def get_friends(request, user_id):
 # Return posts to timeline
 @login_required()
 def get_your_posts(request, user_id):
-   posts = Post.objects.filter(user=user_id, image='').order_by("-id")  #type: ignore
-   data = {'posts': posts}
-   if not posts:
-       data = {}
-   return render(request, 'posts.html', data)
+    posts = Post.objects.filter(user=user_id, image='').order_by("-id")  # type: ignore
+    data = {'posts': posts}
+    if not posts:
+        data = {}
+    return render(request, 'posts.html', data)
 
 
 @login_required()
 def get_your_images(request, user_id):
-   posts = Post.objects.filter(user=user_id).exclude(image='').order_by("-id")  #type: ignore
-   data = {'posts': posts}
-   return render(request, 'posts.html', data)
+    posts = Post.objects.filter(user=user_id).exclude(image='').order_by("-id")  # type: ignore
+    data = {'posts': posts}
+    return render(request, 'posts.html', data)
 
 
 # # # # # # # # # # # # # # # # Another user profile # # # # # # # # # # # # # # # #
@@ -48,7 +48,7 @@ def show_user_profile(request, user_id):
     if user_id == request.user.id:
         return redirect('show_your_profile')
     user = User.objects.get(pk=user_id)
-    posts = Post.objects.filter(pk=user_id, image='').order_by("-id")  #type: ignore
+    posts = Post.objects.filter(pk=user_id, image='').order_by("-id")  # type: ignore
     data = {'user': user, 'you': request.user, 'posts': posts}
     return render(request, 'profile.html', data)
 
@@ -66,8 +66,8 @@ def find_peoples(request):
 @login_required()
 def show_friends_thinking(request):
     friends = request.user.profile.friends.all()
-    query = Post.objects.filter(user__in=friends, image='').order_by("-id")  #type: ignore
-    user_query = Post.objects.filter(user=request.user, image='')  #type: ignore
+    query = Post.objects.filter(user__in=friends, image='').order_by("-id")  # type: ignore
+    user_query = Post.objects.filter(user=request.user, image='')  # type: ignore
     posts = query.union(user_query)
     data = {'posts': posts}
     return render(request, 'timeline.html', data)
@@ -75,7 +75,7 @@ def show_friends_thinking(request):
 
 @login_required()
 def show_thinking(request):
-    post = Post.objects.filter(image='').exclude(user=request.user).order_by("-id")  #type: ignore
+    post = Post.objects.filter(image='').exclude(user=request.user).order_by("-id")  # type: ignore
     data = {'posts': post}
     return render(request, 'timeline.html', data)
 
@@ -83,8 +83,8 @@ def show_thinking(request):
 @login_required()
 def show_friends_images(request):
     friends = request.user.profile.friends.all()
-    query = Post.objects.filter(user__in=friends).exclude(image='').order_by("-id")  #type: ignore
-    user_query = Post.objects.filter(user=request.user).exclude(image='').order_by("-id")  #type: ignore
+    query = Post.objects.filter(user__in=friends).exclude(image='').order_by("-id")  # type: ignore
+    user_query = Post.objects.filter(user=request.user).exclude(image='').order_by("-id")  # type: ignore
     posts = query.union(user_query)
     data = {'posts': posts}
     return render(request, 'timeline.html', data)
@@ -92,7 +92,7 @@ def show_friends_images(request):
 
 @login_required()
 def show_images(request):
-    post = Post.objects.all().exclude(user=request.user).exclude(image='').order_by("-id")  #type: ignore
+    post = Post.objects.all().exclude(user=request.user).exclude(image='').order_by("-id")  # type: ignore
     data = {'posts': post}
     return render(request, 'timeline.html', data)
 
@@ -120,7 +120,7 @@ def add_post(request):
 @login_required()
 def get_modal(request, post_id):
     post = Post.objects.get(pk=post_id)  # type: ignore
-    comments = Comment.objects.filter(post=post)  #type: ignore
+    comments = Comment.objects.filter(post=post)  # type: ignore
     data = {'post': post, 'comments': comments}
     return render(request, 'modal.html', data)
 
@@ -158,7 +158,7 @@ def follow_manager(request, user_id):
 # # # # # # # # # # # # # # # # Comments # # # # # # # # # # # # # # # #
 @login_required()
 def add_comment(request, post_id):
-    post = Post.objects.get(pk=post_id)  #type: ignore
+    post = Post.objects.get(pk=post_id)  # type: ignore
     text = request.POST['text']
     comment = Comment(user=request.user, post=post, text=text)
     comment.save()

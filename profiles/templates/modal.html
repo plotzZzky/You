@@ -1,8 +1,6 @@
 
 
-        <div class="modal-close"><i onclick="closeModal();" class="fa-solid fa-xmark fa-2xl"></i></div>
-
-        <div class="div-modal-preview">
+        <div class="div-modal-preview" id="modalPreview">
             <div class="view-div">
                 <div class="post-user-div">
                     <img class="user-picture" id="userPicture" src="{{ post.user.profile.image.url }}">
@@ -23,7 +21,7 @@
                             <i id="heartIcon" class="fa-regular fa-heart"></i>
                         {% endif %}
                         </button>
-                    <a class="modalDate" id="viewDate">{{ post.date }}</a>
+                    <a class="modalDate" id="viewDate">{{ post.date|date:"d/m/Y"}}</a>
                 </div>
             </div>
 
@@ -33,7 +31,7 @@
 
                 </div>
                 <div class="comment-div-input">
-                    <form action="/profiles/post/comment/add={{ post.id }}" method="POST" id="newComment">
+                    <form action="/profiles/post/comment/add={{ post.id }}/" method="POST" id="newComment">
                         {% csrf_token %}
                         <input type="text" placeholder="Comentario" class="input-comment" name="text">
                     </form>
