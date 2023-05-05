@@ -1,0 +1,131 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  margin: auto;
+  background-color: var(--color_accent);
+  z-index: 990;
+}
+
+.navbar-align {
+  width: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.brand {
+  width: var(--menu_size);
+  height: 50px;
+  padding: auto;
+  color: var(--fontColor_pri);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.brand-name {
+  margin: auto;
+  margin-top: 4px;
+}
+
+.brand:hover {
+  color: var(--color_navbar_font_hover);
+  background-color: var(--background);
+}
+ 
+.brand:hover .brand-name {
+  color: var(--fontColor_pri);
+}
+
+.brand:hover .icon-menu {
+  color: var(--fontColor_pri);
+}
+
+.menu {
+  width: auto;
+  height: auto;
+  margin: 0px;
+  margin-right: 4px;
+  display: flex;
+  justify-content: center;
+}
+
+.navbar a {
+  font-size: 1.1em;
+  color: var(--fontColor_pri);
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 0px;
+}
+
+.menu-item {
+  width: var(--menu_size);
+  padding: 12px 0px;
+  margin-right: 4px;
+  margin-left: 4px;
+  color: var(--fontColor_pri);
+  text-align: center;
+  cursor: pointer;
+}
+
+.menu-item:hover, .menu-item:hover a{
+  color: var(--fontColor_pri);
+  background-color: var(--background);
+  font-weight: 500;
+}
+
+.menu-item:hover .icon-menu {
+  color: var(--fontColor_pri);
+}
+
+.menu-icon {
+  display: none;
+  width: 40px;
+  height: 28px;
+  margin: 0px;
+}
+
+.menu-icon:hover {
+  filter: invert(0);
+  background-color: var(--fontColor_sec);
+}
+
+@media screen and (max-width: 1300px) {
+  .navbar-align {
+    width: calc(100% - 4em);
+    padding-left: 2em;
+    padding-right: 2em;
+  }
+}
+
+
+@media screen and (max-width: 1000px) {
+  .navbar-align {
+    width: calc(100% - 2em);
+    padding-left: 1em;
+    padding-right: 1em;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
+  .menu {flex-direction: column;}
+  .menu-item  {display: none;}
+  .menu-icon {
+      display: block;
+  }
+}
+
+@media screen and (max-width: 11000px) {
+  .menu.responsive {
+      flex-direction: column;
+      overflow: hidden;
+      align-items: flex-start;
+  }
+  .menu.responsive .menu-item {
+      display: block;
+      text-align: left;
+      padding-left: 8px;
+  }
+  .menu.responsive .menu-item a {text-align: left;}
+}

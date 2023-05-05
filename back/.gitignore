@@ -1,0 +1,7 @@
+.idea/
+/venv/
+/media/posts/*
+/media/profiles/*
+*/__pycache__/*
+*/migrations/__pycache__/*
+*_initial.py
