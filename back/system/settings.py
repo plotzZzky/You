@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'users',
     'posts',
+    'comments'
 ]
 
 REST_FRAMEWORK = {
@@ -92,7 +93,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5430',
     }
 }
 

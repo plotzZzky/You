@@ -18,9 +18,4 @@ class Post(models.Model):
     date = models.DateField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='users_liked', blank=True)
 
-
-class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    text = models.CharField(max_length=255)
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
+    objects = models.Manager()

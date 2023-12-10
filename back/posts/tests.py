@@ -1,220 +1,136 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
+from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from PIL import Image
+import io
 
-from .models import Post, Comment
-from users.models import Profile
+from users.models import Profile, Post
 
 
 class PostsTest(TestCase):
     def setUp(self):
+        self.client = APIClient()
         self.credentials = {
             'username': 'temporary',
             'password': '1234x567'}
-        self.client = APIClient()
+
+        self.uploaded_file = self.create_image_model()
+        self.create_test_user()
+
+    def create_test_user(self):
         self.user = User.objects.create_user(**self.credentials)
+        self.profile = Profile(user=self.user, image=self.uploaded_file)
+        self.profile.save()
         self.token = Token.objects.create(user=self.user)  # type:ignore
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
-        self.image = SimpleUploadedFile("media/posts/1a471777-1de5-4364-bbae-420cda72dec8.png", b"file_content",
-                                        content_type="image/png")
-        self.profile = self.create_profile()
 
-    def create_simple_post(self):
-        data = {"text": "Test de post", "image": self.image}
-        self.client.post('/posts/add/', data)
-        return Post.objects.get(text=data['text'])  # type:ignore
+    @staticmethod
+    def create_image_model():
+        image_temp = Image.new('RGB', (100, 100))
+        image_io = io.BytesIO()
+        image_temp.save(image_io, format='PNG')
+        image_io.seek(0)
+        return SimpleUploadedFile('test_image.png', image_io.read(), content_type='image/png')
 
-    def create_profile(self):
-        profile = Profile(user=self.user, image=self.image)
-        profile.save()
-        return profile
+    def create_new_post(self):
+        post = Post.objects.create(
+            user=self.user,
+            image=self.uploaded_file,
+            text='Test de postagem!'
+        )
+        return post
 
-    def create_simple_comment(self):
-        post = self.create_simple_post()
-        comment = Comment(text='Teste de comentario', post_id=post.id, user_id=self.user.id)
-        comment.save()
-        return comment
+    # Get posts
+    def test_get_posts_status(self):
+        response = self.client.post('/posts/')
+        self.assertEqual(response.status_code, 200)
 
-    # Create post
-    # Teste retorna 300 pq a imagem do teste é nula
-    def test_create_post_status(self):
-        data = {"text": "Test de post", "image": self.image}
-        response = self.client.post('/posts/add/', data)
-        self.assertEqual(response.status_code, 300)
-
-    def test_create_post_content(self):
-        data = {"text": "Test de post", "image": self.image}
-        self.client.post('/posts/add/', data)
-        result = Post.objects.get(text="Test de post")  # type:ignore
-        self.assertTrue(result)
-
-    def test_create_post_no_login(self):
-        data = {"text": "Test de post", "image": self.image}
-        self.client.logout()
-        response = self.client.post('/posts/add/', data)
+    def test_get_posts_status_401_error(self):
+        self.client.credentials()
+        response = self.client.post('/posts/')
         self.assertEqual(response.status_code, 401)
 
-    def test_create_post_empty_text(self):
-        data = {"text": "", "image": self.image}
-        response = self.client.post('/posts/add/', data)
-        self.assertEqual(response.status_code, 300)
+    def test_get_posts_by_type_status(self):
+        response_nothing = self.client.post('/posts/')
+        self.assertEqual(response_nothing.status_code, 200)
+        response_you = self.client.post('/posts/', {'type': 'you'})
+        self.assertEqual(response_you.status_code, 200)
+        response_all = self.client.post('/posts/', {'type': 'all'})
+        self.assertEqual(response_all.status_code, 200)
+        response_rand = self.client.post('/posts/', {'type': 'qualquercoisa'})
+        self.assertEqual(response_rand.status_code, 200)
 
-    def test_create_post_no_text_error_404(self):
-        data = {"image": self.image}
-        response = self.client.post('/posts/add/', data)
-        self.assertEqual(response.status_code, 404)
+    def test_get_posts_response_if_json(self):
+        response = self.client.post('/posts/')
+        if 'posts' in response.json():
+            self.assertTrue(True)
+        else:
+            self.assertTrue(False)
 
-    # Test não funciona
-    def test_create_post_image_empty_error(self):
-        data = {"text": "Teste", "image": ""}
-        response = self.client.post('/posts/add/', data)
-        self.assertEqual(response.status_code, 300)
+    # Get modal info
+    def test_get_modal_info_status_200(self):
+        post = self.create_new_post()
+        response = self.client.post('/posts/info/', {'id': post.id})
+        self.assertEqual(response.status_code, 200)
 
-    def test_create_post_no_image_error_404(self):
-        data = {"text": "Teste"}
-        response = self.client.post('/posts/add/', data)
-        self.assertEqual(response.status_code, 404)
+    def test_get_modal_info_status_401_error(self):
+        post = self.create_new_post()
+        self.client.credentials()
+        response = self.client.post('/posts/info/', {'id': post.id})
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_modal_info_response_is_json(self):
+        post = self.create_new_post()
+        response = self.client.post('/posts/info/', {'id': post.id})
+        if 'post' in response.json():
+            self.assertTrue(True)
+        else:
+            self.assertTrue(False)
+
+    def test_get_modal_info_id_error(self):
+        response = self.client.post('/posts/info/', {'id': 9999999})
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_new_post(self):
+        image = self.uploaded_file
+        text = 'Teste de texto'
+        response = self.client.post('/posts/add/', {'image': image, 'text': text})
+        query = Post.objects.get(text=text)
+        self.assertIsNotNone(query)
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_new_post_error_401(self):
+        self.client.credentials()
+        response = self.client.post('/posts/add/')
+        self.assertEqual(response.status_code, 401)
 
     # Delete post
-    def test_delete_post_status(self):
-        query = self.create_simple_post()
-        response = self.client.delete(f'/posts/del/id={query.id}/')
+    def test_delete_post_status_200(self):
+        post = self.create_new_post()
+        response = self.client.delete('/posts/del/', {'id': post.id})
         self.assertEqual(response.status_code, 200)
 
-    def test_delete_post_content(self):
-        query = self.create_simple_post()
-        self.client.delete(f'/posts/del/id={query.id}/')
-        try:
-            result = Post.objects.get(text=query.id)  # type:ignore
-        except Post.DoesNotExist:  # type:ignore
-            result = None
-        self.assertIsNone(result)
+    def test_delete_post_status_401_error(self):
+        self.client.credentials()
+        response = self.client.delete('/posts/del/')
+        self.assertEqual(response.status_code, 401)
 
-    def test_delete_post_error_404(self):
-        response = self.client.delete(f'/posts/del/id={9999999999}/')
+    def test_delete_post_status_no_id(self):
+        response = self.client.delete('/posts/del/')
         self.assertEqual(response.status_code, 404)
 
-    def test_delete_post_error_empty(self):
-        response = self.client.delete(f'/posts/del/id=/')
-        self.assertEqual(response.status_code, 404)
-
-    # Get Posts
-    def test_get_friends_posts_status(self):
-        response = self.client.get(f'/posts/')
+    def test_like_post_status_200(self):
+        post = self.create_new_post()
+        response = self.client.post('/posts/like/', {'id': post.id})
         self.assertEqual(response.status_code, 200)
 
-    def test_get_friends_posts_content(self):
-        response = self.client.get(f'/posts/')
-        self.assertEqual(response['Content-Type'], 'application/json')
+    def test_like_post_status_401(self):
+        self.client.credentials()
+        response = self.client.post('/posts/del/', )
+        self.assertEqual(response.status_code, 401)
 
-    def test_get_your_posts_status(self):
-        response = self.client.get(f'/posts/your/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_your_posts_content(self):
-        response = self.client.get(f'/posts/your/')
-        self.assertEqual(response['Content-Type'], 'application/json')
-
-    def test_get_all_posts_status(self):
-        response = self.client.get(f'/posts/all/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_all_posts_content(self):
-        response = self.client.get(f'/posts/all/')
-        self.assertEqual(response['Content-Type'], 'application/json')
-
-    # Modal
-    def test_get_modal_info_status(self):
-        post = self.create_simple_post()
-        response = self.client.get(f'/posts/info/id={post.id}/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_modal_info_content(self):
-        post = self.create_simple_post()
-        response = self.client.get(f'/posts/info/id={post.id}/')
-        self.assertEqual(response['Content-Type'], 'application/json')
-
-    def test_get_modal_info_404(self):
-        response = self.client.get(f'/posts/info/id={9999999999999}/')
-        self.assertEqual(response.status_code, 404)
-
-    # Likes
-    def test_like_status(self):
-        post = self.create_simple_post()
-        response = self.client.get(f'/posts/like/id={post.id}/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_like_status_404(self):
-        response = self.client.get(f'/posts/like/id={99999999}/')
-        self.assertEqual(response.status_code, 404)
-
-    # Follow
-    def test_follow_status(self):
-        credentials = {
-            'username': 'anotherUser',
-            'password': 'password'
-        }
-        new_user = User.objects.create_user(credentials)
-        response = self.client.get(f'/posts/follow/id={new_user.id}/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_follow_status_404(self):
-        response = self.client.get(f'/posts/follow/id={99999999}/')
-        self.assertEqual(response.status_code, 404)
-
-    def test_follow_you_status_300(self):
-        response = self.client.get(f'/posts/follow/id={self.user.id}/')
-        self.assertEqual(response.status_code, 300)
-
-    # Comments
-    def test_create_comment_status(self):
-        post = self.create_simple_post()
-        data = {"comment": 'Comment'}
-        response = self.client.post(f'/posts/comment/add/id={post.id}/', data)
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_comment_content(self):
-        post = self.create_simple_post()
-        data = {"comment": 'Comment'}
-        self.client.post(f'/posts/comment/add/id={post.id}/', data)
-        try:
-            comment = Comment.objects.get(text=data['comment'])  # type:ignore
-        except Comment.DoesNotExist:  # type:ignore
-            comment = None
-        self.assertIsNotNone(comment)
-
-    def test_create_comment_empty(self):
-        post = self.create_simple_post()
-        data = {"comment": ""}
-        self.client.post(f'/posts/comment/add/id={post.id}/', data)
-        try:
-            comment = Comment.objects.get(text=data['comment'])  # type:ignore
-        except Comment.DoesNotExist:  # type:ignore
-            comment = None
-        self.assertIsNotNone(comment)
-
-    def test_create_comment_empty_error(self):
-        post = self.create_simple_post()
-        data = {}
-        response = self.client.post(f'/posts/comment/add/id={post.id}/', data)
-        self.assertEqual(response.status_code, 404)
-
-    def test_delete_comment_status(self):
-        comment = self.create_simple_comment()
-        response = self.client.delete(f'/posts/comment/del/id={comment.id}/')  # type:ignore
-        self.assertEqual(response.status_code, 200)
-
-    def test_delete_comment_content(self):
-        comment = self.create_simple_comment()
-        self.client.delete(f'/posts/comment/del/id={comment.id}/')  # type:ignore
-        try:
-            query = Comment.objects.get(text=comment.text)  # type:ignore
-        except Comment.DoesNotExist:  # type:ignore
-            query = None
-        self.assertIsNone(query)
-
-    def test_delete_comment_error_404(self):
-        response = self.client.delete(f'/posts/comment/del/id={99999999}/')  # type:ignore
+    def test_like_post_id_error(self):
+        response = self.client.post('/posts/like/', {'id': 9999})
         self.assertEqual(response.status_code, 404)

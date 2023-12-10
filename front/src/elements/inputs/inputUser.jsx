@@ -1,9 +1,6 @@
 import { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
 import { faX, faCheck } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faX, faCheck)
 
 
 export default function InputUser(props) {
@@ -15,7 +12,7 @@ export default function InputUser(props) {
 
   const validate_user = (event) => {
     const value = event.target.value;
-    if (value.length > 3) {
+    if (value.length > 2) {
       props.setValid(true)
       props.username(value)
     } else {
@@ -28,15 +25,16 @@ export default function InputUser(props) {
     validate_user(fakeEvent)
   }, [props.value])
 
+
   return (
     <div className='div-input'>
       <input
-        className='text-input' type='text' name='username' placeholder='Digite o nome do usuario'
+        className='text-input' type='text' name='username' placeholder='Digite o nome do usuario' min={2}
         onChange={validate_user} onFocus={update_tip_login_password} value={props.value}>
       </input>
       <span className='input-div-icon'>{props.valid ?
-        <FontAwesomeIcon icon="fa-solid fa-check" className='icon-input-validate' /> :
-        <FontAwesomeIcon icon="fa-solid fa-x" className='icon-input' />
+        <FontAwesomeIcon icon={faCheck} className='icon-input-validate' /> :
+        <FontAwesomeIcon icon={faX} className='icon-input' />
       }
       </span>
     </div>

@@ -1,5 +1,10 @@
+# folders
 .idea/
 /venv/
 */__pycache__/*
 */migrations/__pycache__/*
+*/migrations/*
+!*/migrations/__init__.py
+
+# files
 *_initial.py

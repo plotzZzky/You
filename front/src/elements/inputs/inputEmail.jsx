@@ -1,9 +1,6 @@
 import { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
 import { faX, faCheck } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faX, faCheck)
 
 
 export default function InputEmail(props) {
@@ -28,15 +25,16 @@ export default function InputEmail(props) {
     validate_email(fakeEvent)
   }, [props.value])
 
+  
   return (
     <div className='div-input'>
       <input
         className='text-input' type='email' name='email' placeholder='Digite seu email'
         onChange={validate_email} onFocus={update_tip_login_password} value={props.value} >
       </input>
-      <span className='input-div-icon'>{props.valid ?
-        <FontAwesomeIcon icon="fa-solid fa-check" className='icon-input-validate' /> :
-        <FontAwesomeIcon icon="fa-solid fa-x" className='icon-input' />
+      <span className='input-div-icon'> {props.valid ?
+        <FontAwesomeIcon icon={faCheck} className='icon-input-validate' /> :
+        <FontAwesomeIcon icon={faX} className='icon-input' />
       }
       </span>
     </div>

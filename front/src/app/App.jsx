@@ -1,144 +1,107 @@
 import { useState, useEffect } from 'react'
 import PostCard from '../elements/postCard'
 import AppNavBar from '../elements/appNavbar'
-import Modal from '../elements/Modal';
-import NewPost from '../elements/NewPost';
-import EditUser from '../elements/editUser';
+import ModalViewPost from '../elements/ModalViewPost';
+import NewPost from '../elements/ModalNewPost';
+import EditUser from '../elements/ModalEditUser';
 
 
 export default function App() {
   const [getToken, setToken] = useState(sessionStorage.getItem('token'));
-  const [getModal, setModal] = useState();
-  const [Cards, setCards] = useState();
-  const [getTab, setTab] = useState();
+  const [Cards, setCards] = useState([]);
+  const [modalData, setModalData] = useState({'user': '', 'comments': ''})
 
+  // Verifica se possui o token 
   function check_login() {
     if (getToken == undefined) {
-      location.href = "/you/login/";
+      location.pathname = "/login/";
     } else {
-      get_friends_posts();
+      get_posts();
     }
   }
 
-  function check_tab() {
-    switch (getTab) {
-      case 'all':
-        get_all_posts()
-        break;
-      case 'your':
-        get_your_posts()
-        break;
-      default:
-        get_friends_posts()
-        break;
-    }
-  }
-
-  function get_friends_posts() {
+  // Busca os posts no backend e executa a função que cria os cards
+  function get_posts(value = 'Friends') {
     let url = "http://127.0.0.1:8000/posts/"
+    const form = new FormData()
+    form.append('type', value)
+
     let data = {
-      method: 'GET',
-      headers: { Authorization: 'Token ' + getToken }
+      method: 'POST',
+      headers: { Authorization: 'Token ' + getToken },
+      body: form
     }
     fetch(url, data)
       .then((res) => res.json())
       .then((data) => {
-        create_cards(data, false)
-        setTab('friends')
+        create_cards(data['posts'])
       })
   }
 
-  function get_all_posts() {
-    let url = "http://127.0.0.1:8000/posts/all/"
-    let data = {
-      method: 'GET',
-      headers: { Authorization: 'Token ' + getToken }
-    }
-    fetch(url, data)
-      .then((res) => res.json())
-      .then((data) => {
-        create_cards(data, true)
-        setTab('all')
-      })
-  }
-
-  function get_your_posts() {
-    let url = "http://127.0.0.1:8000/posts/your/"
-    let data = {
-      method: 'GET',
-      headers: { Authorization: 'Token ' + getToken }
-    }
-    fetch(url, data)
-      .then((res) => res.json())
-      .then((data) => {
-        create_cards(data, true)
-        setTab('your')
-      })
-  }
-
-  function create_cards(data, horizon) {
-    const posts = data['posts']
+  // Cria os cards das postagens 
+  function create_cards(value) {
     setCards(
-      posts?.map((data) => (
-        <PostCard data={data} horizon={horizon} update={get_modal_info} open={() => show_modal(data)}></PostCard>
+      value.map((data) => (
+        <PostCard data={data} update={get_posts} get_info={() => get_modal_info(data.id)}></PostCard>
       )))
   }
 
-  function show_modal(data) {
-    let modal = document.getElementById("Modal")
-    modal.style.display = "block"
-    document.body.style.position = 'fixed'
-    get_modal_info(data.id)
-  }
-
+  // Busca info(comentarios, likes etc) de um post 
   function get_modal_info(post_id) {
-    let url = `http://127.0.0.1:8000/posts/info/id=${post_id}/`
-    let header = {
-      method: 'GET',
-      headers: { Authorization: 'Token ' + getToken }
+    let url = 'http://127.0.0.1:8000/posts/info/'
+    let form = new FormData()
+    form.append('id', post_id)
+
+    let data = {
+      method: 'POST',
+      headers: { Authorization: 'Token ' + getToken },
+      body: form
     }
-    fetch(url, header)
+
+    fetch(url, data)
       .then((res) => res.json())
-      .then((data) => {
-        setModal(data['post'])
+      .then((data) => { 
+        setModalData(data['post'])
+      })
+      .then(() => {
+        change_visiblity_modal_divs()
       })
   }
 
-  function show_new_post() {
-    const newModal = document.getElementById("NewPostModal")
-    newModal.style.display = "block"
+  // Sempre que abrir o modal exibe a imagem e ocualt os comentarios
+  function change_visiblity_modal_divs() {
+    const modal = document.getElementById("PostModal")
+    const modalVisibility = modal.style.display
+    
+    if (modalVisibility !== 'flex') {
+    const img = document.getElementById("imgPrev")
+    const div_comment = document.getElementById("commentPrev")
+
+    modal.style.display = "flex"
+    img.style.display = 'block';
+    div_comment.style.display = 'none';
+    }
   }
 
   useEffect(() => {
     check_login()
   }, [])
 
-
   return (
-    <>
-      <AppNavBar new={show_new_post} all={get_all_posts} your={get_your_posts} friends={get_friends_posts}></AppNavBar>
+    <div className='page'>
+      <AppNavBar get_posts={get_posts}></AppNavBar>
 
-      <div className='app-page' id='postsView'>
-        <div className="view-posts">
-          {Cards}
-        </div>
-      </div>
-
-      <div className='app-page' id='horizonView' style={{ display: 'none' }}>
-        <div className="view-posts">
-          {Cards}
-        </div>
-      </div>
-
-      <div className='app-page' id='yourView' style={{ display: 'none' }}>
+      <div className='app-page'>
         <div className="view-posts">
           {Cards}
         </div>
       </div>
 
       <EditUser></EditUser>
-      <Modal data={getModal} update_info={get_modal_info} update_posts={check_tab}></Modal>
-      <NewPost update={get_modal_info} update_posts={check_tab}></NewPost>
-    </>
+
+      <ModalViewPost data={modalData} update_posts={get_posts} update_modal={get_modal_info}></ModalViewPost>
+      
+      <NewPost get_posts={get_posts}></NewPost>
+    </div>
   )
 }

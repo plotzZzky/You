@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import InputPwd from './inputs/inputPwd'
 import InputEmail from './inputs/inputEmail'
 import InputUser from './inputs/inputUser'
@@ -22,7 +21,12 @@ export default function EditUser(props) {
   const [Pwd1Valid, setPwd1Valid] = useState(false);
   const [Pwd2Valid, setPwd2Valid] = useState(false)
 
-
+  // Fecha o modal
+  function close_modal() {
+    let modal = document.getElementById("profileView");
+    modal.style.display = 'none'
+  }
+  
   function get_user_infos() {
     let url = `http://127.0.0.1:8000/users/profile/`
     let info = {
@@ -59,8 +63,8 @@ export default function EditUser(props) {
     formData.set('enctype', 'multipart/form-data');
     formData.append("username", getUsername);
     formData.append("email", getEmail)
-    formData.append("password1", getPassword1)
-    formData.append("password2", getPassword2)
+    formData.append("password", getPassword1)
+    formData.append("pwd", getPassword2)
     if (getImageUser) {
       formData.append('image', getImageUser, getImageUser.name);
     }
@@ -81,8 +85,9 @@ export default function EditUser(props) {
   }, [])
 
   return (
-    <div className='app-page' id='profileView' style={{ display: 'none' }}>
-      <div className="div-edit-user">
+    <div className="modal-background" id='profileView' style={{ display: 'none' }} onClick={close_modal}>
+      <div className="div-edit-user" onClick={(e) => e.stopPropagation()}>
+        <p className='login-title'> Editar suas informações </p>
         <div className='align-input'>
           <div>
             <img className='img-user-preview' onClick={click_input} src={getFileUser}></img>
@@ -93,9 +98,9 @@ export default function EditUser(props) {
           <InputEmail email={setEmail} valid={EmailValid} setValid={setEmailValid} tip='EditTip' value={getEmail}></InputEmail>
           <InputPwd password={setPassword1} valid={Pwd1Valid} setValid={setPwd1Valid} placeholder="Digite a nova senha" tip='EditTip'></InputPwd>
           <InputPwd password={setPassword2} valid={Pwd2Valid} setValid={setPwd2Valid} placeholder="Comfirme a nova senha" tip='EditTip'></InputPwd><br />
-          <a className='login-tip' id='EditTip'> </a>
         </div>
-        <button className='btn' onClick={edit_user}> Salvar </button>
+        <p className='login-tip' id='EditTip'> </p>
+        <button className='btn-mini' onClick={edit_user}> Salvar </button>
       </div>
     </div>
   )

@@ -7,16 +7,20 @@ export default function NewPost(props) {
   const [postImg, setPostImg] = useState();
   const [postFile, setPostFile] = useState();
 
+  // Fecha o modal
+  function close_modal() {
+    let modal = document.getElementById("NewPostModal");
+    modal.style.display = 'none'
+  }
+
+  // Essa função faz que quando o user clickar na imagem essa função seleciona o input para selecionar uma imagem
   function click_input() {
     document.getElementById("selectImg").click()
   }
 
-  function close_modal() {
-    let modal = document.getElementById("NewPostModal");
-    modal.style.display = 'none'
-    document.body.style.position = ''
-  }
-
+  // Função que carrega a imagem
+  // setPostImg carrega a imagem para ser enviada para o back
+  // setPostFile carrga a imagem no front 
   function change_image(event) {
     const file = event.target.files[0];
     setPostImg(file)
@@ -28,6 +32,13 @@ export default function NewPost(props) {
     reader.readAsDataURL(file);
   }
 
+  // Salva o texto da postagem no useState
+  function set_text_from_post(event) {
+    const value = event.target.value
+    setPostText(value)
+  }
+
+  // Salva o post no back
   function save_post() {
     let url = "http://127.0.0.1:8000/posts/add/"
 
@@ -44,12 +55,9 @@ export default function NewPost(props) {
 
     fetch(url, info)
       .then(() => {
-        props.update()
-        setPostImg()
-        setPostFile()
-        setPostText("")
+        props.get_posts()
         close_modal()
-        props.update_posts()
+        setPostFile()
       })
   }
 
@@ -58,8 +66,8 @@ export default function NewPost(props) {
       <div className='modal-new' onClick={e => e.stopPropagation()}>
         <img className='img-preview' onClick={click_input} src={postFile}></img>
         <input type="file" className="select-image" id='selectImg' onChange={change_image}></input>
-        <input type="text" placeholder="Diga algo" className="input-text-desc" value={postText} onChange={(e) => setPostText(e.target.value)}></input>
-        <input type="submit" className="newpost-btn" value="Publicar" onClick={save_post}></input>
+        <input type="text" placeholder="Diga algo" className="input-text-desc" value={postText} onChange={set_text_from_post}></input>
+        <button className="btn-mini" onClick={save_post}> Publicar </button>
       </div>
     </div>
   )

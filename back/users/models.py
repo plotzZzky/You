@@ -16,4 +16,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_file_path)
     follows = models.ManyToManyField(User, related_name='users_friend', blank=True)
-    likes = models.ManyToManyField(Post)
+    likes = models.ManyToManyField(Post, blank=True)
+
+    objects = models.Manager()
