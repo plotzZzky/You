@@ -5,6 +5,8 @@
 */migrations/__pycache__/*
 */migrations/*
 !*/migrations/__init__.py
+/media/posts/*
+/media/
 
 # files
 *_initial.py

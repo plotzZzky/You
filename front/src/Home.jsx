@@ -54,7 +54,7 @@ export default function Home() {
         <div className='align-home-page'>
           <div className='div-align-text-home'>
             <a className='big-title'> Bem vindo a  You!</a>
-            <p className='subtitle'> A You é a plataforma para compartilhar suas fotos com seus amigos, familiares e o mundo... </p>
+            <p className='subtitle'> A You é a plataforma para compartilhar o que importa na sua via com amigos, familiares e o mundo... </p>
             <br></br>
             <button className='btn' onClick={go_login}> Fazer parte!</button>
           </div>
