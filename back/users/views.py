@@ -1,15 +1,17 @@
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
+from django.contrib.auth.hashers import make_password, check_password
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 import imghdr
 
+from .token import create_new_token
 from .models import Profile
 from .serializer import serialize_user
-from .validate import valid_user, validate_password, validate_username, validate_email
+from .validate import (valid_user, validate_password, validate_username, validate_email, validate_question,
+                       validate_answer)
 
 
 @api_view(['POST'])
@@ -19,16 +21,21 @@ def register_user(request):
         pwd = request.data['pwd']
         username = request.data['username']
         email = request.data['email']
-        image = request.data['image']
-        imghdr.what(None, image.read())
+        question = request.data['question']
+        answer = request.data['answer']
+        image = request.data.get('image', None)
+        if image:
+            imghdr.what(None, image.read())
+
         if valid_user(password, pwd, username, email):
-            user = User(username=username, email=email, password=password)
+            user = User.objects.create(username=username, email=email)
             user.set_password(password)
             user.save()
-            profile = Profile(user=user, image=image)
-            profile.save()
-            user = authenticate(username=username, password=password)
-            token = Token.objects.create(user=user)  # type:ignore
+            authenticate(username=username, password=password)
+            token = create_new_token(user)  # type:ignore
+            # salva a respota ja protegida por hash
+            answer_hashed = make_password(answer)
+            Profile.objects.create(user=user, question=question, answer=answer_hashed, image=image)
             return JsonResponse({"token": token.key}, status=200)
         else:
             raise ValueError()
@@ -37,13 +44,13 @@ def register_user(request):
 
 
 @api_view(['POST'])
-def login(request):
+def login_user(request):
     try:
         password = request.data['password']
         username = request.data['username']
         user = authenticate(username=username, password=password)
         if user is not None:
-            token = Token.objects.get(user=user)  # type:ignore
+            token = create_new_token(user)
             return JsonResponse({"token": token.key}, status=200)
         else:
             return JsonResponse({"msg": "Login incorreto!"}, status=401)
@@ -51,38 +58,85 @@ def login(request):
         return JsonResponse({"msg": "Login incorreto!"}, status=401)
 
 
+# Atualiza as informações do usario
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def update_profile(request):
+def update_user(request):
     try:
-        password = request.data['password']
-        pwd = request.data['pwd']
-        username = request.data['username']
-        email = request.data['email']
-        try:
-            image = request.data['image']
-            imghdr.what(None, image.read())
-        except KeyError:
-            image = None
         user = request.user
+        password = request.data.get('password', "")
+        pwd = request.data.get('pwd', "")
+        username = request.data.get('username', "")
+        email = request.data.get('email', "")
+        image = request.data.get('image', None)
+        question = request.data.get('question', None)
+        answer = request.data.get('answer', None)
+
+        if image is not None:
+            imghdr.what(None, image.read())
+            user.profile.image = image
         if validate_username(username):
             user.username = username
         if validate_email(email):
             user.email = email
-        if validate_password(password, pwd):
-            user.set_password(password)
-        if image:
-            user.profile.image = image
-            user.profile.save()
+        if validate_question(question):
+            user.profile.question = question
+        new_answer = validate_answer(answer)
+        if new_answer:
+            user.profile.answer = new_answer
+        if password == pwd:
+            if validate_password(password, pwd):
+                user.set_password(password)
+        else:
+            return JsonResponse({"msg": "As senhas não são iguais, mas os demais dados foram atualizados!"})
         user.save()
-        return JsonResponse({"msg": "Usuario atualizado"}, status=200)
-    except (KeyError, ValueError, ObjectDoesNotExist):
+        user.profile.save()
+        return JsonResponse({"msg": "Dados atualizados!"}, status=200)
+    except (ValueError, ObjectDoesNotExist):
         return JsonResponse({"msg": "Não foi possivel atualizar!"}, status=400)
 
 
+# Retorna as informações sobre um usuario no formato json
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_profile(request):
-    user = request.user
-    user_dict = serialize_user(user)
-    return JsonResponse(user_dict, status=200)
+def receive_user_profile(request):
+    try:
+        user = request.user
+        user_json = serialize_user(user)
+        return JsonResponse(user_json, status=200)
+    except ObjectDoesNotExist:
+        return JsonResponse({'msg': 'Usuario não existe!'}, 401)
+
+
+# Recuperação de senha, atraves de pergunta e resposta
+@api_view(['POST'])
+def recovery_password(request):
+    try:
+        username = request.data['username']
+        answer = request.data['answer']
+        password = request.data['password']
+        pwd = request.data['pwd']
+        user = User.objects.get(username=username)
+        if check_password(answer, user.profile.answer):
+            if password == pwd:
+                user.set_password(password)
+                user.save()
+                return JsonResponse({"msg": "Senha atualizada!"}, status=200)
+            else:
+                return JsonResponse({"msg": "As senhas precisam ser iguais!"}, status=400)
+        else:
+            raise ValueError()
+    except (KeyError, ValueError, ObjectDoesNotExist):
+        return JsonResponse({"msg": "Resposta incorreta!"}, status=400)
+
+
+# Envia a question do usuario para o front para fazer a recuperação de senha
+@api_view(['POST'])
+def receive_your_question(request):
+    try:
+        username = request.data['username']
+        user = User.objects.get(username=username)
+        question = user.profile.question
+        return JsonResponse({"question": question}, status=200)
+    except (KeyError, ValueError, ObjectDoesNotExist):
+        return JsonResponse({"msg": "Usuario não encontrado"}, status=400)

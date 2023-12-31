@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)4(_vkwg#4pc-s)!cx9pa)tigu*uyy5s^y1(mbxuv^h8kfqbs7'
+SECRET_KEY = 'django-insecure-)4(_vkwg#4pc-s)!cx9pa)tigu*uyy5s^y1(mbxuv^h8kfqbs7ccvweYiss%fgs7s8shsbxX'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'users',
     'posts',
     'comments'
@@ -53,6 +53,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -140,9 +141,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173'
+    'http://localhost:3000',
+    'http://127.0.0.1:3000'
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 MEDIA_URL = 'media/'
 
