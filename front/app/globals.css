@@ -70,8 +70,8 @@ body {
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 2vh 1vw 0;
+  padding: 0 1vw;
+  margin-top: 10vh;
 }
 
 .big-title {
@@ -170,6 +170,7 @@ footer a, footer * {
     flex-direction: column;
     justify-content: center;
     gap: 1vh;
+    margin-top: -5vh;
   }
 
   .div-align-text-home {
@@ -180,5 +181,6 @@ footer a, footer * {
 
   .img-background {
     width: 94vw;
+    height: 60vh;
   }
 }
