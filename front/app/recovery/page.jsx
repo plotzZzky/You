@@ -8,7 +8,7 @@ import InputAnswer from '../elements/inputs/inputAnswer';
 
 
 export default function Login() {
-  const [getToken, setToken] = useState(sessionStorage.getItem('token'));
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const [getVisibility, setVisibility] = useState(false)
   const router = useRouter();
 
@@ -30,31 +30,32 @@ export default function Login() {
   };
 
   // Função para verificar se o usuario terminou de digitar o username e então buscar a question
-  function receiveQuestionTimer () {
+  function receiveQuestionTimer (value) {
     // Timer para buscar o username
     let timerId;
     clearTimeout(timerId);
     timerId = setTimeout(() => {
-      receiverQuestion();
+      receiveQuestion(value);
     }, 500);
   }
 
   // Função que busca a question do usuario para recuperar a senha
-  function receiverQuestion() {
+  function receiveQuestion(value) {
     let url = 'http://127.0.0.1:8000/users/question/'
 
     const formData = new FormData();
-    formData.append("username", getUsername)
-    const data = {method: 'POST', body: formData}
+    formData.append("username", value || getUsername)
+    const requestData = {method: 'POST', body: formData}
 
-    fetch(url, data)
-    .then((res) => res.json)
-    .then((jsonData) => {
+    fetch(url, requestData)
+    .then((res) => res.json())
+    .then((data) => {
       if (data.msg) {
-        const tip = document.getElementById("SignTip")
+        const tip = document.getElementById("recoveryTip")
         tip.innerText = data.msg
       } else {
-        setQuestion(jsonData['question'])
+        setQuestion(data['question'])
+        console.log(data['question'])
         setVisibility(true)
       }
     })
@@ -70,13 +71,13 @@ export default function Login() {
     formData.append("password", getPassword);
     formData.append("pwd", getpwd);
 
-    const info = {method: 'POST', body: formData}
+    const requestData = {method: 'POST', body: formData}
 
-    fetch(url, info)
+    fetch(url, requestData)
     .then((res) => res.json())
     .then((data) => {
       if (data.msg) {
-        const tip = document.getElementById("SignTip")
+        const tip = document.getElementById("recoveryTip")
         tip.innerText = data.msg
       } else {
         router.push('/login');

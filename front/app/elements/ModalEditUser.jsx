@@ -7,7 +7,7 @@ import InputAnswer from "./inputs/inputAnswer";
 
 
 export default function EditUser(props) {
-  const [getToken, setToken] = useState(sessionStorage.getItem('token'));
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const [getData, setData] = useState({});
 
   const [getUsername, setUsername] = useState(getData.username);
@@ -45,7 +45,7 @@ export default function EditUser(props) {
         setUsername(data.username)
         setEmail(data.email)
         setQuestion(data.question)
-        setFileUser(`http://127.0.0.1:8000/${data.image}/`)
+        setFileUser(data.image)
       })
   }
 

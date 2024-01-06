@@ -12,13 +12,13 @@ export default function InputUser(props) {
 
   const validateUser = (event) => {
     const value = event.target.value;
-    if (value.length > 2) {
+    if (value.length > 3) {
       props.setValid(true)
+      props.action? props.action(value) : null;
     } else {
       props.setValid(false)
     }
     props.username(value)
-    props.action? props.action() : null;
   }
 
   useEffect(() => {

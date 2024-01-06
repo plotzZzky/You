@@ -12,7 +12,7 @@ import ImageDefault from '../../public/user.png';
 
 export default function Login() {
   const [getLogin, setLogin] = useState(true);
-  const [getToken, setToken] = useState(sessionStorage.getItem('token'));
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const router = useRouter();
 
   const [getUsername, setUsername] = useState("");
@@ -33,7 +33,7 @@ export default function Login() {
   const [AnswerValid, setAnswerValid] = useState(false)
 
   function checkLogin() {
-    if (getToken !== null) {
+    if (getToken !== '') {
       router.push("/app/");
     }
   }
@@ -112,7 +112,7 @@ export default function Login() {
     }
   }
 
-  // Função de login
+  // Função para registar um novo usuario, envia o form com as informações (exceto imagem) e recebe o nome randonizado da imagem do usuario
   function SignUpFunc() {
       let url = `http://127.0.0.1:8000/users/register/`
 
@@ -121,7 +121,7 @@ export default function Login() {
       formData.append("email", getEmail);
       formData.append("password", getPassword);
       formData.append("pwd", getpwd);
-      formData.append("image", getImageUser, getImageUser.name);
+      formData.append("image", getImageUser.name);
       formData.append("question", getQuestion)
       formData.append("answer", getAnswer)
 
@@ -132,16 +132,60 @@ export default function Login() {
       }
 
       fetch(url, info)
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (res.status === 200) {
+          return res.json();
+        } else {
+          const data = await res.json();
+          throw new Error(`${data.msg} status: ${res.status}`);
+        }
+      })
+      
       .then((data) => {
         if (data.msg) {
           const tip = document.getElementById("SignTip")
           tip.innerText = data.msg
         } else {
-          sessionStorage.setItem("token", data["token"])
+          sendImageToCdn(data.filename)
+          sessionStorage.setItem("token", data.token)
           router.push('/app')
         }
       })
+
+      .catch((error) => {
+        alert("Não foi possivel criar o usuario, tente novamente mais tarde")
+        console.log(error.message);
+      });
+    }
+
+  // Envia a imagem com o nome randonizado pelo back para o cdn
+  function sendImageToCdn(filename) {
+    const url = "http://127.0.0.1:8080/files/profile/"
+
+    const formCdn = new FormData();
+    formCdn.set('enctype', 'multipart/form-data');
+    formCdn.append("image", getImageUser, filename)
+
+    const requestData = {
+      method: 'POST',
+      body: formCdn
+    }
+
+    fetch(url, requestData)
+    .then(res => {
+      if (res.status === 200) {
+        props.get_posts()
+        closeModal()
+        setPostFile()
+      } else {
+        throw new Error(`Não foi possivel salvar a imagem. status: ${res.status}`);
+      }
+    })
+
+    .catch((error) => {
+      console.log(error.message)
+      alert("Não foi possivel salvar a imagem");
+    });
   }
 
   useEffect(() => {

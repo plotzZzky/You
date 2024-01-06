@@ -4,7 +4,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function CommentCard(props) {
-  const [getToken, setToken] = useState(sessionStorage.getItem('token'));
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
 
   function delComment() {
     const url = 'http://127.0.0.1:8000/comments/del/'
@@ -33,7 +33,7 @@ export default function CommentCard(props) {
          {props.data?.text}
       </div>
       <div className="post-align-btns">
-        <a className="date"> {props.data?.date} </a>
+        <a className="date"> {props.formatDate(props.data?.date)} </a>
         {props.data?.your ?
           <a className="post-delete" onClick={delComment}> <FontAwesomeIcon icon={faTrash} /></a> :
           ''

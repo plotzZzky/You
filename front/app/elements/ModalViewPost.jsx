@@ -6,11 +6,10 @@ import CommentCard from './commentCard'
 
 
 export default function ModalViewPost(props) {
-  const [getToken, setToken] = useState(sessionStorage.getItem('token'));
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const [getCards, setCards] = useState([])
 
   const [getComment, setComment] = useState("");
-  const [getDate, setDate] = useState('28/04/1994');
 
   // Fecha esse modal
   function closeModal() {
@@ -19,17 +18,19 @@ export default function ModalViewPost(props) {
   }
 
   // Formata a data para ser exibida
-  function formatDate() {
-    const date = '2023-05-03'.split("-")
-    setDate(`${date[2]}/${date[1]}/${date[0]}`)
+  function formatDate(value) {
+    if (value) {
+    const date = value.split("-")
+    return `${date[2]}/${date[1]}/${date[0]}`
+    }
   }
 
-  // Cria os cards das postagens 
+  // Cria os cards dos comentarios 
   function createCards() {
     if (props.data.comments) {
       setCards(
-        props.data.comments.map((data) => (
-          <CommentCard data={data} update_modal={() => props.update_modal(props.data.id)}></CommentCard>
+        props.data.comments.map((data, index) => (
+          <CommentCard key={index} data={data} update_modal={() => props.update_modal(props.data.id)} formatDate={formatDate}></CommentCard>
         )))
     }
   }
@@ -121,20 +122,19 @@ export default function ModalViewPost(props) {
   }
 
   useEffect(() => {
-    formatDate()
     createCards()
   }, [props.data])
 
   return (
     <div className="modal-background" id="PostModal" onClick={closeModal}>
 
-      <div className='modal-new' onClick={e => e.stopPropagation()}>
-        <img className='modal-img' src={`http://127.0.0.1:8000/${props.data?.image}/`} id='imgPrev'></img>
+      <div className='modal-div' onClick={e => e.stopPropagation()}>
+        <img className='modal-img' src={props.data?.image} id='imgPrev'></img>
 
         <div className="modal-info" id='commentPrev'>
           <div className="modal-desc">
             <p> {props.data?.text} </p>
-            <a className="date"> {getDate} </a>
+            <a className="date"> {formatDate(props.data?.date)} </a>
 
             <div className='comments-div'>
               <div className='new-comment'>
@@ -152,7 +152,7 @@ export default function ModalViewPost(props) {
 
         <div className="modal-align-name">
           <div className='align-nick'>
-            <img className="modal-user-img" src={`http://127.0.0.1:8000/${props.data?.user.img}/`} ></img>
+            <img className="modal-user-img" src={props.data?.user.img} ></img>
             <a className="modal-username"> {props.data?.user.username} </a>
           </div>
 

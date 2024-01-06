@@ -1,12 +1,12 @@
 def serializer_modal(item, user, request):
     post_id = item.id
     text = item.text
-    image = item.image.url
+    image = item.image
     date = item.date
     follow = True if item.user in user.profile.follows.all() else False
     user_id = item.user.id
     username = item.user.username
-    pic = item.user.profile.image.url
+    pic = item.user.profile.image
     liked = True if user in item.likes.all() else False
     likes = len(item.likes.all())
     me = True if request.user == user else False
@@ -25,6 +25,6 @@ def check_your(request, user):
 
 def serializer_post(item):
     post_id = item.id
-    image = item.image.url
+    image = item.image
     post = {'id': post_id, "image": image}
     return post

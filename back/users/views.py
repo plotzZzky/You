@@ -5,10 +5,11 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
 import imghdr
 
 from .token import create_new_token
-from .models import Profile
+from .models import Profile, get_filename
 from .serializer import serialize_user
 from .validate import (valid_user, validate_password, validate_username, validate_email, validate_question,
                        validate_answer)
@@ -24,8 +25,8 @@ def register_user(request):
         question = request.data['question']
         answer = request.data['answer']
         image = request.data.get('image', None)
-        if image:
-            imghdr.what(None, image.read())
+        filename = get_filename(image)
+        image_path = f"http://localhost:8080/media/profiles/{filename}"
 
         if valid_user(password, pwd, username, email):
             user = User.objects.create(username=username, email=email)
@@ -35,12 +36,18 @@ def register_user(request):
             token = create_new_token(user)  # type:ignore
             # salva a respota ja protegida por hash
             answer_hashed = make_password(answer)
-            Profile.objects.create(user=user, question=question, answer=answer_hashed, image=image)
-            return JsonResponse({"token": token.key}, status=200)
+            Profile.objects.create(user=user, question=question, answer=answer_hashed, image=image_path)
+            return JsonResponse({"token": token.key, "filename": filename}, status=200)
         else:
             raise ValueError()
     except (AttributeError, KeyError, ValueError):
         return JsonResponse({"msg": "Informações incorretas!"}, status=401)
+    except IntegrityError as error:
+        if 'auth_user_username_key' in str(error):
+            field = 'Nome de usuario'
+        else:
+            field = 'O e-mail'
+        return JsonResponse({"msg": f"{field} já existe e não pode ser cadastrado!"})
 
 
 @api_view(['POST'])
@@ -88,6 +95,8 @@ def update_user(request):
             if validate_password(password, pwd):
                 user.set_password(password)
         else:
+            user.save()
+            user.profile.save()
             return JsonResponse({"msg": "As senhas não são iguais, mas os demais dados foram atualizados!"})
         user.save()
         user.profile.save()
@@ -118,12 +127,13 @@ def recovery_password(request):
         pwd = request.data['pwd']
         user = User.objects.get(username=username)
         if check_password(answer, user.profile.answer):
-            if password == pwd:
+            if validate_password(password, pwd):
                 user.set_password(password)
                 user.save()
                 return JsonResponse({"msg": "Senha atualizada!"}, status=200)
             else:
-                return JsonResponse({"msg": "As senhas precisam ser iguais!"}, status=400)
+                return JsonResponse(
+                    {"msg": "As senhas precisam ser iguais, no minimo uma letra, numero e 8 digitos!"}, status=400)
         else:
             raise ValueError()
     except (KeyError, ValueError, ObjectDoesNotExist):
@@ -140,3 +150,10 @@ def receive_your_question(request):
         return JsonResponse({"question": question}, status=200)
     except (KeyError, ValueError, ObjectDoesNotExist):
         return JsonResponse({"msg": "Usuario não encontrado"}, status=400)
+
+
+# Esse end point é usado pelo cdn, para permitir o usuario acessar o back
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def validate_token(request):
+    return JsonResponse({'message': 'Token is valid'}, status=200)

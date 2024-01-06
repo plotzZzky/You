@@ -1,6 +1,6 @@
 .login-div {
   display: block;
-  max-width: 500px;
+  max-width: 460px;
   margin: 2vh auto 0;
   padding: 2vh 1vw;
   background-color: var(--background);
@@ -53,7 +53,7 @@
 
 .text-input {
   width: calc(100% - 4vw);
-  padding: 0.8vh 2vw;
+  padding: 5px 2vw;
   border: none;
   text-align: center;
   font-size: clamp(0.8em, 1.5vw, 1em);

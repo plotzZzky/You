@@ -4,7 +4,7 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Post
+from .models import Post, get_filename
 from .serializers import serializer_post, serializer_modal
 
 
@@ -45,9 +45,10 @@ def add_post(request):
     try:
         text = request.data.get('text', '')
         image = request.data['image']
-        post = Post(user=request.user, image=image, text=text)
-        post.save()
-        return JsonResponse({"msg": "Post adicionado"}, status=200)
+        filename = get_filename(image)
+        image_path = f"http://localhost:8080/media/posts/{filename}"
+        post = Post.objects.create(user=request.user, image=image_path, text=text)
+        return JsonResponse({"filename": filename, "postId": post.id}, status=200)
     except (KeyError, ValueError):
         return JsonResponse({"msg": "Post incorreto"}, status=400)
 

@@ -29,7 +29,7 @@ export default function PostCard(props) {
   return (
     <div className='card-margin'>
       <div className="card" onClick={show_modal}>
-        <img className="card-img" src={`http://127.0.0.1:8000/${props.data?.image}/`} loading='lazy'></img>
+        <img className="card-img" src={props.data?.image} loading='lazy'></img>
       </div>
     </div>
   )

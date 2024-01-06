@@ -17,7 +17,7 @@ export default function App() {
 
   // Verifica se possui o token 
   function checkLogin() {
-    if (getToken == undefined) {
+    if (getToken === '') {
       router.push("/login/");
     } else {
       recivePosts();
@@ -45,8 +45,8 @@ export default function App() {
   // Cria os cards das postagens 
   function createCards(value) {
     setCards(
-      value.map((data) => (
-        <PostCard data={data} update={recivePosts} get_info={() => getModalInfo(data.id)}></PostCard>
+      value.map((data, index) => (
+        <PostCard key={index} data={data} update={recivePosts} get_info={() => getModalInfo(data.id)}></PostCard>
       )))
   }
 
