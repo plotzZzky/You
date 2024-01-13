@@ -7,7 +7,7 @@ import InputAnswer from "./inputs/inputAnswer";
 
 
 export default function EditUser(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
   const [getData, setData] = useState({});
 
   const [getUsername, setUsername] = useState(getData.username);

@@ -8,7 +8,7 @@ import InputAnswer from '../elements/inputs/inputAnswer';
 
 
 export default function Login() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
   const [getVisibility, setVisibility] = useState(false)
   const router = useRouter();
 

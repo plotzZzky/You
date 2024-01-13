@@ -7,7 +7,7 @@ import NavBar from './elements/navbar'
 
 
 export default function Home() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
   const router = useRouter();
 
   const FAQ = [

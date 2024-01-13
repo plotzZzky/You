@@ -6,7 +6,7 @@ import CommentCard from './commentCard'
 
 
 export default function ModalViewPost(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
   const [getCards, setCards] = useState([])
 
   const [getComment, setComment] = useState("");

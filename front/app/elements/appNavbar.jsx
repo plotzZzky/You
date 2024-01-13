@@ -36,7 +36,7 @@ export default function AppNavBar(props) {
   }
 
   function logOut() {
-    sessionStorage.setItem("token", '')
+    sessionStorage.removeItem("token")
     router.push('/');
   }
 
