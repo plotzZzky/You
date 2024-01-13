@@ -9,7 +9,7 @@ import PostCard from '../elements/postCard';
 
 
 export default function App() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
   const router = useRouter();
 
   const [Cards, setCards] = useState([]);
@@ -17,7 +17,8 @@ export default function App() {
 
   // Verifica se possui o token 
   function checkLogin() {
-    if (getToken === '') {
+    console.log(getToken)
+    if (getToken === null) {
       router.push("/login/");
     } else {
       recivePosts();
