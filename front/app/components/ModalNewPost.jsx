@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function NewPost(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
+  const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : undefined);
 
   const [postText, setPostText] = useState("");
   const [postImg, setPostImg] = useState();

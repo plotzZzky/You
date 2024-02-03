@@ -1,13 +1,9 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import NavBar from './elements/navbar'
-
 
 export default function Home() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const router = useRouter();
 
   const FAQ = [
@@ -51,12 +47,8 @@ export default function Home() {
     }
   }
 
-  function goToGitHub() { router.push("https://github.com/plotzzzky") }
-
   return (
     <>
-      <NavBar></NavBar>
-
       <div className='page-home' id='Start'>
         <div className='align-home-page'>
           <div className='div-align-text-home'>
@@ -85,13 +77,6 @@ export default function Home() {
         <h1> Duvias frequentes: </h1>
         {faqItems()}
       </div>
-
-      <footer id="footer">
-        <p className="link" onClick={goToGitHub}>
-          <FontAwesomeIcon icon={faGithub} />
-          <a> GitHub </a>
-        </p>
-      </footer>
     </>
   )
 }

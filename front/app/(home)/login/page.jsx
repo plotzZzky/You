@@ -1,25 +1,23 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import NavBar from "../elements/navbar";
-import InputPwd from '../elements/inputs/inputPwd';
-import InputEmail from '../elements/inputs/inputEmail';
-import InputUser from '../elements/inputs/inputUser';
-import InputAnswer from '../elements/inputs/inputAnswer';
-import InputQuestion from '../elements/inputs/inputQuestion';
-import ImageDefault from '../../public/user.png';
-
+import InputPwd from '@comps/inputs/inputPwd';
+import InputEmail from '@comps/inputs/inputEmail';
+import InputUser from '@comps/inputs/inputUser';
+import InputAnswer from '@comps/inputs/inputAnswer';
+import InputQuestion from '@comps/inputs/inputQuestion';
+import userPicDefault from '../../../public/user.png'
 
 export default function Login() {
   const [getLogin, setLogin] = useState(true);
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const router = useRouter();
 
   const [getUsername, setUsername] = useState("");
   const [getEmail, setEmail] = useState("");
   const [getPassword, setPassword] = useState("");
   const [getpwd, setPwd] = useState("")
-  const [getImageUser, setImageUser] = useState(ImageDefault);
+  const [getImageUser, setImageUser] = useState(userPicDefault);
   const [getFileUser, setFileUser] = useState("user.png");
   const [getQuestion, setQuestion] = useState("");
   const [getAnswer, setAnswer] = useState("");
@@ -33,7 +31,7 @@ export default function Login() {
   const [AnswerValid, setAnswerValid] = useState(false)
 
   function checkLogin() {
-    if (getToken !== null) {
+    if (getToken !== '') {
       router.push("/app/");
     }
   }
@@ -66,7 +64,7 @@ export default function Login() {
 
   // Redireciona para a pagina de recuperação de senha
   function showRecovery() {
-    router.push('/recovery')
+    router.push('/login/recovery')
   }
 
   // Verifica se os campos de login estão preenchidas com informções validas
@@ -195,7 +193,6 @@ export default function Login() {
 
   return (
     <>
-    <NavBar></NavBar>
       <div className='page'>
         <div className="login-page">
           <div className='login-div' id='loginTab'>

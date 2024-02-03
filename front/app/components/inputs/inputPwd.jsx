@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faX, faCheck, faEye, faEyeSlash, faEyeDropper, faEyeLowVision } from '@fortawesome/free-solid-svg-icons'
+import { faX, faCheck, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function InputPwd(props) {

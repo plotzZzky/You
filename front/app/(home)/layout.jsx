@@ -1,19 +1,18 @@
 import { Inter } from 'next/font/google'
-import AppNavBar from '@comps/appNavbar'
+import NavBar from '@comps/navbar'
 import Footer from '@comps/footer'
-import './app.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'App - You!',
+  title: 'Início - You! ',
 }
 
 export default function RootLayout({ children }) {
   return (
     <section>
       <header>
-        <AppNavBar></AppNavBar>
+        <NavBar></NavBar>
       </header>
 
       <main>

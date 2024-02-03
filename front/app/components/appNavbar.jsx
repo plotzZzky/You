@@ -1,3 +1,4 @@
+'use client'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faImage, faMagnifyingGlass, faSquarePlus, faGears, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
@@ -36,7 +37,7 @@ export default function AppNavBar(props) {
   }
 
   function logOut() {
-    sessionStorage.removeItem("token")
+    sessionStorage.setItem("token", '')
     router.push('/');
   }
 

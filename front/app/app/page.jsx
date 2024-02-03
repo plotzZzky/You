@@ -1,15 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AppNavBar from '../elements/appNavbar';
-import EditUser from '../elements/ModalEditUser';
-import ModalViewPost from '../elements/ModalViewPost';
-import NewPost from '../elements/ModalNewPost';
-import PostCard from '../elements/postCard';
-
+import EditUser from '@comps/ModalEditUser';
+import ModalViewPost from '@comps/ModalViewPost';
+import NewPost from '@comps/ModalNewPost';
+import PostCard from '@comps/postCard';
 
 export default function App() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const router = useRouter();
 
   const [Cards, setCards] = useState([]);
@@ -17,8 +15,7 @@ export default function App() {
 
   // Verifica se possui o token 
   function checkLogin() {
-    console.log(getToken)
-    if (getToken === null) {
+    if (getToken === '') {
       router.push("/login/");
     } else {
       recivePosts();
@@ -94,7 +91,6 @@ export default function App() {
 
   return (
     <div className='page'>
-      <AppNavBar get_posts={recivePosts}></AppNavBar>
 
       <div className='app-page'>
         <div className="view-posts">

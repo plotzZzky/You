@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,7 +7,7 @@ import './navbar.css'
 
 
 export default function NavBar() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
+  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
   const router = useRouter();
   const getPath = usePathname();
 
@@ -44,7 +45,7 @@ export default function NavBar() {
   };
 
   const LOGIN = () => {
-    return getToken === null? (
+    return getToken === ''? (
       <div className="menu-item" onClick={goApp}>
         <a><FontAwesomeIcon icon={faUser} className='icon-menu' /> Entrar </a>
       </div>
@@ -77,7 +78,7 @@ export default function NavBar() {
 
   // Se possui token redireciona para pagina do app, se não, para pagina do login
   function goApp() {
-    if (getToken === null) {
+    if (getToken === '') {
       router.push("/login/")
     } else {
       router.push("/app/")
