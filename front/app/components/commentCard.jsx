@@ -7,24 +7,19 @@ export default function CommentCard(props) {
   const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
 
   function delComment() {
-    const url = 'http://127.0.0.1:8000/comments/del/'
-    const comment_id = props.data.id
-
-    const form = new FormData()
-    form.append('id', comment_id)
+    const commentId = props.data.id
+    const url = `http://127.0.0.1:8000/comments/comment/${commentId}/`
 
     const data = {
       method: 'DELETE',
       headers: { Authorization: 'Token ' + getToken },
-      body: form
     }
 
     fetch(url, data)
       .then(() => {
-        props.update_modal()
+        props.updateModal()
       })
   }
-
 
   return (
     <div className='comment-card'>

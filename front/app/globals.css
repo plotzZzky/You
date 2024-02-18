@@ -149,12 +149,13 @@ summary {
 
 /* Footer */
 footer {
-  background-color: var(--background);
-  width: 100%;
   margin: 0;
+  padding: 1vh 1vw;
   display: flex;
   justify-content: space-around;
+  gap: 0 2vw;
   border-top: 1px solid var(--color_accent);
+  background-color: var(--background);
 }
 
 footer a, footer * {
@@ -162,6 +163,18 @@ footer a, footer * {
   text-decoration: none;
   cursor: pointer;
   font-size: clamp(0.9, 1.5vw, 1.1em);
+}
+
+.align-footer {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.you-brand {
+  font-size: clamp(0.9em, 2vw, 1.2em);
+  color: var(--color_accent);
+  font-weight: bold;
 }
 
 @media screen and (max-width: 600px) {

@@ -9,19 +9,19 @@ export default function AppNavBar(props) {
 
   // essa função atualiza a timeline com a categoria selecionada
   function setContentFromTimeline(value) {
-    props.get_posts(value)
+    props.getPosts(value)
   }
   
   function showFriendsPosts() {
-    setContentFromTimeline('Friends')
+    setContentFromTimeline('friends')
   }
 
   function showHorizonPosts() {
-    setContentFromTimeline('All')
+    setContentFromTimeline('all')
   }
 
   function showYourPosts() {
-    setContentFromTimeline('You')
+    setContentFromTimeline('you')
   }
 
   // Mostra o modal para criar um novo post

@@ -30,47 +30,43 @@ export default function ModalViewPost(props) {
     if (props.data.comments) {
       setCards(
         props.data.comments.map((data, index) => (
-          <CommentCard key={index} data={data} update_modal={() => props.update_modal(props.data.id)} formatDate={formatDate}></CommentCard>
+          <CommentCard key={index} data={data} updateModal={() => props.updateModal(props.data.id)} formatDate={formatDate}></CommentCard>
         )))
     }
   }
 
   // Deleta esse post
   function deletePost() {
-    let url = 'http://127.0.0.1:8000/posts/del/'
+    const postId = props.data.id
+    const url = `http://127.0.0.1:8000/posts/post/${postId}/`
 
-    const post_id = props.data.id
-    const form = new FormData()
-    form.append('id', post_id)
-
-    let data = {
+    const data = {
       method: 'DELETE',
       headers: { Authorization: 'Token ' + getToken },
-      body: form
     }
 
     fetch(url, data)
       .then(() => {
         closeModal()
-        props.update_posts()
+        props.updatePosts()
       })
   }
 
   // Função para dar like ou dislike
   function changeLike() {
-    let url = 'http://127.0.0.1:8000/posts/like/'
+    const url = 'http://127.0.0.1:8000/posts/like/'
 
     const formData = new FormData();
     formData.append('id', props.data.id);
 
-    let data = {
+    const data = {
       method: 'POSt',
       headers: { Authorization: 'Token ' + getToken },
       body: formData
     }
     fetch(url, data)
       .then(() => {
-        props.update_modal(props.data.id)
+        props.updateModal(props.data.id)
       })
   }
 
@@ -88,17 +84,18 @@ export default function ModalViewPost(props) {
     }
     fetch(url, data)
       .then(() => {
-        props.update_modal(props.data.id)
+        props.updateModal(props.data.id)
+        props.updatePosts()
       })
   }
 
   // Função que cria um novo comentario
   function addComment() {
     if (getComment) {
-      const url = 'http://127.0.0.1:8000/comments/add/'
+      const url = 'http://127.0.0.1:8000/comments/comment/'
       const form = new FormData();
       form.append('comment', getComment);
-      form.append('id', props.data.id)
+      form.append('postId', props.data.id)
 
       const data = {
         method: 'POST',
@@ -107,7 +104,7 @@ export default function ModalViewPost(props) {
       }
       fetch(url, data)
         .then(() => {
-          props.update_modal(props.data.id)
+          props.updateModal(props.data.id)
           setComment('')
         })
     }

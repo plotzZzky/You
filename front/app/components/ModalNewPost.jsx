@@ -40,7 +40,7 @@ export default function NewPost(props) {
 
   // Salva o post no back
   function savePost() {
-    let url = "http://127.0.0.1:8000/posts/add/"
+    let url = "http://127.0.0.1:8000/posts/post/"
 
     const formBack = new FormData();
     formBack.append("text", postText);
@@ -111,12 +111,12 @@ export default function NewPost(props) {
   // Apagao o post no back se o cdn retornar um erro
   function deletePost(postId) {
     console.log(postId)
-    let url = 'http://127.0.0.1:8000/posts/del/'
+    const url = 'http://127.0.0.1:8000/posts/del/'
 
     const form = new FormData()
     form.append('id', postId)
 
-    let data = {
+    const data = {
       method: 'DELETE',
       headers: { Authorization: 'Token ' + getToken },
       body: form
@@ -124,7 +124,6 @@ export default function NewPost(props) {
 
     fetch(url, data)
   }
-
 
   return (
     <div className="modal-background" id="NewPostModal" onClick={closeModal}>

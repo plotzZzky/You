@@ -58,13 +58,13 @@ export default function Home() {
               <button onClick={goToLogin}> Fazer parte!</button>
             </div>
           </div>
-          <img className='img-background' src={'http://localhost:8080/media/static/background_a.jpg'} loading='lazy'></img>
+          <img className='img-background' src={'background_a.jpg'} loading='lazy'></img>
         </div>   
       </div>
 
       <div className='page-home' id='About'>
         <div className='align-home-page-midle'>
-          <img className='img-background' src={'http://localhost:8080/media/static/background_c.jpg'} loading='lazy'></img>
+          <img className='img-background' src={'background_c.jpg'} loading='lazy'></img>
           <div className='div-align-text-home'>
             <h1> Aqui você pode... </h1>
             <p> A You é uma plataforma para compartilhamento de fotos, é ideal para quem quer compartilhar suas experiências com o mundo. Aqui você pode criar uma galeria pessoal, seguir amigos e descobrir novas tendências e temas que são importantes para você. Com a You, você nunca perde um momento importante e pode reviver suas lembranças sempre que quiser.</p>

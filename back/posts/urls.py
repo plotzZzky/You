@@ -1,12 +1,9 @@
-from django.urls import path
+from rest_framework import routers
 
 from . import views
 
-urlpatterns = [
-    path('', views.get_posts, name="get_posts"),
-    path('info/', views.get_modal_info, name="get_modal_info"),
-    path('add/', views.add_post, name='add_post'),
-    path('del/', views.delete_post, name='delete_post'),
-    path('like/', views.like_manager, name='like_manager'),
-    path('follow/', views.follow_user, name='follow_manager'),
-]
+
+posts_router = routers.DefaultRouter()
+posts_router.register(r'post', views.PostClassView, basename='post')
+posts_router.register(r'like', views.LikeClassView, basename='like')
+posts_router.register(r'follow', views.FollowClassView, basename='follow')

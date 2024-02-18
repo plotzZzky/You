@@ -5,6 +5,7 @@ import EditUser from '@comps/ModalEditUser';
 import ModalViewPost from '@comps/ModalViewPost';
 import NewPost from '@comps/ModalNewPost';
 import PostCard from '@comps/postCard';
+import AppNavBar from '../components/appNavbar';
 
 export default function App() {
   const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
@@ -24,11 +25,11 @@ export default function App() {
 
   // Busca os posts no backend e executa a função que cria os cards
   function recivePosts(value = 'Friends') {
-    let url = "http://127.0.0.1:8000/posts/"
+    const url = "http://127.0.0.1:8000/posts/post/all/"
     const form = new FormData()
     form.append('type', value)
 
-    let data = {
+    const data = {
       method: 'POST',
       headers: { Authorization: 'Token ' + getToken },
       body: form
@@ -36,7 +37,7 @@ export default function App() {
     fetch(url, data)
       .then((res) => res.json())
       .then((data) => {
-        createCards(data['posts'])
+        createCards(data)
       })
   }
 
@@ -50,20 +51,17 @@ export default function App() {
 
   // Busca info(comentarios, likes etc) de um post 
   function getModalInfo(post_id) {
-    let url = 'http://127.0.0.1:8000/posts/info/'
-    let form = new FormData()
-    form.append('id', post_id)
+    const url = `http://127.0.0.1:8000/posts/post/${post_id}/`
 
-    let data = {
-      method: 'POST',
+    const data = {
+      method: 'GET',
       headers: { Authorization: 'Token ' + getToken },
-      body: form
     }
 
     fetch(url, data)
       .then((res) => res.json())
       .then((data) => { 
-        setModalData(data['post'])
+        setModalData(data)
       })
       .then(() => {
         changeVisiblityModalDivs()
@@ -91,6 +89,7 @@ export default function App() {
 
   return (
     <div className='page'>
+      <AppNavBar getPosts={recivePosts}></AppNavBar>
 
       <div className='app-page'>
         <div className="view-posts">
@@ -100,7 +99,7 @@ export default function App() {
 
       <EditUser></EditUser>
 
-      <ModalViewPost data={modalData} update_posts={recivePosts} update_modal={getModalInfo}></ModalViewPost>
+      <ModalViewPost data={modalData} updatePosts={recivePosts} updateModal={getModalInfo}></ModalViewPost>
       
       <NewPost get_posts={recivePosts}></NewPost>
     </div>

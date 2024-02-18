@@ -1,100 +1,103 @@
-from django.http import JsonResponse
-from django.contrib.auth.models import User
-from rest_framework.decorators import permission_classes, api_view
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post, get_filename
-from .serializers import serializer_post, serializer_modal
+from .serializers import serializer_modal, PostSerializer
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def get_posts(request):
-    user = request.user
-    post_type = request.data.get('type', 'you')
-    if post_type == 'You':
-        posts = Post.objects.filter(user=user).order_by("-id")
-    elif post_type == 'All':
-        posts = Post.objects.all().exclude(user=user).order_by("-id")
-    else:
-        friends = user.profile.follows.all()
-        query = Post.objects.filter(user__in=friends)
-        user_query = Post.objects.filter(user=user)
-        posts = query.union(user_query).order_by("-id")
-    data = [serializer_post(item) for item in posts]
-    return JsonResponse({"posts": data})
+class PostClassView(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
 
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def get_modal_info(request):
-    try:
-        post_id = request.data['id']
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
         user = request.user
-        query = Post.objects.get(pk=post_id)
-        data = serializer_modal(query, user, request)
-        return JsonResponse({"post": data})
-    except (ObjectDoesNotExist, KeyError, ValueError):
-        return JsonResponse({'msg': 'Post não encontrado!'}, status=400)
+        serializer = serializer_modal(instance, user, request)
+        return Response(serializer, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def all(self, request, *args, **kwargs):
+        """ Retorna a lista com todos os posts para a timeline """
+        user = request.user
+        post_type = request.data.get('type', 'you')
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_post(request):
-    try:
-        text = request.data.get('text', '')
-        image = request.data['image']
-        filename = get_filename(image)
-        image_path = f"http://localhost:8080/media/posts/{filename}"
-        post = Post.objects.create(user=request.user, image=image_path, text=text)
-        return JsonResponse({"filename": filename, "postId": post.id}, status=200)
-    except (KeyError, ValueError):
-        return JsonResponse({"msg": "Post incorreto"}, status=400)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def delete_post(request):
-    try:
-        post_id = request.data['id']
-        post = Post.objects.get(pk=post_id, user=request.user)
-        post.delete()
-        return JsonResponse({"msg": "Post deletado"}, status=200)
-    except (KeyError, ValueError, ObjectDoesNotExist):
-        return JsonResponse({"msg": "Post não encontrado"}, status=404)
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def like_manager(request):
-    try:
-        post_id = request.data['id']
-        post = Post.objects.get(pk=post_id)
-        if request.user in post.likes.all():
-            post.likes.remove(request.user)
+        if post_type == 'you':
+            posts = Post.objects.filter(user=user).order_by("-id")
+        elif post_type == 'all':
+            posts = Post.objects.exclude(user=user).order_by("-id")
         else:
-            post.likes.add(request.user)
-        return JsonResponse({'msg': 'Like!'}, status=200)
-    except (ObjectDoesNotExist, KeyError, ValueError):
-        return JsonResponse({'msg': 'Dislike!'}, status=404)
+            friends = user.profile.follows.all()
+            query = Post.objects.filter(user__in=friends)
+            user_query = Post.objects.filter(user=user)
+            posts = query.union(user_query).order_by("-id")
+        serializer = self.get_serializer(posts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        try:
+            text = request.data.get('text', '')
+            image = request.data['image']
+            filename = get_filename(image)
+            image_path = f"http://localhost:8080/media/posts/{filename}"
+            post = Post.objects.create(user=request.user, image=image_path, text=text)
+            return Response({"filename": filename, "postId": post.id}, status=status.HTTP_200_OK)
+        except (KeyError, ValueError):
+            return Response({"msg": "Post incorreto"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            user = request.user
+            post_id = kwargs['pk']
+            post = Post.objects.get(pk=post_id, user=user)
+            post.delete()
+            return Response({"msg": "Post deletado!"}, status=status.HTTP_200_OK)
+        except (KeyError, ValueError, ObjectDoesNotExist):
+            return Response({"msg": "Post não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def follow_user(request):
-    try:
-        user_id = request.data['id']
-        user = User.objects.get(pk=user_id)
-        you = request.user
-        friends = you.profile.follows
-        if user == you:
-            return JsonResponse({'msg': "Error"}, status=300)
-        else:
-            if user in friends.all():
-                friends.remove(user)
+class LikeClassView(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = []
+    serializer_class = PostSerializer
+
+    def create(self, request, *args, **kwargs):
+        try:
+            post_id = request.data['id']
+            post = Post.objects.get(pk=post_id)
+            if request.user in post.likes.all():
+                post.likes.remove(request.user)
             else:
-                friends.add(user)
-            return JsonResponse({'msg': 'Follow!'}, status=200)
-    except (ObjectDoesNotExist, KeyError, ValueError):
-        return JsonResponse({'msg': 'UnFollow!'}, status=404)
+                post.likes.add(request.user)
+            return Response({'msg': 'Like!'}, status=status.HTTP_200_OK)
+        except (ObjectDoesNotExist, KeyError, ValueError):
+            return Response({'msg': 'Dislike!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FollowClassView(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = []
+    serializer_class = PostSerializer
+
+    def create(self, request, *args, **kwargs):
+        try:
+            user_id = request.data['id']
+            user = User.objects.get(pk=user_id)
+            you = request.user
+            friends = you.profile.follows
+            if user == you:
+                return Response({'msg': "Error"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                if user in friends.all():
+                    friends.remove(user)
+                else:
+                    friends.add(user)
+                return Response({'msg': 'Follow!'}, status=status.HTTP_200_OK)
+        except (ObjectDoesNotExist, KeyError, ValueError):
+            return Response({'msg': 'UnFollow!'}, status=status.HTTP_400_BAD_REQUEST)

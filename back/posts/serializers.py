@@ -1,3 +1,8 @@
+from rest_framework.serializers import ModelSerializer
+
+from .models import Post
+
+
 def serializer_modal(item, user, request):
     post_id = item.id
     text = item.text
@@ -28,3 +33,9 @@ def serializer_post(item):
     image = item.image
     post = {'id': post_id, "image": image}
     return post
+
+
+class PostSerializer(ModelSerializer):
+    class Meta:
+        model = Post
+        fields = '__all__'

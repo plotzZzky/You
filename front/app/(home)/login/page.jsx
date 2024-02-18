@@ -90,12 +90,12 @@ export default function Login() {
     fetch(url, info)
       .then((res) => res.json())
       .then((data) => {
-        if (data.msg) {
-          const tip = document.getElementById("LoginTip")
-          tip.innerText = data.msg
-        } else {
+        if (data.token) {
           sessionStorage.setItem("token", data["token"])
           router.push('/app')
+        } else {
+          const tip = document.getElementById("LoginTip")
+          tip.innerText = data.msg
         }
     })
   }
@@ -130,30 +130,17 @@ export default function Login() {
       }
 
       fetch(url, info)
-      .then(async (res) => {
-        if (res.status === 200) {
-          return res.json();
-        } else {
-          const data = await res.json();
-          throw new Error(`${data.msg} status: ${res.status}`);
-        }
-      })
-      
-      .then((data) => {
-        if (data.msg) {
-          const tip = document.getElementById("SignTip")
-          tip.innerText = data.msg
-        } else {
-          sendImageToCdn(data.filename)
-          sessionStorage.setItem("token", data.token)
-          router.push('/app')
-        }
-      })
-
-      .catch((error) => {
-        alert("Não foi possivel criar o usuario, tente novamente mais tarde")
-        console.log(error.message);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.token) {
+            sendImageToCdn(data.filename)
+            sessionStorage.setItem("token", data.token)
+            router.push('/app')
+          } else {
+            const tip = document.getElementById("SignTip")
+            tip.innerText = data.msg
+          }
+        })
     }
 
   // Envia a imagem com o nome randonizado pelo back para o cdn

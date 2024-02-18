@@ -1,5 +1,4 @@
 import { Inter } from 'next/font/google'
-import AppNavBar from '@comps/appNavbar'
 import Footer from '@comps/footer'
 import './app.css'
 
@@ -12,9 +11,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <section>
-      <header>
-        <AppNavBar></AppNavBar>
-      </header>
 
       <main>
         {children}
