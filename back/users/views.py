@@ -8,10 +8,9 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
 import imghdr
-import os
 
 from .token import create_new_token
-from .models import Profile, get_filename
+from .models import Profile
 from .serializer import ProfileSerializer, UserSerializer
 from .validate import (valid_user, validate_password, validate_username, validate_email, validate_question,
                        validate_answer)
@@ -33,8 +32,6 @@ class RegisterView(ModelViewSet):
             question = request.data['question']
             answer = request.data['answer']
             image = request.data.get('image', None)
-            filename = get_filename(image)
-            image_path = f"http://localhost:8080/media/profiles/{filename}"
 
             if valid_user(password, pwd, username, email):
                 user = User.objects.create(username=username, email=email)
@@ -43,19 +40,19 @@ class RegisterView(ModelViewSet):
                 authenticate(username=username, password=password)
                 token = create_new_token(user)
                 answer_hashed = make_password(answer)  # salva a respota ja protegida por hash
-                Profile.objects.create(user=user, question=question, answer=answer_hashed, image=image_path)
-                return Response({"token": token.key, "filename": filename}, status=200)
+                Profile.objects.create(user=user, question=question, answer=answer_hashed, image=image)
+                return Response({"token": token.key}, status=200)
             else:
                 raise ValueError()
         except (AttributeError, KeyError, ValueError):
-            return Response({"msg": "Informações incorretas!"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "Informações incorretas!"}, status=status.HTTP_401_UNAUTHORIZED)
         except IntegrityError as error:
             if 'auth_user_username_key' in str(error):
                 field = 'Nome de usuario'
             else:
                 field = 'O e-mail'
             msg = f"{field} já existe e não pode ser cadastrado!"
-            return Response({"msg": msg}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": msg}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(ModelViewSet):
@@ -137,7 +134,7 @@ class YourProfile(ModelViewSet):
             serializer = self.get_serializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
-            return Response({'msg': 'Usuario não existe!'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Usuario não existe!'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class RecoveryPassword(ModelViewSet):
@@ -159,7 +156,7 @@ class RecoveryPassword(ModelViewSet):
                     return Response({"msg": "Senha atualizada!"}, status=200)
                 else:
                     msg = "As senhas precisam ser iguais, no minimo uma letra, numero e 8 digitos!"
-                    return Response({"erro": msg}, status=500)
+                    return Response({"error": msg}, status=500)
             else:
                 raise ValueError()
         except (KeyError, ValueError, ObjectDoesNotExist):
@@ -179,14 +176,3 @@ class ReceiverYourQuestion(ModelViewSet):
             return Response({"question": question}, status=status.HTTP_200_OK)
         except (KeyError, ValueError, ObjectDoesNotExist):
             return Response({"error": "Usuario não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ValidateProfile(ModelViewSet):
-    """
-        Não implementado
-    """
-    serializer_class = UserSerializer
-    queryset = []
-
-    def list(self, request, *args, **kwargs):
-        return Response({'message': 'Token is valid'}, status=status.HTTP_200_OK)

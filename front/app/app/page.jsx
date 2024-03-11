@@ -25,7 +25,7 @@ export default function App() {
 
   // Busca os posts no backend e executa a função que cria os cards
   function recivePosts(value = 'Friends') {
-    const url = "http://127.0.0.1:8000/posts/post/all/"
+    const url = "http://127.0.0.1:8000/post/all/"
     const form = new FormData()
     form.append('type', value)
 
@@ -51,7 +51,7 @@ export default function App() {
 
   // Busca info(comentarios, likes etc) de um post 
   function getModalInfo(post_id) {
-    const url = `http://127.0.0.1:8000/posts/post/${post_id}/`
+    const url = `http://127.0.0.1:8000/post/${post_id}/`
 
     const data = {
       method: 'GET',
@@ -62,6 +62,7 @@ export default function App() {
       .then((res) => res.json())
       .then((data) => { 
         setModalData(data)
+        console.log(data)
       })
       .then(() => {
         changeVisiblityModalDivs()

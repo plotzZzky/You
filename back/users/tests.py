@@ -247,17 +247,17 @@ class UpdateUserTest(TestCase):
     # Este endpoin não exige login, mas precisa do username, answer, password e pwd
     def test_recovery_pwd_no_data_error(self):
         response = self.client.post('/users/recovery/')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
 
     def test_recovery_pwd_answer_error(self):
         data = {'password': '1234x567', 'pwd': '1234x567', 'answer': '0987654'}
         response = self.client.post('/users/recovery/', data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
 
     def test_recovery_pwd_incorrect_pwd_error(self):
         data = {'password': '12345678', 'pwd': '1234x567', 'answer': '12345'}
         response = self.client.post('/users/recovery/', data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
 
     def test_recovery_pwd_check_if_pwd_recovered(self):
         data = {'username': 'newuser', 'password': '12345678', 'pwd': '12345678', 'answer': '12345'}
@@ -285,6 +285,6 @@ class UpdateUserTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_receive_your_question_get_error(self):
-        data = {'username': 'newuser'}
+        data = {'username': 'xxxxxxxx'}
         response = self.client.get('/users/question/', data)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 400)

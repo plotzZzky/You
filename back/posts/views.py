@@ -6,8 +6,8 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Post, get_filename
-from .serializers import serializer_modal, PostSerializer
+from .models import Post
+from .serializers import PostSerializer, ModalSerializer, modal_serializer
 
 
 class PostClassView(ModelViewSet):
@@ -17,9 +17,9 @@ class PostClassView(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        user = request.user
-        serializer = serializer_modal(instance, user, request)
-        return Response(serializer, status=status.HTTP_200_OK)
+        serializer = ModalSerializer(instance, context={'request': request})
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def all(self, request, *args, **kwargs):
@@ -44,10 +44,8 @@ class PostClassView(ModelViewSet):
         try:
             text = request.data.get('text', '')
             image = request.data['image']
-            filename = get_filename(image)
-            image_path = f"http://localhost:8080/media/posts/{filename}"
-            post = Post.objects.create(user=request.user, image=image_path, text=text)
-            return Response({"filename": filename, "postId": post.id}, status=status.HTTP_200_OK)
+            post = Post.objects.create(user=request.user, image=image, text=text)
+            return Response({"postId": post.id}, status=status.HTTP_200_OK)
         except (KeyError, ValueError):
             return Response({"msg": "Post incorreto"}, status=status.HTTP_400_BAD_REQUEST)
 

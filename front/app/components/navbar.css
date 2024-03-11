@@ -19,7 +19,7 @@ nav {
 
 .menu-item {
   padding: 12px 1vw 6px;
-  margin: 0 10px;
+  margin: 0 1vw;
   color: var(--color_accent);
   text-align: center;
   cursor: pointer;

@@ -8,13 +8,13 @@ export default function PostCard(props) {
 
   // Deleta o post
   function delete_post() {
-    let url = 'http://127.0.0.1:8000/post/del/'
+    const url = 'http://127.0.0.1:8000/post/'
     const post_id = props.data.post_id
     
     const form = new FormData()
     form.append('id', post_id)
 
-    let data = {
+    const data = {
       method: 'GET',
       headers: { Authorization: 'Token ' + getToken },
       body: form

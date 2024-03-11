@@ -8,7 +8,7 @@ export default function CommentCard(props) {
 
   function delComment() {
     const commentId = props.data.id
-    const url = `http://127.0.0.1:8000/comments/comment/${commentId}/`
+    const url = `http://127.0.0.1:8000/comment/${commentId}/`
 
     const data = {
       method: 'DELETE',

@@ -150,29 +150,26 @@ summary {
 /* Footer */
 footer {
   margin: 0;
-  padding: 1vh 1vw;
   display: flex;
   justify-content: space-around;
-  gap: 0 2vw;
-  border-top: 1px solid var(--color_accent);
+  align-items: center;
+  border-top: 2px solid var(--color_accent);
   background-color: var(--background);
 }
 
-footer a, footer * {
+footer a {
   color: var(--fontColor_pri);
   text-decoration: none;
   cursor: pointer;
-  font-size: clamp(0.9, 1.5vw, 1.1em);
+  font-size: clamp(0.8em, 1vw, 1em);
 }
 
-.align-footer {
-  display: flex;
-  justify-content: space-evenly;
-  width: 100%;
+footer * {
+  color: var(--fontColor_pri);
 }
 
 .you-brand {
-  font-size: clamp(0.9em, 2vw, 1.2em);
+  font-size: clamp(0.9em, 2vw, 1.8em);
   color: var(--color_accent);
   font-weight: bold;
 }

@@ -94,7 +94,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': 'localhost',
-        'PORT': '5430',
+        'PORT': '5432',
     }
 }
 
@@ -146,3 +146,7 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+MEDIA_URL = 'media/'
+
+MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media/')

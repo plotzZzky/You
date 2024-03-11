@@ -44,7 +44,7 @@
 
 .div-input {
   width: calc(100% - 5vw);
-  margin: 1vh 2vw 0;
+  margin: 1vh 2vw;
   background-color: #7c7c7c;
   position: relative;
   display: inline-flex;
@@ -53,7 +53,7 @@
 
 .text-input {
   width: calc(100% - 4vw);
-  padding: 5px 2vw;
+  padding: 0.8vh 2vw;
   border: none;
   text-align: center;
   font-size: clamp(0.8em, 1.5vw, 1em);

@@ -44,8 +44,8 @@ export default function EditUser(props) {
       .then((data) => {
         setUsername(data.username)
         setEmail(data.email)
-        setQuestion(data.question)
-        setFileUser(data.image)
+        setQuestion(data.profile.question)
+        setFileUser(data.profile.image)
       })
   }
 
@@ -79,7 +79,7 @@ export default function EditUser(props) {
       formData.append('image', getImageUser, getImageUser.name);
     }
 
-    let info = {
+    const info = {
       method: 'POST',
       headers: { Authorization: 'Token ' + getToken },
       body: formData

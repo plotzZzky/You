@@ -40,11 +40,11 @@ export default function NewPost(props) {
 
   // Salva o post no back
   function savePost() {
-    let url = "http://127.0.0.1:8000/posts/post/"
+    let url = "http://127.0.0.1:8000/post/"
 
     const formBack = new FormData();
     formBack.append("text", postText);
-    formBack.append('image', postImg.name);
+    formBack.append('image', postImg, postImg.name);
 
     let requestData = {
       method: 'POST',
@@ -62,67 +62,15 @@ export default function NewPost(props) {
       })
 
       .then((data) => {
-        const filename = data.filename
-        const postId = data.postId
-        sendImageToCdn(filename, postId)
+        props.get_posts();
+        closeModal();
+        setPostFile();
       })
 
       .catch((error) => {
         console.log(error.message)
         alert(error);
       });
-  }
-
-  function sendImageToCdn(filename, postId) {
-    const url = "http://127.0.0.1:8080/files/post/"
-
-    const formCdn = new FormData();
-    formCdn.set('enctype', 'multipart/form-data');
-    formCdn.append("token", getToken)
-    formCdn.append("image", postImg, filename)
-
-    const requestData = {
-      method: 'POST',
-      body: formCdn,
-    }
- 
-    fetch(url, requestData)
-    .then(res => {
-      if (res.status === 200) {
-        return res.json();
-      } else {
-        throw new CustomError(`Não foi possivel criar o post. status: ${res.status}`);
-      }
-    })
-
-    .then(() => {
-      props.get_posts();
-      closeModal();
-      setPostFile();
-    })
-
-    .catch(error => {
-      console.log(error); 
-      alert("Não foi possível postar a imagem");
-      deletePost(postId);
-    });
-  }
-
-  // Apagao o post no back se o cdn retornar um erro
-  function deletePost(postId) {
-    console.log(postId)
-    const url = 'http://127.0.0.1:8000/posts/del/'
-
-    const form = new FormData()
-    form.append('id', postId)
-
-    const data = {
-      method: 'DELETE',
-      headers: { Authorization: 'Token ' + getToken },
-      body: form
-    }
-
-    fetch(url, data)
   }
 
   return (

@@ -7,27 +7,28 @@ export default function Footer() {
 
   function goToGitHub() { router.push("https://github.com/plotzzzky") }
 
-  return(
-    <footer id="footer">
-      <span className="you-brand"> You! </span>
+  return (
+    <footer>
+      <div className='brand'>
+        <span className='you-brand'> You! </span>
+      </div>
 
-      <div className="align-footer">
+      <div className='contacts'>
+        <p> Contatos: </p>
 
-        <div className="link" onClick={goToGitHub}>
-          <FontAwesomeIcon icon={faEnvelope} />
-          <a> contato@you.com</a>
-        </div>
+        <p>
+          <FontAwesomeIcon icon={faEnvelope}/>
+          <a> contato@you.com </a>
+        </p>
+      </div>
 
-        <div className="link" onClick={goToGitHub}>
-          <FontAwesomeIcon icon={faEnvelope} />
-          <a> marketing@you.com</a>
-        </div>
+      <div className='contacts'>
+        <p> Dev: </p>
 
-        <div className="link" onClick={goToGitHub}>
+        <p onClick={goToGitHub}>
           <FontAwesomeIcon icon={faGithub} />
-          <a> Dev </a>
-       </div>
-
+          <a> GitHub.com/you </a>
+        </p>
       </div>
     </footer>
   )

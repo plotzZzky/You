@@ -95,7 +95,7 @@ export default function Login() {
           router.push('/app')
         } else {
           const tip = document.getElementById("LoginTip")
-          tip.innerText = data.msg
+          tip.innerText = data.error
         }
     })
   }
@@ -112,65 +112,36 @@ export default function Login() {
 
   // Função para registar um novo usuario, envia o form com as informações (exceto imagem) e recebe o nome randonizado da imagem do usuario
   function SignUpFunc() {
-      let url = `http://127.0.0.1:8000/users/register/`
+    const url = `http://127.0.0.1:8000/users/register/`
 
-      const formData = new FormData();
-      formData.append("username", getUsername);
-      formData.append("email", getEmail);
-      formData.append("password", getPassword);
-      formData.append("pwd", getpwd);
-      formData.append("image", getImageUser.name);
-      formData.append("question", getQuestion)
-      formData.append("answer", getAnswer)
-
-      const info = {method: 'POST', body: formData, 
-        Headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-
-      fetch(url, info)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.token) {
-            sendImageToCdn(data.filename)
-            sessionStorage.setItem("token", data.token)
-            router.push('/app')
-          } else {
-            const tip = document.getElementById("SignTip")
-            tip.innerText = data.msg
-          }
-        })
-    }
-
-  // Envia a imagem com o nome randonizado pelo back para o cdn
-  function sendImageToCdn(filename) {
-    const url = "http://127.0.0.1:8080/files/profile/"
-
-    const formCdn = new FormData();
-    formCdn.set('enctype', 'multipart/form-data');
-    formCdn.append("image", getImageUser, filename)
+    const formData = new FormData();
+    formData.append("username", getUsername);
+    formData.append("email", getEmail);
+    formData.append("password", getPassword);
+    formData.append("pwd", getpwd);
+    formData.append("image", getImageUser, getImageUser.name);
+    formData.append("question", getQuestion)
+    formData.append("answer", getAnswer)
 
     const requestData = {
-      method: 'POST',
-      body: formCdn
+      method: 'POST', 
+      body: formData, 
+      Headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     }
 
     fetch(url, requestData)
-    .then(res => {
-      if (res.status === 200) {
-        props.get_posts()
-        closeModal()
-        setPostFile()
-      } else {
-        throw new Error(`Não foi possivel salvar a imagem. status: ${res.status}`);
-      }
-    })
-
-    .catch((error) => {
-      console.log(error.message)
-      alert("Não foi possivel salvar a imagem");
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.token) {
+          sessionStorage.setItem("token", data.token)
+          router.push('/app')
+        } else {
+          const tip = document.getElementById("SignTip")
+          tip.innerText = data.msg
+        }
+      })
   }
 
   useEffect(() => {

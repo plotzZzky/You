@@ -13,7 +13,7 @@ export default function ModalViewPost(props) {
 
   // Fecha esse modal
   function closeModal() {
-    let modal = document.getElementById("PostModal");
+    const modal = document.getElementById("PostModal");
     modal.style.display = 'none'
   }
 
@@ -38,7 +38,7 @@ export default function ModalViewPost(props) {
   // Deleta esse post
   function deletePost() {
     const postId = props.data.id
-    const url = `http://127.0.0.1:8000/posts/post/${postId}/`
+    const url = `http://127.0.0.1:8000/post/${postId}/`
 
     const data = {
       method: 'DELETE',
@@ -54,7 +54,7 @@ export default function ModalViewPost(props) {
 
   // Função para dar like ou dislike
   function changeLike() {
-    const url = 'http://127.0.0.1:8000/posts/like/'
+    const url = 'http://127.0.0.1:8000/like/'
 
     const formData = new FormData();
     formData.append('id', props.data.id);
@@ -72,7 +72,7 @@ export default function ModalViewPost(props) {
 
   // Função para dar follow ou unfollow
   function followUser() {
-    const url = 'http://127.0.0.1:8000/posts/follow/'
+    const url = 'http://127.0.0.1:8000/follow/'
 
     const form = new FormData();
     form.append('id', props.data.user.id);
@@ -92,7 +92,7 @@ export default function ModalViewPost(props) {
   // Função que cria um novo comentario
   function addComment() {
     if (getComment) {
-      const url = 'http://127.0.0.1:8000/comments/comment/'
+      const url = 'http://127.0.0.1:8000/comment/'
       const form = new FormData();
       form.append('comment', getComment);
       form.append('postId', props.data.id)
@@ -121,7 +121,7 @@ export default function ModalViewPost(props) {
   useEffect(() => {
     createCards()
   }, [props.data])
-
+  
   return (
     <div className="modal-background" id="PostModal" onClick={closeModal}>
 
@@ -149,7 +149,7 @@ export default function ModalViewPost(props) {
 
         <div className="modal-align-name">
           <div className='align-nick'>
-            <img className="modal-user-img" src={props.data?.user.img} ></img>
+            <img className="modal-user-img" src={props.data?.user.profile?.image} ></img>
             <a className="modal-username"> {props.data?.user.username} </a>
           </div>
 
