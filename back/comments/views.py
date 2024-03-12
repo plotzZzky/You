@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,7 +10,7 @@ from .serializer import CommentSerializer
 
 
 class CommentClassView(ModelViewSet):
-    IsAuthenticated = True
+    permission_classes = [IsAuthenticated]
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 

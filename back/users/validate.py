@@ -23,13 +23,15 @@ def find_char(text):
 
 def validate_username(username):
     try:
-        return False if len(username) < 4 else True
+        if username:
+            return False if len(username) < 4 else True
     except TypeError:
         return False
 
 
 def validate_email(email):
-    return re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[com]', email) is not None
+    if email:
+        return re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[com]', email) is not None
 
 
 def validate_question(question):
@@ -38,5 +40,5 @@ def validate_question(question):
 
 
 def validate_answer(answer):
-    if len(answer) > 3:
+    if answer is str and len(answer) > 3 :
         return make_password(answer)

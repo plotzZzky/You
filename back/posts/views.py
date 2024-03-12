@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
-from .serializers import PostSerializer, ModalSerializer, modal_serializer
+from .serializers import PostSerializer, ModalSerializer
 
 
 class PostClassView(ModelViewSet):
@@ -16,10 +16,12 @@ class PostClassView(ModelViewSet):
     queryset = Post.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = ModalSerializer(instance, context={'request': request})
-        print(serializer.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            instance = self.get_object()
+            serializer = ModalSerializer(instance, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except (TypeError, ValueError, ObjectDoesNotExist):
+            return Response({'error': 'Post não encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['POST'])
     def all(self, request, *args, **kwargs):

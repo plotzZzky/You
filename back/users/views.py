@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
 import imghdr
+import os
 
 from .token import create_new_token
 from .models import Profile
@@ -98,7 +99,9 @@ class UpdateProfile(ModelViewSet):
 
             if image is not None:
                 imghdr.what(None, image.read())
-                # os.remove(f"/static/profiles/{user.profile.image}")
+                image_path = str(user.profile.image)
+                if os.path.exists(image_path):
+                    os.remove(image_path)
                 user.profile.image = image
             if validate_username(username):
                 user.username = username
@@ -149,7 +152,8 @@ class RecoveryPassword(ModelViewSet):
             password = request.data['password']
             pwd = request.data['pwd']
             user = User.objects.get(username=username)
-            if check_password(answer, user.recovery.answer):
+
+            if check_password(answer, user.profile.answer):
                 if validate_password(password, pwd):
                     user.set_password(password)
                     user.save()
@@ -172,7 +176,7 @@ class ReceiverYourQuestion(ModelViewSet):
         try:
             username = request.data['username']
             user = User.objects.get(username=username)
-            question = user.recovery.question
+            question = user.profile.question
             return Response({"question": question}, status=status.HTTP_200_OK)
         except (KeyError, ValueError, ObjectDoesNotExist):
             return Response({"error": "Usuario não encontrado"}, status=status.HTTP_400_BAD_REQUEST)

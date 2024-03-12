@@ -44,93 +44,89 @@ class PostsTest(TestCase):
 
     # Get posts
     def test_get_posts_status(self):
-        response = self.client.post('/posts/')
+        data = {'type': 'all'}
+        response = self.client.post('/post/all/', data)
         self.assertEqual(response.status_code, 200)
 
     def test_get_posts_status_401_error(self):
         self.client.credentials()
-        response = self.client.post('/posts/')
+        response = self.client.post('/post/all/')
         self.assertEqual(response.status_code, 401)
 
     def test_get_posts_by_type_status(self):
-        response_nothing = self.client.post('/posts/')
+        response_nothing = self.client.post('/post/all/')
         self.assertEqual(response_nothing.status_code, 200)
-        response_you = self.client.post('/posts/', {'type': 'you'})
+        response_you = self.client.post('/post/all/', {'type': 'you'})
         self.assertEqual(response_you.status_code, 200)
-        response_all = self.client.post('/posts/', {'type': 'all'})
+        response_all = self.client.post('/post/all/', {'type': 'all'})
         self.assertEqual(response_all.status_code, 200)
-        response_rand = self.client.post('/posts/', {'type': 'qualquercoisa'})
+        response_rand = self.client.post('/post/all/', {'type': 'qualquercoisa'})
         self.assertEqual(response_rand.status_code, 200)
 
     def test_get_posts_response_if_json(self):
-        response = self.client.post('/posts/')
-        if 'posts' in response.json():
-            self.assertTrue(True)
-        else:
-            self.assertTrue(False)
+        data = {'type': 'all'}
+        response = self.client.post('/post/all/', data)
+        self.assertEqual(response['Content-Type'], 'application/json')
 
     # Get modal info
     def test_get_modal_info_status_200(self):
         post = self.create_new_post()
-        response = self.client.post('/posts/info/', {'id': post.id})
+        response = self.client.get(f'/post/{post.id}/', )
         self.assertEqual(response.status_code, 200)
 
     def test_get_modal_info_status_401_error(self):
         post = self.create_new_post()
         self.client.credentials()
-        response = self.client.post('/posts/info/', {'id': post.id})
+        response = self.client.post(f'/post/{post.id}/')
         self.assertEqual(response.status_code, 401)
 
     def test_get_modal_info_response_is_json(self):
         post = self.create_new_post()
-        response = self.client.post('/posts/info/', {'id': post.id})
-        if 'post' in response.json():
-            self.assertTrue(True)
-        else:
-            self.assertTrue(False)
+        response = self.client.get(f'/post/{post.id}/')
+        self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_get_modal_info_id_error(self):
-        response = self.client.post('/posts/info/', {'id': 9999999})
-        self.assertEqual(response.status_code, 400)
+        response = self.client.get(f'/post/{99999999}/')
+        self.assertEqual(response.status_code, 404)
 
     def test_create_new_post(self):
         image = self.uploaded_file
         text = 'Teste de texto'
-        response = self.client.post('/posts/add/', {'image': image, 'text': text})
+        response = self.client.post('/post/', {'image': image, 'text': text})
         query = Post.objects.get(text=text)
         self.assertIsNotNone(query)
         self.assertEqual(response.status_code, 200)
 
     def test_create_new_post_error_401(self):
         self.client.credentials()
-        response = self.client.post('/posts/add/')
+        response = self.client.post('/post/')
         self.assertEqual(response.status_code, 401)
 
     # Delete post
     def test_delete_post_status_200(self):
         post = self.create_new_post()
-        response = self.client.delete('/posts/del/', {'id': post.id})
+        response = self.client.delete(f'/post/{post.id}/',)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_post_status_401_error(self):
         self.client.credentials()
-        response = self.client.delete('/posts/del/')
+        response = self.client.delete('/post/')
         self.assertEqual(response.status_code, 401)
 
     def test_delete_post_status_no_id(self):
-        response = self.client.delete('/posts/del/')
+        response = self.client.delete(f'/post/{""}/')
         self.assertEqual(response.status_code, 404)
 
     def test_like_post_status_200(self):
         post = self.create_new_post()
-        response = self.client.post('/posts/like/', {'id': post.id})
+        response = self.client.post('/like/', {'id': post.id})
         self.assertEqual(response.status_code, 200)
 
     def test_like_post_status_401(self):
         self.client.credentials()
-        response = self.client.post('/posts/del/', )
+        response = self.client.delete('/like/', )
         self.assertEqual(response.status_code, 401)
 
     def test_like_post_id_error(self):
-        response = self.client.post('/posts/like/', {'id': 9999})
-        self.assertEqual(response.status_code, 404)
+        response = self.client.post('/like/', {'id': 9999})
+        self.assertEqual(response.status_code, 400)

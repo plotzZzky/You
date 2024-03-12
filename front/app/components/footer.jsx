@@ -14,20 +14,30 @@ export default function Footer() {
       </div>
 
       <div className='contacts'>
-        <p> Contatos: </p>
+        <h3> Contatos: </h3>
 
         <p>
           <FontAwesomeIcon icon={faEnvelope}/>
           <a> contato@you.com </a>
         </p>
+
+        <p>
+          <FontAwesomeIcon icon={faEnvelope}/>
+          <a> equipe@you.com </a>
+        </p>
       </div>
 
       <div className='contacts'>
-        <p> Dev: </p>
+        <h3> Dev: </h3>
+
+        <p>
+          <FontAwesomeIcon icon={faEnvelope}/>
+          <a> dev@you.com </a>
+        </p>
 
         <p onClick={goToGitHub}>
           <FontAwesomeIcon icon={faGithub} />
-          <a> GitHub.com/you </a>
+          <a> github.com/you </a>
         </p>
       </div>
     </footer>

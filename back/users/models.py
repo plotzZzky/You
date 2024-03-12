@@ -9,7 +9,7 @@ from posts.models import Post
 def get_file_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = f"{uuid.uuid4()}.{ext}"
-    return os.path.join('static/profiles/', filename)
+    return os.path.join('profiles/', filename)
 
 
 class Profile(models.Model):

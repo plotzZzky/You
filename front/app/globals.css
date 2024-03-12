@@ -161,7 +161,13 @@ footer a {
   color: var(--fontColor_pri);
   text-decoration: none;
   cursor: pointer;
-  font-size: clamp(0.8em, 1vw, 1em);
+  font-size: clamp(0.7em, 1vw, 1em);
+}
+
+footer p {
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
 }
 
 footer * {
@@ -169,7 +175,7 @@ footer * {
 }
 
 .you-brand {
-  font-size: clamp(0.9em, 2vw, 1.8em);
+  font-size: clamp(1.8em, 3vw, 3em);
   color: var(--color_accent);
   font-weight: bold;
 }
@@ -191,4 +197,5 @@ footer * {
   .img-background {
     width: 94vw;
   }
+
 }

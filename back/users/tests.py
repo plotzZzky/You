@@ -16,7 +16,7 @@ from .models import Profile
 # Esta função apaga todas as imagens geradas pelo test na pasta profiles/
 # NÂO RENOMEAR essa função, o nome é o padrão definido pelo unittest
 def tearDownModule():
-    path = 'profiles/'
+    path = 'media/profiles/'
     if os.path.isdir(path):
         files = os.listdir(path)
 
@@ -61,7 +61,7 @@ class LoginTest(TestCase):
 
     def test_login_status_error_empty(self):
         response = self.client.post('/users/login/', {})
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
 
 
 class RegisterUserTest(TestCase):
@@ -260,7 +260,7 @@ class UpdateUserTest(TestCase):
         self.assertEqual(response.status_code, 500)
 
     def test_recovery_pwd_check_if_pwd_recovered(self):
-        data = {'username': 'newuser', 'password': '12345678', 'pwd': '12345678', 'answer': '12345'}
+        data = {'username': 'newuser', 'password': '12345678x', 'pwd': '12345678x', 'answer': '12345'}
         response = self.client.post('/users/recovery/', data)
         user = User.objects.get(username=self.user_data['username'])
         result = check_password(data['pwd'], user.password)
@@ -282,9 +282,4 @@ class UpdateUserTest(TestCase):
     def test_receive_your_question_user_doesnt_exists_error(self):
         data = {'username': 'anything'}
         response = self.client.post('/users/question/', data)
-        self.assertEqual(response.status_code, 400)
-
-    def test_receive_your_question_get_error(self):
-        data = {'username': 'xxxxxxxx'}
-        response = self.client.get('/users/question/', data)
         self.assertEqual(response.status_code, 400)

@@ -55,29 +55,29 @@ class CommentsTest(TestCase):
     # Add Comment
     def test_add_comment_status_200(self):
         post = self.create_new_post()
-        response = self.client.post('/comments/add/', {'id': post.id, 'comment': 'teste de comentario'})
+        response = self.client.post('/comment/', {'postId': post.id, 'comment': 'teste de comentario'})
         self.assertEqual(response.status_code, 200)
 
     def test_add_comment_status_401_error(self):
         self.client.credentials()
-        response = self.client.post('/comments/add/')
+        response = self.client.post('/comment/')
         self.assertEqual(response.status_code, 401)
 
     def test_add_comment_status_no_id_error(self):
-        response = self.client.post('/comments/add/', {'id': 999999, 'comment': 'teste de comentario'})
-        self.assertEqual(response.status_code, 404)
+        response = self.client.post('/comment/', {'id': 999999, 'comment': 'teste de comentario'})
+        self.assertEqual(response.status_code, 400)
 
     # Delete Comment
     def test_delete_comment_status_200(self):
         comment = self.create_new_comment()
-        response = self.client.delete('/comments/del/', {'id': comment.id})
+        response = self.client.delete(f'/comment/{comment.id}/')
         self.assertEqual(response.status_code, 200)
 
     def test_delete_comment_status_401_error(self):
         self.client.credentials()
-        response = self.client.delete('/comments/del/')
+        response = self.client.delete(f'/comment/{9999}/')
         self.assertEqual(response.status_code, 401)
 
     def test_delete_comment_no_id_error(self):
-        response = self.client.delete('/comments/del/', {'id': 999999})
-        self.assertEqual(response.status_code, 404)
+        response = self.client.delete(f'/comment/{999999}/')
+        self.assertEqual(response.status_code, 400)
