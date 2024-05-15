@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@comps/authContext';
 import InputPwd from '@comps/inputs/inputPwd';
 import InputEmail from '@comps/inputs/inputEmail';
 import InputUser from '@comps/inputs/inputUser';
@@ -10,7 +11,7 @@ import userPicDefault from '../../../public/user.png'
 
 export default function Login() {
   const [getLogin, setLogin] = useState(true);
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
   const router = useRouter();
 
   const [getUsername, setUsername] = useState("");
@@ -91,7 +92,7 @@ export default function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.token) {
-          sessionStorage.setItem("token", data["token"])
+          setToken(data.token)
           router.push('/app')
         } else {
           const tip = document.getElementById("LoginTip")
@@ -135,7 +136,7 @@ export default function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.token) {
-          sessionStorage.setItem("token", data.token)
+          setToken(data.token)
           router.push('/app')
         } else {
           const tip = document.getElementById("SignTip")

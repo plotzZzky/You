@@ -13,7 +13,7 @@ def get_file_path(instance, filename):
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=get_file_path)
+    image = models.ImageField(upload_to=get_file_path, blank=True, null=True)
     text = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='users_liked', blank=True)

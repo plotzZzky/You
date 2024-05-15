@@ -1,9 +1,10 @@
 'use client'
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@comps/authContext';
+
 
 export default function Home() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
   const router = useRouter();
 
   const FAQ = [

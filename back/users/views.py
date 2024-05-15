@@ -127,6 +127,7 @@ class UpdateProfile(ModelViewSet):
 
 
 class YourProfile(ModelViewSet):
+    """ Retorna o perfil do usuario """
     permission_classes = [IsAuthenticated]
     queryset = []
     serializer_class = UserSerializer
@@ -141,6 +142,7 @@ class YourProfile(ModelViewSet):
 
 
 class RecoveryPassword(ModelViewSet):
+    """ Recupera a senha """
     permission_classes = [IsAuthenticated]
     queryset = []
     serializer_class = ProfileSerializer
@@ -167,8 +169,8 @@ class RecoveryPassword(ModelViewSet):
             return Response({"error": "Resposta incorreta!"}, status=500)
 
 
-# Envia a question do usuario para o front para fazer a recuperação de senha
 class ReceiverYourQuestion(ModelViewSet):
+    """ Envia a question do usuario para o front para fazer a recuperação de senha """
     serializer_class = ProfileSerializer
     queryset = []
 

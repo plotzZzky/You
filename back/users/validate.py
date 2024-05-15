@@ -22,11 +22,7 @@ def find_char(text):
 
 
 def validate_username(username):
-    try:
-        if username:
-            return False if len(username) < 4 else True
-    except TypeError:
-        return False
+    return False if len(username) < 4 else True
 
 
 def validate_email(email):
@@ -35,10 +31,10 @@ def validate_email(email):
 
 
 def validate_question(question):
-    if isinstance(question, str) and len(question) > 3:
+    if question and len(question) > 3:
         return True
 
 
 def validate_answer(answer):
-    if answer is str and len(answer) > 3 :
+    if answer is str and len(answer) > 3:
         return make_password(answer)
