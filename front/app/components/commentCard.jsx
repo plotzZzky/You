@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useAuth } from './authContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function CommentCard(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
 
   function delComment() {
     const commentId = props.data.id
@@ -17,7 +17,7 @@ export default function CommentCard(props) {
 
     fetch(url, data)
       .then(() => {
-        props.updateModal()
+        props.getAllComments()
       })
   }
 

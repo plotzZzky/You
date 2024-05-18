@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext();
 
+
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState( typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('token') || null : null );
 
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 
 export const useAuth = () => {
   const { token, updateToken } = useContext(AuthContext);

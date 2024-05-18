@@ -26,23 +26,31 @@ class PostClassView(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """ Desativado por não ser necessario """
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    @action(detail=False, methods=['POST'])
-    def all(self, request, *args, **kwargs):
-        """ Retorna a lista com todos os posts para a timeline """
         user = request.user
-        post_type = request.data.get('type', 'you')
+        posts = Post.objects.exclude(user=user).order_by("-id")
+        serializer = self.get_serializer(posts, many=True)
 
-        if post_type == 'you':
-            posts = Post.objects.filter(user=user).order_by("-id")
-        elif post_type == 'all':
-            posts = Post.objects.exclude(user=user).order_by("-id")
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'], url_path=r'user/(?P<pk>\d+)')
+    def posts_from_users(self, request, *args, **kwargs):
+        """ Retorna a lista de posts de um usuario especifico """
+        user_id = kwargs['pk']  # id do perfil
+        if user_id == r'0':
+            user = request.user
         else:
-            friends = user.profile.follows.all()
-            query = Post.objects.filter(user__in=friends)
-            user_query = Post.objects.filter(user=user)
-            posts = query.union(user_query).order_by("-id")
+            user = User.objects.get(pk=user_id)
+        posts = Post.objects.filter(user=user).order_by("-id")
+        serializer = self.get_serializer(posts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'], url_path='followee')
+    def posts_from_followee(self, request, *args, **kwargs):
+        """ Retorna a lista de posts de quem voce segue """
+        user = request.user
+        friends = user.profile.follows.all()
+        posts = Post.objects.filter(user__in=friends).order_by("-id")
         serializer = self.get_serializer(posts, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -81,11 +89,12 @@ class LikeClassView(ModelViewSet):
             post = Post.objects.get(pk=post_id)
             if request.user in post.likes.all():
                 post.likes.remove(request.user)
+                return Response({'msg': 'Dislike!'}, status=status.HTTP_200_OK)
             else:
                 post.likes.add(request.user)
             return Response({'msg': 'Like!'}, status=status.HTTP_200_OK)
         except (ObjectDoesNotExist, KeyError, ValueError):
-            return Response({'msg': 'Dislike!'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class FollowClassView(ModelViewSet):

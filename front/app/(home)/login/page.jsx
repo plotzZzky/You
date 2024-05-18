@@ -11,7 +11,7 @@ import userPicDefault from '../../../public/user.png'
 
 export default function Login() {
   const [getLogin, setLogin] = useState(true);
-  const [getToken, setToken] = useAuth();
+  const [Token, setToken] = useAuth();
   const router = useRouter();
 
   const [getUsername, setUsername] = useState("");
@@ -32,7 +32,7 @@ export default function Login() {
   const [AnswerValid, setAnswerValid] = useState(false)
 
   function checkLogin() {
-    if (getToken !== '') {
+    if (Token !== null && typeof Token === 'string') {
       router.push("/app/");
     }
   }
@@ -147,7 +147,7 @@ export default function Login() {
 
   useEffect(() => {
     checkLogin()
-  }, [getToken]);
+  }, [Token]);
 
 
   return (

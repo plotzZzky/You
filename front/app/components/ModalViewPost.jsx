@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faThumbsUp, faCaretRight, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp as faThumbsUp_r } from '@fortawesome/free-regular-svg-icons'
@@ -6,43 +7,57 @@ import CommentCard from './commentCard'
 
 
 export default function ModalViewPost(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [Token, setToken] = useAuth();
   const [getCards, setCards] = useState([])
-
   const [getComment, setComment] = useState("");
 
-  // Fecha esse modal
   function closeModal() {
+    // Fecha esse modal
     const modal = document.getElementById("PostModal");
     modal.style.display = 'none'
   }
 
-  // Formata a data para ser exibida
   function formatDate(value) {
+    // Formata a data para ser exibida 
     if (value) {
     const date = value.split("-")
     return `${date[2]}/${date[1]}/${date[0]}`
     }
   }
 
-  // Cria os cards dos comentarios 
-  function createCards() {
-    if (props.data.comments) {
-      setCards(
-        props.data.comments.map((data, index) => (
-          <CommentCard key={index} data={data} updateModal={() => props.updateModal(props.data.id)} formatDate={formatDate}></CommentCard>
-        )))
+  function getAllComments(){
+    // Busca os commentarios no backend
+    const postId = props.data.id
+    const url = `http://127.0.0.1:8000/comments/${postId}/`
+
+    const data = {
+      method: 'GET',
+      headers: { Authorization: 'Token ' + Token}
     }
+
+    fetch(url, data)
+      .then((res) => res.json())
+      .then((data) => {
+        createCards(data)
+      })
   }
 
-  // Deleta esse post
+  function createCards(value) {
+    // Cria os cards dos comentarios 
+    setCards(
+      value.map((data, index) => (
+        <CommentCard key={index} data={data} formatDate={formatDate} getAllComments={getAllComments}></CommentCard>
+    )))
+  }
+
   function deletePost() {
+    // Deleta esse post
     const postId = props.data.id
-    const url = `http://127.0.0.1:8000/post/${postId}/`
+    const url = `http://127.0.0.1:8000/posts/${postId}/`
 
     const data = {
       method: 'DELETE',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + Token },
     }
 
     fetch(url, data)
@@ -52,8 +67,8 @@ export default function ModalViewPost(props) {
       })
   }
 
-  // Função para dar like ou dislike
   function changeLike() {
+    // Função para dar like ou dislike
     const url = 'http://127.0.0.1:8000/like/'
 
     const formData = new FormData();
@@ -61,7 +76,7 @@ export default function ModalViewPost(props) {
 
     const data = {
       method: 'POSt',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + Token },
       body: formData
     }
     fetch(url, data)
@@ -70,8 +85,8 @@ export default function ModalViewPost(props) {
       })
   }
 
-  // Função para dar follow ou unfollow
   function followUser() {
+    // Função para dar follow ou unfollow
     const url = 'http://127.0.0.1:8000/follow/'
 
     const form = new FormData();
@@ -79,18 +94,17 @@ export default function ModalViewPost(props) {
 
     const data = {
       method: 'POST',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + Token },
       body: form
     }
     fetch(url, data)
       .then(() => {
         props.updateModal(props.data.id)
-        props.updatePosts()
       })
   }
 
-  // Função que cria um novo comentario
-  function addComment() {
+  function addNewComment() {
+    // Função que cria um novo comentario
     if (getComment) {
       const url = 'http://127.0.0.1:8000/comment/'
       const form = new FormData();
@@ -99,29 +113,27 @@ export default function ModalViewPost(props) {
 
       const data = {
         method: 'POST',
-        headers: { Authorization: 'Token ' + getToken },
+        headers: { Authorization: 'Token ' + Token },
         body: form
       }
       fetch(url, data)
         .then(() => {
-          props.updateModal(props.data.id)
+          getAllComments()
           setComment('')
         })
     }
   }
 
   function showComments() {
+    // Altera a visibilidade dos comentarios
+    getAllComments()
+
     const img = document.getElementById("imgPrev")
     const div_comment = document.getElementById("commentPrev")
     img.style.display = img.style.display === 'none' ? 'block' : 'none';
     div_comment.style.display = div_comment.style.display === 'none' ? 'flex' : 'none';
-    createCards()
   }
 
-  useEffect(() => {
-    createCards()
-  }, [props.data])
-  
   return (
     <div className="modal-background" id="PostModal" onClick={closeModal}>
 
@@ -138,7 +150,7 @@ export default function ModalViewPost(props) {
                 <input type='text' placeholder='Novo comentario' className='input-new-comment' value={getComment}
                   onChange={(e) => setComment(e.target.value)} >
                 </input>
-                <button className='btn-new-comment' onClick={addComment}>
+                <button className='btn-new-comment' onClick={addNewComment}>
                   <FontAwesomeIcon icon={faCaretRight} />
                 </button>
               </div>

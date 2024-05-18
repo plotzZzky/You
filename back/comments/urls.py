@@ -4,4 +4,4 @@ from . import views
 
 
 comments_router = routers.DefaultRouter()
-comments_router.register(r'comment', views.CommentClassView, basename='comment')
+comments_router.register(r'comments', views.CommentClassView, basename='comments')

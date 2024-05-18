@@ -1,27 +1,29 @@
 import { useState } from "react";
+import { useAuth } from "./authContext";
 
 export default function NewPost(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
 
   const [postText, setPostText] = useState("");
   const [postImg, setPostImg] = useState();
   const [postFile, setPostFile] = useState();
 
-  // Fecha o modal
   function closeModal() {
-    let modal = document.getElementById("NewPostModal");
+    // Fecha o modal
+    const modal = document.getElementById("NewPostModal");
     modal.style.display = 'none'
   }
 
-  // Essa função faz que quando o user clickar na imagem essa função seleciona o input para selecionar uma imagem
   function clickInput() {
+    // Essa função faz que quando o user clickar na imagem essa função seleciona o input para selecionar uma imagem
     document.getElementById("selectImg").click()
   }
 
-  // Função que carrega a imagem
-  // setPostImg carrega a imagem para ser enviada para o back
-  // setPostFile carrga a imagem no front 
   function changeImage(event) {
+    // Função que carrega a imagem
+    // setPostImg carrega a imagem para ser enviada para o back
+    // setPostFile carrga a imagem no front 
+
     const file = event.target.files[0];
     setPostImg(file)
     const reader = new FileReader();
@@ -32,21 +34,21 @@ export default function NewPost(props) {
     reader.readAsDataURL(file);
   }
 
-  // Salva o texto da postagem no useState
   function setTextFromPost(event) {
+    // Salva o texto da postagem no useState
     const value = event.target.value
     setPostText(value)
   }
 
-  // Salva o post no back
   function savePost() {
-    let url = "http://127.0.0.1:8000/post/"
+    // Salva o post no back
+    const url = "http://127.0.0.1:8000/posts/"
 
     const formBack = new FormData();
     formBack.append("text", postText);
     formBack.append('image', postImg, postImg.name);
 
-    let requestData = {
+    const requestData = {
       method: 'POST',
       headers: { Authorization: 'Token ' + getToken },
       body: formBack
@@ -61,14 +63,13 @@ export default function NewPost(props) {
         }
       })
 
-      .then((data) => {
-        props.get_posts();
+      .then(() => {
+        props.getPosts();
         closeModal();
         setPostFile();
       })
 
       .catch((error) => {
-        console.log(error.message)
         alert(error);
       });
   }

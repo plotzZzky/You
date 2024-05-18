@@ -42,6 +42,7 @@ class RegisterView(ModelViewSet):
                 token = create_new_token(user)
                 answer_hashed = make_password(answer)  # salva a respota ja protegida por hash
                 Profile.objects.create(user=user, question=question, answer=answer_hashed, image=image)
+
                 return Response({"token": token.key}, status=200)
             else:
                 raise ValueError()

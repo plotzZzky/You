@@ -4,7 +4,7 @@ import { useAuth } from '@comps/authContext';
 
 
 export default function Home() {
-  const [getToken, setToken] = useAuth();
+  const [Token, setToken] = useAuth();
   const router = useRouter();
 
   const FAQ = [
@@ -41,7 +41,7 @@ export default function Home() {
   }
 
   function goToLogin() {
-    if (getToken === undefined) {
+    if (Token !== null && typeof Token === 'string') {
       router.push("/login/");
     } else {
       router.push("/app/");

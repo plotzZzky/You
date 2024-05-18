@@ -1,27 +1,32 @@
-.app-navbar {
+.app-bar {
   position: fixed;
-  inset: 0 0 auto 0;
+  inset: 0 0 auto;
   padding: 2px 0 0;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   background-color: var(--color_accent);
   box-shadow: var(--shadow);
   z-index: 999;
 }
 
-.app-navbar-icon-div {
+.align-app-bar {
+  display: flex;
+  flex: 0 1 33.3%;
+}
+
+.app-icon-div {
   display: flex;
   flex-direction: column;
   position: relative;
-  padding: 4px clamp( 5px, 2vw, 15px) 0;
+  padding: 4px 1.2vw 0;
   cursor: pointer;
   z-index: 1;
 }
 
-.app-navbar-icon-div::before {
+.app-icon-div::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 0 0.5vw;
   transform-origin: bottom;
   transform: scaleY(0);
   transition: transform .15s ease-in-out;
@@ -31,7 +36,7 @@
   z-index: -1;
 }
 
-.app-navbar-icon-div:hover::before {
+.app-icon-div:hover::before {
   transform-origin: bottom;
   transform: scaleY(1);
 }
@@ -46,10 +51,9 @@
 }
 
 /* Posts */
-.view-posts {
-  max-width: 1000px;
+.posts {
+  max-width: 500px;
   margin: auto;
-  padding-top: 1vh;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -57,7 +61,7 @@
 }
 
 .card-margin {
-  flex: 0 0 50%;
+  flex: 0 0 100%;
   aspect-ratio: 1/ 1.3;
 }
 

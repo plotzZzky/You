@@ -1,19 +1,19 @@
 'use client'
-import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faBars, faImage, faHome, faQuestion, faUsers } from '@fortawesome/free-solid-svg-icons'
 import './navbar.css'
 
 
 export default function NavBar() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
   const router = useRouter();
   const getPath = usePathname();
 
-  // Função que abre o menu no modo responsivo
   function openResponsiveMenu() {
-    let navbar = document.getElementsByClassName("menu")[0];
+    // Função que abre o menu no modo responsivo
+    const navbar = document.getElementsByClassName("menu")[0];
     if (navbar.className == "menu") {
       navbar.classList.add("responsive");
     } else {
@@ -21,9 +21,9 @@ export default function NavBar() {
     }
   };
 
-  // Função que fecha o menu no modo responsivo
   function closeResponsiveMenu() {
-    let navbar = document.getElementsByClassName("menu")[0];
+    // Função que fecha o menu no modo responsivo
+    const navbar = document.getElementsByClassName("menu")[0];
     navbar.classList.remove("responsive");
   };
 
@@ -76,8 +76,8 @@ export default function NavBar() {
     closeResponsiveMenu();
   }
 
-  // Se possui token redireciona para pagina do app, se não, para pagina do login
   function goApp() {
+    // Se possui token redireciona para pagina do app, se não, para pagina do login
     if (getToken === '') {
       router.push("/login/")
     } else {

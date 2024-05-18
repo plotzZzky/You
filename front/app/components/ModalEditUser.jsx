@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "./authContext";
 import InputPwd from './inputs/inputPwd'
 import InputEmail from './inputs/inputEmail'
 import InputUser from './inputs/inputUser'
@@ -7,9 +8,10 @@ import InputAnswer from "./inputs/inputAnswer";
 
 
 export default function EditUser(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
   const [getData, setData] = useState({});
 
+  // Atributos
   const [getUsername, setUsername] = useState(getData.username);
   const [getEmail, setEmail] = useState(getData.email);
   const [getPassword1, setPassword1] = useState();
@@ -27,15 +29,16 @@ export default function EditUser(props) {
   const [QuestionValid, setQuestionValid] = useState(false)
   const [AnswerValid, setAnswerValid] = useState(false)
 
-  // Fecha o modal
   function closeModal() {
-    let modal = document.getElementById("profileView");
+    // Fecha este modal
+    const modal = document.getElementById("profileView");
     modal.style.display = 'none'
   }
   
-  function getUserInfos() {
-    let url = `http://127.0.0.1:8000/users/profile/`
-    let info = {
+  function getUserData() {
+    // Recebe os dados do perfil do usuario
+    const url = `http://127.0.0.1:8000/users/profile/`
+    const info = {
       method: 'GET',
       headers: { Authorization: 'Token ' + getToken }
     }
@@ -65,7 +68,8 @@ export default function EditUser(props) {
   }
 
   function editUser() {
-    let url = 'http://127.0.0.1:8000/users/update/'
+    // Salva no back as alterações do perfil do usuario
+    const url = 'http://127.0.0.1:8000/users/update/'
 
     const formData = new FormData();
     formData.set('enctype', 'multipart/form-data');
@@ -94,7 +98,7 @@ export default function EditUser(props) {
   }
 
   useEffect(() => {
-    getUserInfos()
+    getUserData()
   }, [])
 
   return (
