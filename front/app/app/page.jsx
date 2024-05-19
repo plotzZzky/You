@@ -13,14 +13,15 @@ export default function App() {
   const [Token, setToken] = useAuth();
   const router = useRouter();
   const [Cards, setCards] = useState([]);
-  const [modalData, setModalData] = useState({'user': '', 'comments': ''});
+  const [modalData, setModalData] = useState();
+  const [test, setTest] = useState();
 
   function checkLogin() {
     // Verifica se possui o token 
     if (Token !== null && typeof Token === 'string') {
       receiveAllPosts()
     } else {
-      router.push("/login/");
+      router.push("/login");
     }
   }
 
@@ -60,40 +61,12 @@ export default function App() {
     // Cria os cards das postagens 
     setCards(
       value.map((data, index) => (
-        <PostCard key={index} data={data} update={receiveFolloweePosts} showModal={() => getModalData(data.id)}></PostCard>
+        <PostCard key={index} data={data} update={receiveFolloweePosts} showModal={() => showModal(data.id)}></PostCard>
       )))
   }
 
-  function getModalData(postId) {
-    // Busca informações de um post 
-    const url = `http://127.0.0.1:8000/posts/${postId}/`
-
-    const data = {
-      method: 'GET',
-      headers: { Authorization: 'Token ' + Token },
-    }
-
-    fetch(url, data)
-      .then((res) => res.json())
-      .then((data) => { 
-        setModalData(data)
-        changeVisiblityModalDivs()
-      })
-  }
-
-  function changeVisiblityModalDivs() {
-    // Sempre que abrir o modal exibe a imagem e ocualt os comentarios
-    const modal = document.getElementById("PostModal")
-    const modalVisibility = modal.style.display
-    
-    if (modalVisibility !== 'flex') {
-    const img = document.getElementById("imgPrev")
-    const div_comment = document.getElementById("commentPrev")
-
-    modal.style.display = "flex"
-    img.style.display = 'block';
-    div_comment.style.display = 'none';
-    }
+  function showModal(value){
+    setTest(value)
   }
 
   useEffect(() => {
@@ -112,7 +85,7 @@ export default function App() {
 
       <EditUser></EditUser>
 
-      <ModalViewPost data={modalData} updatePosts={receiveFolloweePosts} updateModal={getModalData}></ModalViewPost>
+      <ModalViewPost data={modalData} updatePosts={receiveFolloweePosts} test={test} setTest={setTest}></ModalViewPost>
       
       <NewPost getPosts={receiveFolloweePosts}></NewPost>
     </div>

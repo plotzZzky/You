@@ -8,11 +8,46 @@ import CommentCard from './commentCard'
 
 export default function ModalViewPost(props) {
   const [Token, setToken] = useAuth();
+  const [modalData, setModalData] = useState();
   const [getCards, setCards] = useState([])
   const [getComment, setComment] = useState("");
 
+  function getModalData(postId) {
+    // Busca informações de um post 
+    const url = `http://127.0.0.1:8000/posts/${postId}/`
+
+    const data = {
+      method: 'GET',
+      headers: { Authorization: 'Token ' + Token },
+    }
+
+    fetch(url, data)
+      .then((res) => res.json())
+      .then((data) => { 
+        setModalData(data)
+        changeVisiblityModalDivs()
+        console.log(data)
+      })
+  }
+
+  function changeVisiblityModalDivs() {
+    // Sempre que abrir o modal exibe a imagem e ocualt os comentarios
+    const modal = document.getElementById("PostModal")
+    const modalVisibility = modal.style.display
+    
+    if (modalVisibility !== 'flex') {
+    const img = document.getElementById("imgPrev")
+    const div_comment = document.getElementById("commentPrev")
+
+    modal.style.display = "flex"
+    img.style.display = 'block';
+    div_comment.style.display = 'none';
+    }
+  }
+
   function closeModal() {
     // Fecha esse modal
+    props.setTest(0)
     const modal = document.getElementById("PostModal");
     modal.style.display = 'none'
   }
@@ -133,6 +168,11 @@ export default function ModalViewPost(props) {
     img.style.display = img.style.display === 'none' ? 'block' : 'none';
     div_comment.style.display = div_comment.style.display === 'none' ? 'flex' : 'none';
   }
+
+  useEffect(() => {
+    console.log(props.test)
+    getModalData(props.test)
+  }, [props.test])
 
   return (
     <div className="modal-background" id="PostModal" onClick={closeModal}>
