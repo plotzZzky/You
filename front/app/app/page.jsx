@@ -13,8 +13,7 @@ export default function App() {
   const [Token, setToken] = useAuth();
   const router = useRouter();
   const [Cards, setCards] = useState([]);
-  const [modalData, setModalData] = useState();
-  const [test, setTest] = useState();
+  const [modalId, setModalId] = useState();
 
   function checkLogin() {
     // Verifica se possui o token 
@@ -66,7 +65,7 @@ export default function App() {
   }
 
   function showModal(value){
-    setTest(value)
+    setModalId(value)
   }
 
   useEffect(() => {
@@ -85,7 +84,7 @@ export default function App() {
 
       <EditUser></EditUser>
 
-      <ModalViewPost data={modalData} updatePosts={receiveFolloweePosts} test={test} setTest={setTest}></ModalViewPost>
+      <ModalViewPost updatePosts={receiveFolloweePosts} modalId={modalId} setModalId={setModalId}></ModalViewPost>
       
       <NewPost getPosts={receiveFolloweePosts}></NewPost>
     </div>

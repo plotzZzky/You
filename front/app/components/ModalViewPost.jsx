@@ -23,11 +23,10 @@ export default function ModalViewPost(props) {
 
     fetch(url, data)
       .then((res) => res.json())
-      .then((data) => { 
+      .then((data) => {
         setModalData(data)
-        changeVisiblityModalDivs()
-        console.log(data)
       })
+      .then(() => changeVisiblityModalDivs())
   }
 
   function changeVisiblityModalDivs() {
@@ -47,9 +46,9 @@ export default function ModalViewPost(props) {
 
   function closeModal() {
     // Fecha esse modal
-    props.setTest(0)
+    props.setModalId(undefined);
     const modal = document.getElementById("PostModal");
-    modal.style.display = 'none'
+    modal.style.display = 'none';
   }
 
   function formatDate(value) {
@@ -62,7 +61,7 @@ export default function ModalViewPost(props) {
 
   function getAllComments(){
     // Busca os commentarios no backend
-    const postId = props.data.id
+    const postId = modalData.id
     const url = `http://127.0.0.1:8000/comments/${postId}/`
 
     const data = {
@@ -87,7 +86,7 @@ export default function ModalViewPost(props) {
 
   function deletePost() {
     // Deleta esse post
-    const postId = props.data.id
+    const postId = modalData.id
     const url = `http://127.0.0.1:8000/posts/${postId}/`
 
     const data = {
@@ -107,7 +106,7 @@ export default function ModalViewPost(props) {
     const url = 'http://127.0.0.1:8000/like/'
 
     const formData = new FormData();
-    formData.append('id', props.data.id);
+    formData.append('id', modalData.id);
 
     const data = {
       method: 'POSt',
@@ -116,7 +115,7 @@ export default function ModalViewPost(props) {
     }
     fetch(url, data)
       .then(() => {
-        props.updateModal(props.data.id)
+        getModalData(props.modalId)
       })
   }
 
@@ -125,7 +124,7 @@ export default function ModalViewPost(props) {
     const url = 'http://127.0.0.1:8000/follow/'
 
     const form = new FormData();
-    form.append('id', props.data.user.id);
+    form.append('id', modalData.user.id);
 
     const data = {
       method: 'POST',
@@ -134,17 +133,17 @@ export default function ModalViewPost(props) {
     }
     fetch(url, data)
       .then(() => {
-        props.updateModal(props.data.id)
+        getModalData(props.modalId)
       })
   }
 
   function addNewComment() {
     // Função que cria um novo comentario
     if (getComment) {
-      const url = 'http://127.0.0.1:8000/comment/'
+      const url = 'http://127.0.0.1:8000/comments/'
       const form = new FormData();
       form.append('comment', getComment);
-      form.append('postId', props.data.id)
+      form.append('postId', modalData.id)
 
       const data = {
         method: 'POST',
@@ -170,20 +169,22 @@ export default function ModalViewPost(props) {
   }
 
   useEffect(() => {
-    console.log(props.test)
-    getModalData(props.test)
-  }, [props.test])
+    if( props.modalId !== undefined) {
+      getModalData(props.modalId)
+    }
+
+  }, [props.modalId])
 
   return (
     <div className="modal-background" id="PostModal" onClick={closeModal}>
 
       <div className='modal-div' onClick={e => e.stopPropagation()}>
-        <img className='modal-img' src={props.data?.image} id='imgPrev'></img>
+        <img className='modal-img' src={modalData?.image} id='imgPrev'></img>
 
         <div className="modal-info" id='commentPrev'>
           <div className="modal-desc">
-            <p> {props.data?.text} </p>
-            <a className="date"> {formatDate(props.data?.date)} </a>
+            <p> {modalData?.text}</p>
+            <a className="date"> {formatDate(modalData?.date)} </a>
 
             <div className='comments-div'>
               <div className='new-comment'>
@@ -201,13 +202,13 @@ export default function ModalViewPost(props) {
 
         <div className="modal-align-name">
           <div className='align-nick'>
-            <img className="modal-user-img" src={props.data?.user.profile?.image} ></img>
-            <a className="modal-username"> {props.data?.user.username} </a>
+            <img className="modal-user-img" src={modalData?.user.profile?.image} ></img>
+            <a className="modal-username"> {modalData?.user.username} </a>
           </div>
 
           <div className="modal-align-btns">
-            <button className='modal-btn' onClick={followUser} style={{ display: props.data?.your ? 'none' : 'block' }}>
-              {props.data?.user.follow ?
+            <button className='modal-btn' onClick={followUser} style={{ display: modalData?.your ? 'none' : 'block' }}>
+              {modalData?.user.follow ?
                 <FontAwesomeIcon icon={faUserMinus} /> :
                 <FontAwesomeIcon icon={faUserPlus} />}
             </button>
@@ -216,14 +217,14 @@ export default function ModalViewPost(props) {
               {props.data?.liked ?
                 <FontAwesomeIcon icon={faThumbsUp} /> :
                 <FontAwesomeIcon icon={faThumbsUp_r} />
-              }<a>{props.data?.likes}</a>
+              }<a>{modalData?.likes.length}</a>
             </button>
 
             <button className='modal-btn' onClick={showComments}> <FontAwesomeIcon icon={faComment} />
-              <a> {props.data?.comments.length} </a>
+              <a> {modalData?.comments.length} </a>
             </button>
 
-            {props.data?.your ?
+            {modalData?.your ?
               <button className="modal-btn" onClick={deletePost}> <FontAwesomeIcon icon={faTrash} /></button> :
               ''
             }

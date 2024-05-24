@@ -20,6 +20,7 @@ class PostClassView(ModelViewSet):
         try:
             instance = self.get_object()
             serializer = ModalSerializer(instance, context={'request': request})
+            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except (TypeError, ValueError, ObjectDoesNotExist):
             return Response({'error': 'Post não encontrado'}, status=status.HTTP_404_NOT_FOUND)

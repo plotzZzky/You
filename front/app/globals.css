@@ -127,7 +127,7 @@ button:hover::before {
 
 /* FAQ */
 details {
-  padding: 0 2vw;
+  padding: 1vh 2vw;
   margin: 2vh 2vw;
   border: 1px solid var(--color_accent);
   border-radius: 4px;
