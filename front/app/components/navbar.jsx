@@ -45,7 +45,7 @@ export default function NavBar() {
   };
 
   const LOGIN = () => {
-    return getToken === ''? (
+    return !getToken? (
       <div className="menu-item" onClick={goApp}>
         <a><FontAwesomeIcon icon={faUser} className='icon-menu' /> Entrar </a>
       </div>
@@ -78,7 +78,7 @@ export default function NavBar() {
 
   function goApp() {
     // Se possui token redireciona para pagina do app, se não, para pagina do login
-    if (getToken === '') {
+    if (!getToken) {
       router.push("/login/")
     } else {
       router.push("/app/")

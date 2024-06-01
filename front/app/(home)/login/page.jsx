@@ -37,13 +37,13 @@ export default function Login() {
     }
   }
 
-  // Função para o usuario clickar na imagem e simular o click no input
   function clickInput() {
+    // Função para o usuario clickar na imagem e simular o click no input
     const input = document.getElementById("selectImgUser").click()
   }
 
-  // Carrega a imagem em duas const, a const image para ser enviada pelo form e a file para ser visualizada pelo usuario
   function changeImage(event) {
+    // Carrega a imagem em duas const, a const image para ser enviada pelo form e a file para ser visualizada pelo usuario
     const file = event.target.files[0];
     setImageUser(file)
     const reader = new FileReader();
@@ -54,22 +54,22 @@ export default function Login() {
     reader.readAsDataURL(file);
   }
 
-  // Alterna entre a pagina de login e registro
   function showLogin() {
-    let login = document.getElementById('loginTab');
-    let signup = document.getElementById('signupTab');
+    // Alterna entre a pagina de login e registro
+    const login = document.getElementById('loginTab');
+    const signup = document.getElementById('signupTab');
     login.style.display = getLogin? 'none' : 'flex'
     signup.style.display = getLogin? 'flex' : 'none'
     setLogin(getLogin? false : true)
   }
 
-  // Redireciona para a pagina de recuperação de senha
   function showRecovery() {
+    // Redireciona para a pagina de recuperação de senha
     router.push('/login/recovery')
   }
 
-  // Verifica se os campos de login estão preenchidas com informções validas
   function checkIfLoginIsvalid() {
+    // Verifica se os campos de login estão preenchidas com informções validas
     if (Pwd1Valid && UserValid) {
       loginFunc()
     } else {
@@ -78,14 +78,15 @@ export default function Login() {
     }
   }
 
-  // Função para fazer login
   function loginFunc() {
-    let url = `http://127.0.0.1:8000/users/login/`
+    // Função para fazer login
+    const url = `http://127.0.0.1:8000/users/login/`
 
     const formData = new FormData();
     formData.append("username", getUsername)
     formData.append("password", getPassword)
-    let info = {method: 'POST',
+
+    const info = {method: 'POST',
                 body: formData}
 
     fetch(url, info)
@@ -101,8 +102,8 @@ export default function Login() {
     })
   }
 
-  // Verifica se os campos de cadastro estão preenchidas com informções validas
   function checkIfSignIsValid() {
+    // Verifica se os campos de cadastro estão preenchidas com informções validas
     if (UserValid && EmailValid && Pwd1Valid && Pwd2Valid && Pwd1Valid === Pwd2Valid) {
       SignUpFunc()
     } else {
@@ -111,8 +112,8 @@ export default function Login() {
     }
   }
 
-  // Função para registar um novo usuario, envia o form com as informações (exceto imagem) e recebe o nome randonizado da imagem do usuario
   function SignUpFunc() {
+    // Função para registar um novo usuario, envia o form com as informações (exceto imagem) e recebe o nome randonizado da imagem do usuario
     const url = `http://127.0.0.1:8000/users/register/`
 
     const formData = new FormData();

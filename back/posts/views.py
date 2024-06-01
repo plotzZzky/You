@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
 from .serializers import PostSerializer, ModalSerializer
+from users.serializer import UserSerializer
 
 
 class PostClassView(ModelViewSet):
@@ -20,7 +21,6 @@ class PostClassView(ModelViewSet):
         try:
             instance = self.get_object()
             serializer = ModalSerializer(instance, context={'request': request})
-            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except (TypeError, ValueError, ObjectDoesNotExist):
             return Response({'error': 'Post não encontrado'}, status=status.HTTP_404_NOT_FOUND)
@@ -43,16 +43,20 @@ class PostClassView(ModelViewSet):
             user = User.objects.get(pk=user_id)
         posts = Post.objects.filter(user=user).order_by("-id")
         serializer = self.get_serializer(posts, many=True)
+        user_serializer = UserSerializer(user, many=False)
+        result = {'posts': serializer.data, 'user': user_serializer.data}
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(result, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='followee')
     def posts_from_followee(self, request, *args, **kwargs):
         """ Retorna a lista de posts de quem voce segue """
         user = request.user
         friends = user.profile.follows.all()
-        posts = Post.objects.filter(user__in=friends).order_by("-id")
-        serializer = self.get_serializer(posts, many=True)
+        posts = Post.objects.filter(user__in=friends)
+        user_posts = Post.objects.filter(user=request.user)
+        all_posts = posts.union(user_posts).order_by("-id")
+        serializer = self.get_serializer(all_posts, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

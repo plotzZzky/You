@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-
 export const useAuth = () => {
   const { token, updateToken } = useContext(AuthContext);
   return [token, updateToken];

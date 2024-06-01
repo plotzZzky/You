@@ -1,26 +1,16 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faImage, faMagnifyingGlass, faSquarePlus, faGears, faRightFromBracket, faHome, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faImage, faMagnifyingGlass, faSquarePlus, faRightFromBracket, faHome } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function AppNavBar(props) {
   const router = useRouter();
+  const [user, setUser] = useAuth();
 
   function goHome(){
     router.push('/')
-  }
-
-  function receiveFolloweePosts() {
-    // Função que busca os posts do followees(pessoas que voce segue)
-    const url = "http://127.0.0.1:8000/posts/followee/"
-    props.recievePosts(url)
-  }
-
-  function receiveAllPosts() {
-    // Função que busca os posts do followees(pessoas que voce segue)
-    const url = "http://127.0.0.1:8000/posts/"
-    props.recievePosts(url)
   }
 
   function showNewPostModal() {
@@ -29,14 +19,8 @@ export default function AppNavBar(props) {
     newModal.style.display = "flex"
   }
 
-  function showEditUser() {
-    // Mostra o modal para editar o perfil do usuario
-    const newModal = document.getElementById("profileView")
-    newModal.style.display = "flex"
-  }
-
   function logOut() {
-    sessionStorage.setItem("token", '')
+    setUser(null);
     router.push('/');
   }
 
@@ -56,28 +40,23 @@ export default function AppNavBar(props) {
           <a className='app-name'> Novo </a>
         </div>
 
-        <div className='app-icon-div' onClick={receiveFolloweePosts}>
+        <div className='app-icon-div' onClick={props.followeePage}>
           <FontAwesomeIcon icon={faImage} className='app-icon' />
           <a className='app-name'> Amigos </a>
         </div>
 
-        <div className='app-icon-div' onClick={receiveAllPosts}>
+        <div className='app-icon-div' onClick={props.allPostsPage}>
           <FontAwesomeIcon icon={faMagnifyingGlass} className='app-icon' />
           <a className='app-name'> Horizonte </a>
         </div>
 
-        <div className='app-icon-div' onClick={() =>props.yourPosts()}>
+        <div className='app-icon-div' onClick={e => props.profilePage(0)}>
           <FontAwesomeIcon icon={faUser} className='app-icon' />
-          <a className='app-name'> Meus </a>
+          <a className='app-name'> Perfil </a>
         </div>
       </div>
 
       <div className='align-app-bar' style={{justifyContent: 'flex-end'}}>
-        <div className='app-icon-div' onClick={showEditUser}>
-          <FontAwesomeIcon icon={faGears} className='app-icon' />
-          <a className='app-name'> Ajustes </a>
-        </div>
-
         <div className='app-icon-div' onClick={logOut}>
           <FontAwesomeIcon icon={faRightFromBracket} className='app-icon' />
           <a className='app-name'> Sair </a>

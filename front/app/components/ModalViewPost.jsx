@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faThumbsUp, faCaretRight, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faThumbsUp, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp as faThumbsUp_r } from '@fortawesome/free-regular-svg-icons'
 import CommentCard from './commentCard'
 
@@ -137,6 +137,14 @@ export default function ModalViewPost(props) {
       })
   }
 
+  const submitNewComment = (event) => {
+    if (event.key === 'Enter') {  // verifica se o botão apertado for o enter
+      if (Token) {
+        addNewComment()
+      }
+    }
+  }
+
   function addNewComment() {
     // Função que cria um novo comentario
     if (getComment) {
@@ -187,14 +195,10 @@ export default function ModalViewPost(props) {
             <a className="date"> {formatDate(modalData?.date)} </a>
 
             <div className='comments-div'>
-              <div className='new-comment'>
-                <input type='text' placeholder='Novo comentario' className='input-new-comment' value={getComment}
-                  onChange={(e) => setComment(e.target.value)} >
+                <input 
+                  type='text' placeholder='Novo comentario' className='input-new-comment' value={getComment}
+                  onChange={(e) => setComment(e.target.value)} onKeyDown={submitNewComment}>
                 </input>
-                <button className='btn-new-comment' onClick={addNewComment}>
-                  <FontAwesomeIcon icon={faCaretRight} />
-                </button>
-              </div>
               {getCards}
             </div>
           </div>

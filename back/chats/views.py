@@ -4,7 +4,6 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 
 from .models import ChatModel
 from .serializers import ChatSerializer

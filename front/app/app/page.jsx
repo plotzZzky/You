@@ -18,7 +18,7 @@ export default function App() {
   function checkLogin() {
     // Verifica se possui o token 
     if (Token !== null && typeof Token === 'string') {
-      receiveAllPosts()
+      receiveFolloweePosts()
     } else {
       router.push("/login");
     }
@@ -39,7 +39,7 @@ export default function App() {
   }
 
   function receiveAllPosts() {
-    // Função que busca os posts do followees(pessoas que voce segue)
+    // Função que busca os posts de todos os usuario
     const url = "http://127.0.0.1:8000/posts/"
     baseReceivePosts(url)
   }
@@ -51,7 +51,7 @@ export default function App() {
   }
 
   function receiveUserPosts(user_id=0) {
-    // Função que busca os posts do followees(pessoas que voce segue)
+    // Função que busca os posts de um usuario
     const url = `http://127.0.0.1:8000/posts/user/${user_id}/`
     baseReceivePosts(url)
   }
@@ -61,7 +61,7 @@ export default function App() {
     setCards(
       value.map((data, index) => (
         <PostCard key={index} data={data} update={receiveFolloweePosts} showModal={() => showModal(data.id)}></PostCard>
-      )))
+      )));
   }
 
   function showModal(value){
@@ -76,10 +76,8 @@ export default function App() {
     <div className='page'>
       <AppNavBar recievePosts={baseReceivePosts} yourPosts={receiveUserPosts}></AppNavBar>
 
-      <div className='app-page'>
-        <div className="posts">
-          {Cards}
-        </div>
+      <div className="posts">
+        {Cards}
       </div>
 
       <EditUser></EditUser>

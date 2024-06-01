@@ -47,8 +47,8 @@ export default function EditUser(props) {
       .then((data) => {
         setUsername(data.username)
         setEmail(data.email)
-        setQuestion(data.profile.question)
-        setFileUser(data.profile.image)
+        setQuestion(data.user.profile.question)
+        setFileUser(data.user.profile.image)
       })
   }
 
