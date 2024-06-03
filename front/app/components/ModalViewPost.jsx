@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faThumbsUp, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
@@ -7,6 +8,7 @@ import CommentCard from './commentCard'
 
 
 export default function ModalViewPost(props) {
+  const router = useRouter();
   const [Token, setToken] = useAuth();
   const [modalData, setModalData] = useState();
   const [getCards, setCards] = useState([])
@@ -36,27 +38,52 @@ export default function ModalViewPost(props) {
     
     if (modalVisibility !== 'flex') {
     const img = document.getElementById("imgPrev")
-    const div_comment = document.getElementById("commentPrev")
+    const commentPrev = document.getElementById("commentPrev")
 
     modal.style.display = "flex"
     img.style.display = 'block';
-    div_comment.style.display = 'none';
+    commentPrev.style.display = 'none';
     }
   }
 
-  function closeModal() {
-    // Fecha esse modal
-    props.setModalId(undefined);
-    const modal = document.getElementById("PostModal");
-    modal.style.display = 'none';
+  const submitNewComment = (event) => {
+    // verifica se o botão apertado for o enter e envia o comentario para o backend
+    if (event.key === 'Enter') {
+      if (Token) {
+        addNewComment()
+      }
+    }
   }
 
-  function formatDate(value) {
-    // Formata a data para ser exibida 
-    if (value) {
-    const date = value.split("-")
-    return `${date[2]}/${date[1]}/${date[0]}`
+  function addNewComment() {
+    // Função que cria um novo comentario
+    if (getComment) {
+      const url = 'http://127.0.0.1:8000/comments/'
+      const form = new FormData();
+      form.append('comment', getComment);
+      form.append('postId', modalData.id)
+
+      const data = {
+        method: 'POST',
+        headers: { Authorization: 'Token ' + Token },
+        body: form
+      }
+      fetch(url, data)
+        .then(() => {
+          getAllComments()
+          setComment('')
+        })
     }
+  }
+
+  function showComments() {
+    // Altera a visibilidade da pagina de comentarios
+    getAllComments()
+
+    const img = document.getElementById("imgPrev")
+    const div_comment = document.getElementById("commentPrev")
+    img.style.display = img.style.display === 'none' ? 'block' : 'none';
+    div_comment.style.display = div_comment.style.display === 'none' ? 'flex' : 'none';
   }
 
   function getAllComments(){
@@ -82,6 +109,29 @@ export default function ModalViewPost(props) {
       value.map((data, index) => (
         <CommentCard key={index} data={data} formatDate={formatDate} getAllComments={getAllComments}></CommentCard>
     )))
+  }
+
+  function closeModal() {
+    // Fecha esse modal
+    props.setModalId(undefined);
+    const modal = document.getElementById("PostModal");
+    modal.style.display = 'none';
+  }
+
+  function formatDate(value) {
+    // Formata a data para ser exibida 
+    if (value) {
+    const date = value.split("-")
+    return `${date[2]}/${date[1]}/${date[0]}`
+    }
+  }
+
+
+  function goToProfile() {
+    // redireciona para o perfil de um outro usuario
+    const userId = modalData.user.id
+    props.showProfile(userId)
+    closeModal()
   }
 
   function deletePost() {
@@ -137,50 +187,10 @@ export default function ModalViewPost(props) {
       })
   }
 
-  const submitNewComment = (event) => {
-    if (event.key === 'Enter') {  // verifica se o botão apertado for o enter
-      if (Token) {
-        addNewComment()
-      }
-    }
-  }
-
-  function addNewComment() {
-    // Função que cria um novo comentario
-    if (getComment) {
-      const url = 'http://127.0.0.1:8000/comments/'
-      const form = new FormData();
-      form.append('comment', getComment);
-      form.append('postId', modalData.id)
-
-      const data = {
-        method: 'POST',
-        headers: { Authorization: 'Token ' + Token },
-        body: form
-      }
-      fetch(url, data)
-        .then(() => {
-          getAllComments()
-          setComment('')
-        })
-    }
-  }
-
-  function showComments() {
-    // Altera a visibilidade dos comentarios
-    getAllComments()
-
-    const img = document.getElementById("imgPrev")
-    const div_comment = document.getElementById("commentPrev")
-    img.style.display = img.style.display === 'none' ? 'block' : 'none';
-    div_comment.style.display = div_comment.style.display === 'none' ? 'flex' : 'none';
-  }
-
   useEffect(() => {
-    if( props.modalId !== undefined) {
+    if( props.modalId) {
       getModalData(props.modalId)
     }
-
   }, [props.modalId])
 
   return (
@@ -205,23 +215,24 @@ export default function ModalViewPost(props) {
         </div>
 
         <div className="modal-align-name">
-          <div className='align-nick'>
+          <div className='align-nick' onClick={goToProfile}>
             <img className="modal-user-img" src={modalData?.user.profile?.image} ></img>
             <a className="modal-username"> {modalData?.user.username} </a>
           </div>
 
           <div className="modal-align-btns">
             <button className='modal-btn' onClick={followUser} style={{ display: modalData?.your ? 'none' : 'block' }}>
-              {modalData?.user.follow ?
-                <FontAwesomeIcon icon={faUserMinus} /> :
-                <FontAwesomeIcon icon={faUserPlus} />}
+              {modalData?.following ?
+                <FontAwesomeIcon icon={faUserMinus} /> : <FontAwesomeIcon icon={faUserPlus} />
+              }
             </button>
 
             <button className='modal-btn' onClick={changeLike}>
               {props.data?.liked ?
                 <FontAwesomeIcon icon={faThumbsUp} /> :
                 <FontAwesomeIcon icon={faThumbsUp_r} />
-              }<a>{modalData?.likes.length}</a>
+              }
+              <a>{modalData?.likes.length}</a>
             </button>
 
             <button className='modal-btn' onClick={showComments}> <FontAwesomeIcon icon={faComment} />

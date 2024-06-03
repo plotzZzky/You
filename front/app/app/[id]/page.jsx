@@ -49,14 +49,12 @@ export default function App() {
     // Cria a pagina do perfil de um usuario
     const url = `http://127.0.0.1:8000/posts/user/${userId}/`
     baseReceivePosts(url).then((data) => {
-      console.log(data.user)
       createCards(data.posts, data.user)
     })
   }
 
   async function baseReceivePosts(url) {
     // Função base para buscar os posts no backend
-    console.log(Token)
     const data = {
       method: 'GET',
       headers: { Authorization: 'Token ' + Token },
@@ -91,7 +89,7 @@ export default function App() {
 
       <EditUser></EditUser>
 
-      <ModalViewPost updatePosts={createFolloweePage} modalId={modalId} setModalId={setModalId}></ModalViewPost>
+      <ModalViewPost updatePosts={createFolloweePage} modalId={modalId} setModalId={setModalId} showProfile={createProfilePage}></ModalViewPost>
       
       <NewPost getPosts={createFolloweePage}></NewPost>
     </div>

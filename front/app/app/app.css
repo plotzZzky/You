@@ -86,8 +86,7 @@
   padding: 5px;
   display: flex;
   gap: 0 10px;
-  border: 1px solid var(--color_accent);
-  background-color: #444444;
+  background-color: var(--color_accent);
 }
 
 .profile-img {
@@ -99,16 +98,19 @@
 }
 
 .profile-desc {
+  margin: 0.5vh 0 0;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 1vh 0;
 }
 
 .align-name {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .name {
@@ -117,13 +119,13 @@
 }
 
 .desc {
-  width: calc(100% - 5px);
-  height: 10vh;
+  width: calc(100% - 15px);
+  height: 12.5vh;
   margin-right: 5px;
-  padding: 2px;
+  padding: 5px;
   text-align: left;
   font-size: clamp(0.8em, 1vw, 1em);
-  border: 1px solid rgb(94, 94, 94);
+  border: 1px solid rgba(255, 255, 255, 0.281);
 }
 
 /* Modal */
@@ -155,6 +157,7 @@
   align-items: center;
   justify-content: center;
   gap: 0 5px;
+  cursor: pointer;
 }
 
 .align-nick * {

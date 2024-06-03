@@ -11,13 +11,13 @@ export default function Profile(props) {
 
   return(
     <div className="profile">
-      <img className="profile-img" src={`http://localhost:8000/${props.data.profile.image}`} alt="" />
+      <img className="profile-img" src={`http://localhost:8000/${props.data?.profile.image}`} alt="" />
       <div className="profile-desc">
         <div className="align-name">
           <span className="name"> {props.data.username} </span>
           <FontAwesomeIcon icon={faGears} className='app-icon' style={{cursor: 'pointer'}} onClick={showEditUser}/>
         </div>
-        <span className="desc"> {props.data.desc} </span>
+        <span className="desc"> {props.data.profile.desc} </span>
       </div>
     </div>
   )

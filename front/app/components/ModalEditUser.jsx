@@ -53,7 +53,7 @@ export default function EditUser(props) {
   }
 
   function clickInput() {
-    const input = document.getElementById("selectImgUser").click()
+    document.getElementById("selectImgUser").click()
   }
 
   function changeImage(event) {

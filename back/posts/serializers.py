@@ -9,6 +9,7 @@ class ModalSerializer(ModelSerializer):
     user = UserSerializer()
     comments = CommentSerializer(many=True)
     your = SerializerMethodField()
+    following = SerializerMethodField()
 
     class Meta:
         model = Post
@@ -17,11 +18,25 @@ class ModalSerializer(ModelSerializer):
     def get_your(self, obj):
         request = self.context.get('request')
         if request is not None:
-            return check_your(request, obj.user)
+            return check_if_your(request, obj.user)
+        return False
+
+    def get_following(self, obj):
+        request = self.context.get('request')
+        if request is not None:
+            return check_if_following(request, obj.user)
         return False
 
 
-def check_your(request, user):
+def check_if_following(request, user):
+    follows = request.user.profile.follows
+    if user in follows.all():
+        return True
+    else:
+        return False
+
+
+def check_if_your(request, user):
     result = True if request.user == user else False
     return result
 
