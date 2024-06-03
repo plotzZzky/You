@@ -9,11 +9,11 @@ import InputAnswer from "./inputs/inputAnswer";
 
 export default function EditUser(props) {
   const [getToken, setToken] = useAuth();
-  const [getData, setData] = useState({});
+  const [getData, setData] = useState();
 
   // Atributos
-  const [getUsername, setUsername] = useState(getData.username);
-  const [getEmail, setEmail] = useState(getData.email);
+  const [getUsername, setUsername] = useState();
+  const [getEmail, setEmail] = useState();
   const [getPassword1, setPassword1] = useState();
   const [getPassword2, setPassword2] = useState("")
   const [getImageUser, setImageUser] = useState();
@@ -47,8 +47,8 @@ export default function EditUser(props) {
       .then((data) => {
         setUsername(data.username)
         setEmail(data.email)
-        setQuestion(data.user.profile.question)
-        setFileUser(data.user.profile.image)
+        setQuestion(data.profile.question)
+        setFileUser(data.profile.image)
       })
   }
 

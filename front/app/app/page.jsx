@@ -7,65 +7,74 @@ import ModalViewPost from '@comps/ModalViewPost';
 import NewPost from '@comps/ModalNewPost';
 import PostCard from '@comps/postCard';
 import AppNavBar from '@comps/appNavbar';
+import Profile from '@comps/profile';
 
 
 export default function App() {
   const [Token, setToken] = useAuth();
   const router = useRouter();
-  const [Cards, setCards] = useState([]);
+  const [cardsPage, setCardsPage] = useState();
   const [modalId, setModalId] = useState();
 
   function checkLogin() {
     // Verifica se possui o token 
     if (Token !== null && typeof Token === 'string') {
-      receiveFolloweePosts()
+      createFolloweePage()
     } else {
       router.push("/login");
     }
   }
 
-  function baseReceivePosts(url) {
-    // Função base para buscar os posts no backend e executa a função que cria os cards
+  function showModal(value){
+    setModalId(value)
+  }
+
+  function createFolloweePage() {
+    // Cria a pagina com os posts dos followee
+    const url = "http://127.0.0.1:8000/posts/followee/"
+    baseReceivePosts(url).then((data) => {
+      createCards(data, null)
+    })
+  }
+
+  function createAllPostsPage() {
+    // Cria a pagina com todos os posts
+    const url = "http://127.0.0.1:8000/posts/"
+    baseReceivePosts(url).then((data) => {
+      createCards(data, null)
+    })
+  }
+
+  function createProfilePage(userId=0) {
+    // Cria a pagina do perfil de um usuario
+    const url = `http://127.0.0.1:8000/posts/user/${userId}/`
+    baseReceivePosts(url).then((data) => {
+      createCards(data.posts, data.user)
+    })
+  }
+
+  async function baseReceivePosts(url) {
+    // Função base para buscar os posts no backend
     const data = {
       method: 'GET',
       headers: { Authorization: 'Token ' + Token },
     }
 
-    fetch(url, data)
-      .then((res) => res.json())
-      .then((data) => {
-        createCards(data)
-      })
+    const res = await fetch(url, data);
+    return await res.json();
   }
 
-  function receiveAllPosts() {
-    // Função que busca os posts de todos os usuario
-    const url = "http://127.0.0.1:8000/posts/"
-    baseReceivePosts(url)
-  }
+  function createCards(data, userData) {
+    // Cria os cards da pagina
+    setCardsPage(
+      <div className="posts">
+        {userData? <Profile data={userData} ></Profile> : null}
 
-  function receiveFolloweePosts() {
-    // Função que busca os posts do followees(pessoas que voce segue)
-    const url = "http://127.0.0.1:8000/posts/followee/"
-    baseReceivePosts(url)
-  }
-
-  function receiveUserPosts(user_id=0) {
-    // Função que busca os posts de um usuario
-    const url = `http://127.0.0.1:8000/posts/user/${user_id}/`
-    baseReceivePosts(url)
-  }
-
-  function createCards(value) {
-    // Cria os cards das postagens 
-    setCards(
-      value.map((data, index) => (
-        <PostCard key={index} data={data} update={receiveFolloweePosts} showModal={() => showModal(data.id)}></PostCard>
-      )));
-  }
-
-  function showModal(value){
-    setModalId(value)
+        {data.map((data, index) => (
+          <PostCard key={index} data={data} update={createFolloweePage} showModal={() => showModal(data.id)}></PostCard>
+        ))}
+      </div>
+    )
   }
 
   useEffect(() => {
@@ -74,17 +83,15 @@ export default function App() {
 
   return (
     <div className='page'>
-      <AppNavBar recievePosts={baseReceivePosts} yourPosts={receiveUserPosts}></AppNavBar>
+      <AppNavBar followeePage={createFolloweePage} allPostsPage={createAllPostsPage} profilePage={createProfilePage} ></AppNavBar>
 
-      <div className="posts">
-        {Cards}
-      </div>
+      {cardsPage}
 
       <EditUser></EditUser>
 
-      <ModalViewPost updatePosts={receiveFolloweePosts} modalId={modalId} setModalId={setModalId}></ModalViewPost>
+      <ModalViewPost updatePosts={createFolloweePage} modalId={modalId} setModalId={setModalId} showProfile={createProfilePage}></ModalViewPost>
       
-      <NewPost getPosts={receiveFolloweePosts}></NewPost>
+      <NewPost getPosts={createFolloweePage}></NewPost>
     </div>
   )
 }

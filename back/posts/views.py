@@ -21,7 +21,6 @@ class PostClassView(ModelViewSet):
         try:
             instance = self.get_object()
             serializer = ModalSerializer(instance, context={'request': request})
-            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except (TypeError, ValueError, ObjectDoesNotExist):
             return Response({'error': 'Post não encontrado'}, status=status.HTTP_404_NOT_FOUND)
@@ -44,7 +43,7 @@ class PostClassView(ModelViewSet):
             user = User.objects.get(pk=user_id)
         posts = Post.objects.filter(user=user).order_by("-id")
         serializer = self.get_serializer(posts, many=True)
-        user_serializer = UserSerializer(user, many=False)
+        user_serializer = UserSerializer(user, many=False, context={'request': request})
         result = {'posts': serializer.data, 'user': user_serializer.data}
         return Response(result, status=status.HTTP_200_OK)
 
