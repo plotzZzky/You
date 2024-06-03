@@ -120,12 +120,23 @@
 
 .desc {
   width: calc(100% - 15px);
-  height: 12.5vh;
+  height: 9vh;
   margin-right: 5px;
   padding: 5px;
   text-align: left;
   font-size: clamp(0.8em, 1vw, 1em);
   border: 1px solid rgba(255, 255, 255, 0.281);
+}
+
+.align-follow {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.follow-icon {
+  width: 32px;
+  height: 32px;
 }
 
 /* Modal */

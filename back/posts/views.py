@@ -7,8 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
-from .serializers import PostSerializer, ModalSerializer
-from users.serializer import UserSerializer
+from .serializers import PostSerializer, ModalSerializer, UserProfileSerializer
 
 
 class PostClassView(ModelViewSet):
@@ -43,8 +42,9 @@ class PostClassView(ModelViewSet):
             user = User.objects.get(pk=user_id)
         posts = Post.objects.filter(user=user).order_by("-id")
         serializer = self.get_serializer(posts, many=True)
-        user_serializer = UserSerializer(user, many=False, context={'request': request})
+        user_serializer = UserProfileSerializer(user, context={'request': request})
         result = {'posts': serializer.data, 'user': user_serializer.data}
+        print(user_serializer.data)
         return Response(result, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='followee')
