@@ -31,11 +31,11 @@ export default function EditUser(props) {
 
   function closeModal() {
     // Fecha este modal
-    const modal = document.getElementById("profileView");
+    const modal = document.getElementById("editUser");
     modal.style.display = 'none'
   }
   
-  function getUserData() {
+  function receiveUserData() {
     // Recebe os dados do perfil do usuario
     const url = `http://127.0.0.1:8000/users/profile/`
     const info = {
@@ -67,8 +67,8 @@ export default function EditUser(props) {
     reader.readAsDataURL(file);
   }
 
-  function editUser() {
-    // Salva no back as alterações do perfil do usuario
+  function sendUpdatedUser() {
+    //Envia para o back as alterações do perfil do usuario
     const url = 'http://127.0.0.1:8000/users/update/'
 
     const formData = new FormData();
@@ -94,17 +94,18 @@ export default function EditUser(props) {
     .then((data) => {
       const text = document.getElementById("EditTip")
       text.innerHTML = data.msg
+      props.updateProfile()
     })
   }
 
   useEffect(() => {
-    getUserData()
+    receiveUserData()
   }, [])
 
   return (
-    <div className="modal-background" id='profileView' style={{ display: 'none' }} onClick={closeModal}>
+    <div className="modal-background" id='editUser' style={{ display: 'none' }} onClick={closeModal}>
       <div className="div-edit-user" onClick={(e) => e.stopPropagation()}>
-        <p className='login-title'> Editar suas informações </p>
+        <p className='login-title'> Edite seu usuario </p>
         <div className='align-input'>
           <div>
             <img className='img-user-preview' onClick={clickInput} src={getFileUser}></img>
@@ -119,7 +120,7 @@ export default function EditUser(props) {
           <InputAnswer answer={setAnswer} valid={AnswerValid} setValid={setAnswerValid} tip='EditTip' ></InputAnswer>
         </div>
         <p className='login-tip' id='EditTip'> </p>
-        <button className='btn-mini' onClick={editUser}> Salvar </button>
+        <button className='btn-mini' onClick={sendUpdatedUser}> Salvar </button>
       </div>
     </div>
   )

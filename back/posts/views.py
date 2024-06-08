@@ -44,7 +44,6 @@ class PostClassView(ModelViewSet):
         serializer = self.get_serializer(posts, many=True)
         user_serializer = UserProfileSerializer(user, context={'request': request})
         result = {'posts': serializer.data, 'user': user_serializer.data}
-        print(user_serializer.data)
         return Response(result, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='followee')

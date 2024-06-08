@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGears} from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faGears} from '@fortawesome/free-solid-svg-icons'
 
 export default function Profile(props) {
-  const router = useRouter();
   const [getCards, setCards] = useState();
 
   function showEditUser() {
     // Mostra o modal para editar o perfil do usuario
-    const newModal = document.getElementById("profileView")
+    const newModal = document.getElementById("editUser")
+    newModal.style.display = "flex"
+  }
+
+  function showEditDesc() {
+    // Mostra o modal para editar o perfil do usuario
+    const newModal = document.getElementById("editDesc")
     newModal.style.display = "flex"
   }
 
@@ -25,12 +29,17 @@ export default function Profile(props) {
   }
 
   function goFolloweeProfile(userId) {
-    router.push(`/app/${userId}`);
+    props.showProfile(userId)
   }
 
-  const EDITICON = () => {
+  const USEREDITICON = () => {
     return props.data?.me?
-    <FontAwesomeIcon icon={faGears} className='app-icon' style={{cursor: 'pointer'}} onClick={showEditUser}/> : null
+      <FontAwesomeIcon className='app-icon' icon={faGears} style={{cursor: 'pointer'}} onClick={showEditUser}/> : null
+  }
+
+  const DESCEDITICON = () => {
+    return props.data?.me?
+      <FontAwesomeIcon className='app-icon' icon={faEdit} style={{cursor: 'pointer'}} onClick={showEditDesc}/> : null
   }
 
   useEffect(() => {
@@ -44,7 +53,10 @@ export default function Profile(props) {
       <div className="profile-desc">
         <div className="align-name">
           <span className="name"> {props.data.username} </span>
-          {EDITICON()}
+          <div style={{display: 'flex', gap: '15px'}}>
+            {DESCEDITICON()}
+            {USEREDITICON()}
+          </div>
         </div>
 
         <span className="desc"> {props.data.profile.desc} </span>

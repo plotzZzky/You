@@ -97,6 +97,7 @@ class UpdateProfile(ModelViewSet):
             image = request.data.get('image', None)
             question = request.data.get('question', None)
             answer = request.data.get('answer', None)
+            desc = request.data.get("desc", None)
 
             if image is not None:
                 imghdr.what(None, image.read())
@@ -116,6 +117,8 @@ class UpdateProfile(ModelViewSet):
             if password == pwd:
                 if validate_password(password, pwd):
                     user.set_password(password)
+            if desc:
+                user.profile.desc = desc
             else:
                 user.save()
                 user.profile.save()
@@ -137,6 +140,7 @@ class YourProfile(ModelViewSet):
         try:
             user = request.user
             serializer = self.get_serializer(user, many=False, context={'request': request})
+            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({'error': 'Usuario não existe!'}, status=status.HTTP_401_UNAUTHORIZED)

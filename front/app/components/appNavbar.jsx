@@ -7,7 +7,7 @@ import { faUser, faImage, faMagnifyingGlass, faSquarePlus, faRightFromBracket, f
 
 export default function AppNavBar(props) {
   const router = useRouter();
-  const [user, setUser] = useAuth();
+  const [Token, updateToken] = useAuth();
 
   function goHome(){
     router.push('/')
@@ -20,8 +20,8 @@ export default function AppNavBar(props) {
   }
 
   function logOut() {
-    setUser(null);
-    router.push('/');
+    updateToken(null);
+    router.push('/login');
   }
 
   return (

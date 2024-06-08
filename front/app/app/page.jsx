@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@comps/authContext';
 import EditUser from '@comps/ModalEditUser';
 import ModalViewPost from '@comps/ModalViewPost';
+import EditDesc from '@comps/ModalEditDesc';
 import NewPost from '@comps/ModalNewPost';
 import PostCard from '@comps/postCard';
 import AppNavBar from '@comps/appNavbar';
@@ -68,7 +69,7 @@ export default function App() {
     // Cria os cards da pagina
     setCardsPage(
       <div className="posts">
-        {userData? <Profile data={userData} ></Profile> : null}
+        {userData? <Profile data={userData} showProfile={createProfilePage}></Profile> : null}
 
         {data.map((data, index) => (
           <PostCard key={index} data={data} update={createFolloweePage} showModal={() => showModal(data.id)}></PostCard>
@@ -87,7 +88,9 @@ export default function App() {
 
       {cardsPage}
 
-      <EditUser></EditUser>
+      <EditUser updateProfile={createProfilePage}></EditUser>
+
+      <EditDesc updateProfile={createProfilePage}></EditDesc>
 
       <ModalViewPost updatePosts={createFolloweePage} modalId={modalId} setModalId={setModalId} showProfile={createProfilePage}></ModalViewPost>
       

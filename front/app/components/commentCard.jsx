@@ -21,6 +21,11 @@ export default function CommentCard(props) {
       })
   }
 
+  const DELETEBTN = () => {
+    return props.data?.your ?
+    <a className="post-delete" onClick={delComment}> <FontAwesomeIcon icon={faTrash} /></a> : null
+  }
+
   return (
     <div className='comment-card'>
       <a className="comment-username"> {props.data?.username} </a>
@@ -29,10 +34,7 @@ export default function CommentCard(props) {
       </div>
       <div className="post-align-btns">
         <a className="date"> {props.formatDate(props.data?.date)} </a>
-        {props.data?.your ?
-          <a className="post-delete" onClick={delComment}> <FontAwesomeIcon icon={faTrash} /></a> :
-          ''
-        }
+        {DELETEBTN()}
       </div>
     </div>
   )

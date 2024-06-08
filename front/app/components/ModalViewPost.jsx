@@ -187,6 +187,39 @@ export default function ModalViewPost(props) {
       })
   }
 
+  // Btns
+  const FOLLOWBTN = () => {
+    return !modalData?.me?
+      <button className='modal-btn' onClick={followUser}>
+        {modalData?.following?
+          <FontAwesomeIcon icon={faUserMinus}/> : <FontAwesomeIcon icon={faUserPlus}/>
+        }
+      </button>
+    : null
+  }
+
+  const LIKEBTN = () => {
+    return (
+      <button className='modal-btn' onClick={changeLike}>
+        {props.data?.liked? <FontAwesomeIcon icon={faThumbsUp}/> : <FontAwesomeIcon icon={faThumbsUp_r}/>}
+        <a>{modalData?.likes.length}</a>
+      </button>
+    )
+  }
+
+  const COMMENTBTN = () => {
+    return (
+      <button className='modal-btn' onClick={showComments}> <FontAwesomeIcon icon={faComment} />
+        <a> {modalData?.comments.length} </a>
+      </button>
+    )
+  }
+
+  const DELETEBTN = () => {
+    return modalData?.me?
+      <button className="modal-btn" onClick={deletePost}> <FontAwesomeIcon icon={faTrash} /></button> : null
+  }
+
   useEffect(() => {
     if( props.modalId) {
       getModalData(props.modalId)
@@ -215,36 +248,17 @@ export default function ModalViewPost(props) {
         </div>
 
         <div className="modal-align-name">
+          
           <div className='align-nick' onClick={goToProfile}>
             <img className="modal-user-img" src={modalData?.user.profile.image} ></img>
             <a className="modal-username"> {modalData?.user.username} </a>
           </div>
 
           <div className="modal-align-btns">
-            <button className='modal-btn' onClick={followUser} style={{ display: modalData?.your ? 'none' : 'block' }}>
-              {
-                modalData?.following?
-                <FontAwesomeIcon icon={faUserMinus} /> : <FontAwesomeIcon icon={faUserPlus} />
-              }
-            </button>
-
-            <button className='modal-btn' onClick={changeLike}>
-              {
-                props.data?.liked ?
-                <FontAwesomeIcon icon={faThumbsUp} /> :
-                <FontAwesomeIcon icon={faThumbsUp_r} />
-              }
-              <a>{modalData?.likes.length}</a>
-            </button>
-
-            <button className='modal-btn' onClick={showComments}> <FontAwesomeIcon icon={faComment} />
-              <a> {modalData?.comments.length} </a>
-            </button>
-
-            {
-              modalData?.your ?
-              <button className="modal-btn" onClick={deletePost}> <FontAwesomeIcon icon={faTrash} /></button> : ''
-            }
+            {FOLLOWBTN()}
+            {LIKEBTN()}
+            {COMMENTBTN()}
+            {DELETEBTN()}
           </div>
         </div>
       </div>

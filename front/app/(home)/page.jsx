@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@comps/authContext';
 
 
-export default function Home() {
+export default function HomePage() {
   const [Token, setToken] = useAuth();
   const router = useRouter();
 
@@ -30,8 +30,8 @@ export default function Home() {
     },
   ];
 
-  // Cria os items do faq
   const faqItems = () => {
+    // Cria os items do faq
     return FAQ.map((data, index) => (
       <details key={index}>
         <summary> {data.question} </summary>
@@ -55,7 +55,7 @@ export default function Home() {
           <div className='div-align-text-home'>
             <div>
               <h1 className='big-title'> Bem-vindo à You! </h1>
-              <h2> A You é a plataforma para compartilhar o que importa na sua via com amigos, familiares e o mundo... </h2>
+              <h2> A You é a plataforma para compartilhar o que importa na sua vida com amigos, familiares e o mundo... </h2>
               <button onClick={goToLogin}> Fazer parte!</button>
             </div>
           </div>
