@@ -9,21 +9,22 @@
   z-index: 999;
 }
 
-.align-app-bar {
+.app-bar div {
   display: flex;
   flex: 0 1 33.3%;
 }
 
-.app-icon-div {
+.app-bar span {
   display: flex;
   flex-direction: column;
   position: relative;
   padding: 4px 1.2vw 0;
+  font-size: clamp(0.7em, 0.6vw, 1em);
   cursor: pointer;
   z-index: 1;
 }
 
-.app-icon-div::before {
+.app-bar span::before {
   content: '';
   position: absolute;
   inset: 0 0.5vw;
@@ -36,18 +37,13 @@
   z-index: -1;
 }
 
-.app-icon-div:hover::before {
+.app-bar span:hover::before {
   transform-origin: bottom;
   transform: scaleY(1);
 }
 
-
-.app-icon {
-  font-size: clamp(0.9em, 1.8vw, 1.2em);
-}
-
-.app-name {
-  font-size: clamp(0.7em, 0.6vw, 1em);
+.app-icon * {
+  font-size: clamp(1em, 2vw, 1.5em);
 }
 
 /* Posts */

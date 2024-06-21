@@ -26,41 +26,34 @@ export default function AppNavBar(props) {
 
   return (
     <nav className="app-bar">
-
-      <div className='align-app-bar'>
-        <div className='app-icon-div' onClick={goHome}>
-          <FontAwesomeIcon icon={faHome} className='app-icon' />
-          <a className='app-name'> Inicio </a>
-        </div>
+      <div>
+        <span onClick={goHome}>
+          <FontAwesomeIcon icon={faHome} className='app-icon'/> Inicio
+        </span>
       </div>
 
-      <div className='align-app-bar' style={{justifyContent: 'center'}}>
-        <div className='app-icon-div' onClick={showNewPostModal}>
-          <FontAwesomeIcon icon={faSquarePlus} className='app-icon' />
-          <a className='app-name'> Novo </a>
-        </div>
+      <div style={{justifyContent: 'center'}}>
+        <span onClick={showNewPostModal}>
+          <FontAwesomeIcon icon={faSquarePlus} className='app-icon' /> Novo
+        </span>
 
-        <div className='app-icon-div' onClick={props.followeePage}>
-          <FontAwesomeIcon icon={faImage} className='app-icon' />
-          <a className='app-name'> Amigos </a>
-        </div>
+        <span onClick={props.followeePage}>
+          <FontAwesomeIcon icon={faImage} className='app-icon' /> Amigos
+        </span>
 
-        <div className='app-icon-div' onClick={props.allPostsPage}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} className='app-icon' />
-          <a className='app-name'> Horizonte </a>
-        </div>
+        <span onClick={props.allPostsPage}>
+          <FontAwesomeIcon icon={faMagnifyingGlass} className='app-icon' /> Horizonte
+        </span>
 
-        <div className='app-icon-div' onClick={e => props.profilePage(0)}>
-          <FontAwesomeIcon icon={faUser} className='app-icon' />
-          <a className='app-name'> Perfil </a>
-        </div>
+        <span onClick={e => props.profilePage(0)}>
+          <FontAwesomeIcon icon={faUser} className='app-icon' /> Perfil
+        </span>
       </div>
 
-      <div className='align-app-bar' style={{justifyContent: 'flex-end'}}>
-        <div className='app-icon-div' onClick={logOut}>
-          <FontAwesomeIcon icon={faRightFromBracket} className='app-icon' />
-          <a className='app-name'> Sair </a>
-        </div>
+      <div style={{justifyContent: 'flex-end'}}>
+        <span onClick={logOut}>
+          <FontAwesomeIcon icon={faRightFromBracket} className='app-icon' /> Sair
+        </span>
       </div>
     </nav>
   )
