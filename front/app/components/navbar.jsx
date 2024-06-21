@@ -13,7 +13,7 @@ export default function NavBar() {
 
   function openResponsiveMenu() {
     // Função que abre o menu no modo responsivo
-    const navbar = document.getElementsByClassName("menu")[0];
+    const navbar = document.getElementById('menu');
     if (navbar.className == "menu") {
       navbar.classList.add("responsive");
     } else {
@@ -23,36 +23,36 @@ export default function NavBar() {
 
   function closeResponsiveMenu() {
     // Função que fecha o menu no modo responsivo
-    const navbar = document.getElementsByClassName("menu")[0];
+    const navbar = document.getElementById("menu");
     navbar.classList.remove("responsive");
   };
 
   // Criam os item na navbar dependendo da pagina acessada
   const ABOUT = () => {
     return getPath === '/' ? (
-      <div className="menu-item" onClick={goAbout}>
-        <a><FontAwesomeIcon icon={faUsers} className='icon-menu' /> Sobre </a>
-      </div>
+      <span onClick={goAbout}>
+        <FontAwesomeIcon icon={faUsers}/> Sobre
+      </span>
     ) : null
   };
 
   const FAQ = () => {
     return getPath === '/' ? (
-      <div className="menu-item" onClick={goFaq}>
-        <a><FontAwesomeIcon icon={faQuestion} className='icon-menu' /> Dúvidas </a>
-      </div>
+      <span onClick={goFaq}>
+      <FontAwesomeIcon icon={faQuestion}/> Dúvidas
+      </span>
     ) : null
   };
 
   const LOGIN = () => {
     return !getToken? (
-      <div className="menu-item" onClick={goApp}>
-        <a><FontAwesomeIcon icon={faUser} className='icon-menu' /> Entrar </a>
-      </div>
+      <span onClick={goApp}>
+        <FontAwesomeIcon icon={faUser}/> Entrar
+      </span>
     ) : (
-      <div className="menu-item" onClick={goApp}>
-        <a><FontAwesomeIcon icon={faImage} className='icon-menu' /> App </a>
-      </div>
+      <span onClick={goApp}>
+        <FontAwesomeIcon icon={faImage}/> App
+      </span>
     )
   };
 
@@ -88,24 +88,22 @@ export default function NavBar() {
 
   return (
     <nav>
-      <div className='navbar-align'>
-        <div className="menu" id="menu">
+      <div className="menu" id="menu">
 
-          <a className="menu-icon" onClick={openResponsiveMenu}>
-            <FontAwesomeIcon icon={faBars} />
-          </a>
+        <span id='menuBtn' onClick={openResponsiveMenu}>
+          <FontAwesomeIcon icon={faBars} />
+        </span>
 
-          <div className="menu-item" onClick={goHome}>
-            <a><FontAwesomeIcon icon={faHome} className='icon-menu' /> Inicio </a>
-          </div>
+        <span onClick={goHome}>
+          <FontAwesomeIcon icon={faHome}/> Inicio
+        </span>
 
-          {ABOUT()}
+        {ABOUT()}
 
-          {FAQ()}
+        {FAQ()}
 
-          {LOGIN()}
+        {LOGIN()}
 
-        </div>
       </div>
     </nav>
   )

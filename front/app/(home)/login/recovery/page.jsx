@@ -86,11 +86,11 @@ export default function Recovery() {
       <div className='page'>
         <div className="login-page">
 
-          <div className='login-div' id='signupTab'>
-            <p className='login-title'> Recuperar senha </p>
+          <div id='signupTab'>
+            <h2> Recuperar senha </h2>
 
             <div className='align-input'>
-              <p> {question} </p>
+              <span> {question} </span>
               <InputUser username={setUsername} valid={UserValid} setValid={setUserValid} tip='recoveryTip' action={receiveQuestionTimer}></InputUser>
               <div style={{visibility: getVisibility? 'visible' : 'hidden'}}>
                 <InputAnswer answer={setAnswer} valid={AnswerValid} setValid={setAnswerValid} tip='recoveryTip'></InputAnswer>
@@ -99,11 +99,11 @@ export default function Recovery() {
               </div>
             </div>
 
-            <a className='login-tip' id='recoveryTip'> </a>
+            <h3 id='recoveryTip'> </h3>
 
-            <button className='btn btn-login' onClick={recoveyFunc}> Recuperar </button>
+            <button className='btn-login' onClick={recoveyFunc}> Recuperar </button>
 
-            <p className='login-link' onClick={redirectToLogin}> Entrar </p>
+            <p onClick={redirectToLogin}> Entrar </p>
           </div>
         </div>
       </div>

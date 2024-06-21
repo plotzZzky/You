@@ -58,8 +58,8 @@ export default function Login() {
     // Alterna entre a pagina de login e registro
     const login = document.getElementById('loginTab');
     const signup = document.getElementById('signupTab');
-    login.style.display = getLogin? 'none' : 'flex'
-    signup.style.display = getLogin? 'flex' : 'none'
+    login.style.display = getLogin? 'none' : 'block'
+    signup.style.display = getLogin? 'block' : 'none'
     setLogin(getLogin? false : true)
   }
 
@@ -155,24 +155,24 @@ export default function Login() {
     <>
       <div className='page'>
         <div className="login-page">
-          <div className='login-div' id='loginTab'>
-            <p className='login-title'> Bem vindo de volta!</p>
+          <div id='loginTab'>
+            <h2> Bem vindo de volta!</h2>
 
             <div className='align-input'>
               <InputUser username={setUsername} valid={UserValid} setValid={setUserValid} tip='LoginTip'></InputUser>
               <InputPwd password={setPassword} valid={Pwd1Valid} setValid={setPwd1Valid} placeholder="Digite a senha" tip='LoginTip'></InputPwd>
             </div>
 
-            <a className='login-tip' id='LoginTip'> </a>
+            <h3 id='LoginTip'> </h3>
 
-            <button className='btn btn-login' onClick={checkIfLoginIsvalid}> Entrar </button>
+            <button className='btn-login' onClick={checkIfLoginIsvalid}> Entrar </button>
 
-            <p className='login-link' onClick={showLogin}> Cadastre-se </p>
-            <p className='login-link' onClick={showRecovery}> Recuperar senha </p>
+            <p onClick={showLogin}> Cadastre-se </p>
+            <p onClick={showRecovery}> Recuperar senha </p>
           </div>
 
-          <div className='login-div' id='signupTab' style={{display: 'none'}}>
-            <p className='login-title'> Junte-se a nós! </p>
+          <div id='signupTab' style={{display: 'none'}}>
+            <h2> Junte-se a nós! </h2>
 
             <div className='align-input'>
               <div>
@@ -189,12 +189,12 @@ export default function Login() {
 
             </div>
 
-            <a className='login-tip' id='SignTip'> </a>
+            <h3 id='SignTip'> </h3>
 
-            <button className='btn btn-login' onClick={checkIfSignIsValid}> Cadastrar </button>
+            <button className='btn-login' onClick={checkIfSignIsValid}> Cadastrar </button>
 
-            <p className='login-link' onClick={showLogin}> Entrar </p>
-            <p className='login-link' onClick={showRecovery}> Recuperar senha </p>
+            <p onClick={showLogin}> Entrar </p>
+            <p onClick={showRecovery}> Recuperar senha </p>
           </div>
         </div>
       </div>

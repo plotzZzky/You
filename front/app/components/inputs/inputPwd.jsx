@@ -37,6 +37,19 @@ export default function InputPwd(props) {
     return char && digit;
   }
 
+  const EYESICON = () => {
+    return pwdVisible? 
+    <FontAwesomeIcon icon={faEyeSlash}></FontAwesomeIcon>
+    : <FontAwesomeIcon icon={faEye}></FontAwesomeIcon>
+  }
+
+  const ICON = () => {
+    return props.valid ?
+    <FontAwesomeIcon icon={faCheck} className='icon-input-validate' />
+    :<FontAwesomeIcon icon={faX} className='icon-input' />
+  }
+
+
   return (
     <div className='div-input'>
       <input
@@ -47,17 +60,11 @@ export default function InputPwd(props) {
       </input>
 
       <div className='pwd-visible' onClick={changePwdVisibility}>
-        { pwdVisible? 
-          <FontAwesomeIcon icon={faEyeSlash}></FontAwesomeIcon> :
-          <FontAwesomeIcon icon={faEye}></FontAwesomeIcon>
-        }
+        {EYESICON()}
       </div>
 
       <div className='input-div-icon'>
-        {props.valid ?
-          <FontAwesomeIcon icon={faCheck} className='icon-input-validate' /> :
-          <FontAwesomeIcon icon={faX} className='icon-input' />
-        }
+        {ICON()}
       </div>
     </div>
   )

@@ -140,7 +140,6 @@ class YourProfile(ModelViewSet):
         try:
             user = request.user
             serializer = self.get_serializer(user, many=False, context={'request': request})
-            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({'error': 'Usuario não existe!'}, status=status.HTTP_401_UNAUTHORIZED)
