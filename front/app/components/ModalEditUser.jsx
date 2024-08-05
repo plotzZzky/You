@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "./authContext";
 import InputPwd from './inputs/inputPwd'
 import InputEmail from './inputs/inputEmail'
 import InputUser from './inputs/inputUser'
@@ -7,11 +8,12 @@ import InputAnswer from "./inputs/inputAnswer";
 
 
 export default function EditUser(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
-  const [getData, setData] = useState({});
+  const [getToken, setToken] = useAuth();
+  const [getData, setData] = useState();
 
-  const [getUsername, setUsername] = useState(getData.username);
-  const [getEmail, setEmail] = useState(getData.email);
+  // Atributos
+  const [getUsername, setUsername] = useState();
+  const [getEmail, setEmail] = useState();
   const [getPassword1, setPassword1] = useState();
   const [getPassword2, setPassword2] = useState("")
   const [getImageUser, setImageUser] = useState();
@@ -27,15 +29,16 @@ export default function EditUser(props) {
   const [QuestionValid, setQuestionValid] = useState(false)
   const [AnswerValid, setAnswerValid] = useState(false)
 
-  // Fecha o modal
   function closeModal() {
-    let modal = document.getElementById("profileView");
+    // Fecha este modal
+    const modal = document.getElementById("editUser");
     modal.style.display = 'none'
   }
   
-  function getUserInfos() {
-    let url = `http://127.0.0.1:8000/users/profile/`
-    let info = {
+  function receiveUserData() {
+    // Recebe os dados do perfil do usuario
+    const url = `http://127.0.0.1:8000/users/profile/`
+    const info = {
       method: 'GET',
       headers: { Authorization: 'Token ' + getToken }
     }
@@ -50,7 +53,7 @@ export default function EditUser(props) {
   }
 
   function clickInput() {
-    const input = document.getElementById("selectImgUser").click()
+    document.getElementById("selectImgUser").click()
   }
 
   function changeImage(event) {
@@ -64,8 +67,9 @@ export default function EditUser(props) {
     reader.readAsDataURL(file);
   }
 
-  function editUser() {
-    let url = 'http://127.0.0.1:8000/users/update/'
+  function sendUpdatedUser() {
+    //Envia para o back as alterações do perfil do usuario
+    const url = 'http://127.0.0.1:8000/users/update/'
 
     const formData = new FormData();
     formData.set('enctype', 'multipart/form-data');
@@ -90,17 +94,18 @@ export default function EditUser(props) {
     .then((data) => {
       const text = document.getElementById("EditTip")
       text.innerHTML = data.msg
+      props.updateProfile()
     })
   }
 
   useEffect(() => {
-    getUserInfos()
+    receiveUserData()
   }, [])
 
   return (
-    <div className="modal-background" id='profileView' style={{ display: 'none' }} onClick={closeModal}>
+    <div className="modal-background" id='editUser' style={{ display: 'none' }} onClick={closeModal}>
       <div className="div-edit-user" onClick={(e) => e.stopPropagation()}>
-        <p className='login-title'> Editar suas informações </p>
+        <p className='login-title'> Edite seu usuario </p>
         <div className='align-input'>
           <div>
             <img className='img-user-preview' onClick={clickInput} src={getFileUser}></img>
@@ -115,7 +120,7 @@ export default function EditUser(props) {
           <InputAnswer answer={setAnswer} valid={AnswerValid} setValid={setAnswerValid} tip='EditTip' ></InputAnswer>
         </div>
         <p className='login-tip' id='EditTip'> </p>
-        <button className='btn-mini' onClick={editUser}> Salvar </button>
+        <button className='btn-mini' onClick={sendUpdatedUser}> Salvar </button>
       </div>
     </div>
   )

@@ -1,48 +1,147 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faThumbsUp, faCaretRight, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faThumbsUp, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp as faThumbsUp_r } from '@fortawesome/free-regular-svg-icons'
 import CommentCard from './commentCard'
 
 
 export default function ModalViewPost(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const router = useRouter();
+  const [Token, setToken] = useAuth();
+  const [modalData, setModalData] = useState();
   const [getCards, setCards] = useState([])
-
   const [getComment, setComment] = useState("");
 
-  // Fecha esse modal
-  function closeModal() {
-    const modal = document.getElementById("PostModal");
-    modal.style.display = 'none'
+  function getModalData(postId) {
+    // Busca informações de um post 
+    const url = `http://127.0.0.1:8000/posts/${postId}/`
+
+    const data = {
+      method: 'GET',
+      headers: { Authorization: 'Token ' + Token },
+    }
+
+    fetch(url, data)
+      .then((res) => res.json())
+      .then((data) => {
+        setModalData(data)
+      })
+      .then(() => changeVisiblityModalDivs())
   }
 
-  // Formata a data para ser exibida
+  function changeVisiblityModalDivs() {
+    // Sempre que abrir o modal exibe a imagem e ocualt os comentarios
+    const modal = document.getElementById("PostModal")
+    const modalVisibility = modal.style.display
+    
+    if (modalVisibility !== 'flex') {
+    const img = document.getElementById("imgPrev")
+    const commentPrev = document.getElementById("commentPrev")
+
+    modal.style.display = "flex"
+    img.style.display = 'block';
+    commentPrev.style.display = 'none';
+    }
+  }
+
+  const submitNewComment = (event) => {
+    // verifica se o botão apertado for o enter e envia o comentario para o backend
+    if (event.key === 'Enter') {
+      if (Token) {
+        addNewComment()
+      }
+    }
+  }
+
+  function addNewComment() {
+    // Função que cria um novo comentario
+    if (getComment) {
+      const url = 'http://127.0.0.1:8000/comments/'
+      const form = new FormData();
+      form.append('comment', getComment);
+      form.append('postId', modalData.id)
+
+      const data = {
+        method: 'POST',
+        headers: { Authorization: 'Token ' + Token },
+        body: form
+      }
+      fetch(url, data)
+        .then(() => {
+          getAllComments()
+          setComment('')
+        })
+    }
+  }
+
+  function showComments() {
+    // Altera a visibilidade da pagina de comentarios
+    getAllComments()
+
+    const img = document.getElementById("imgPrev")
+    const div_comment = document.getElementById("commentPrev")
+    img.style.display = img.style.display === 'none' ? 'block' : 'none';
+    div_comment.style.display = div_comment.style.display === 'none' ? 'flex' : 'none';
+  }
+
+  function getAllComments(){
+    // Busca os commentarios no backend
+    const postId = modalData.id
+    const url = `http://127.0.0.1:8000/comments/${postId}/`
+
+    const data = {
+      method: 'GET',
+      headers: { Authorization: 'Token ' + Token}
+    }
+
+    fetch(url, data)
+      .then((res) => res.json())
+      .then((data) => {
+        createCards(data)
+      })
+  }
+
+  function createCards(value) {
+    // Cria os cards dos comentarios 
+    setCards(
+      value.map((data, index) => (
+        <CommentCard key={index} data={data} formatDate={formatDate} getAllComments={getAllComments}></CommentCard>
+    )))
+  }
+
+  function closeModal() {
+    // Fecha esse modal
+    props.setModalId(undefined);
+    const modal = document.getElementById("PostModal");
+    modal.style.display = 'none';
+  }
+
   function formatDate(value) {
+    // Formata a data para ser exibida 
     if (value) {
     const date = value.split("-")
     return `${date[2]}/${date[1]}/${date[0]}`
     }
   }
 
-  // Cria os cards dos comentarios 
-  function createCards() {
-    if (props.data.comments) {
-      setCards(
-        props.data.comments.map((data, index) => (
-          <CommentCard key={index} data={data} updateModal={() => props.updateModal(props.data.id)} formatDate={formatDate}></CommentCard>
-        )))
-    }
+
+  function goToProfile() {
+    // redireciona para o perfil de um outro usuario
+    const userId = modalData.user.id
+    props.showProfile(userId)
+    closeModal()
   }
 
-  // Deleta esse post
   function deletePost() {
-    const postId = props.data.id
-    const url = `http://127.0.0.1:8000/post/${postId}/`
+    // Deleta esse post
+    const postId = modalData.id
+    const url = `http://127.0.0.1:8000/posts/${postId}/`
 
     const data = {
       method: 'DELETE',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + Token },
     }
 
     fetch(url, data)
@@ -52,129 +151,114 @@ export default function ModalViewPost(props) {
       })
   }
 
-  // Função para dar like ou dislike
   function changeLike() {
+    // Função para dar like ou dislike
     const url = 'http://127.0.0.1:8000/like/'
 
     const formData = new FormData();
-    formData.append('id', props.data.id);
+    formData.append('id', modalData.id);
 
     const data = {
       method: 'POSt',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + Token },
       body: formData
     }
     fetch(url, data)
       .then(() => {
-        props.updateModal(props.data.id)
+        getModalData(props.modalId)
       })
   }
 
-  // Função para dar follow ou unfollow
   function followUser() {
+    // Função para dar follow ou unfollow
     const url = 'http://127.0.0.1:8000/follow/'
 
     const form = new FormData();
-    form.append('id', props.data.user.id);
+    form.append('id', modalData.user.id);
 
     const data = {
       method: 'POST',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + Token },
       body: form
     }
     fetch(url, data)
       .then(() => {
-        props.updateModal(props.data.id)
-        props.updatePosts()
+        getModalData(props.modalId)
       })
   }
 
-  // Função que cria um novo comentario
-  function addComment() {
-    if (getComment) {
-      const url = 'http://127.0.0.1:8000/comment/'
-      const form = new FormData();
-      form.append('comment', getComment);
-      form.append('postId', props.data.id)
-
-      const data = {
-        method: 'POST',
-        headers: { Authorization: 'Token ' + getToken },
-        body: form
-      }
-      fetch(url, data)
-        .then(() => {
-          props.updateModal(props.data.id)
-          setComment('')
-        })
-    }
+  // Btns
+  const FOLLOWBTN = () => {
+    return !modalData?.me?
+      <button className='modal-btn' onClick={followUser}>
+        {modalData?.following?
+          <FontAwesomeIcon icon={faUserMinus}/> : <FontAwesomeIcon icon={faUserPlus}/>
+        }
+      </button>
+    : null
   }
 
-  function showComments() {
-    const img = document.getElementById("imgPrev")
-    const div_comment = document.getElementById("commentPrev")
-    img.style.display = img.style.display === 'none' ? 'block' : 'none';
-    div_comment.style.display = div_comment.style.display === 'none' ? 'flex' : 'none';
-    createCards()
+  const LIKEBTN = () => {
+    return (
+      <button className='modal-btn' onClick={changeLike}>
+        {props.data?.liked? <FontAwesomeIcon icon={faThumbsUp}/> : <FontAwesomeIcon icon={faThumbsUp_r}/>}
+        <a>{modalData?.likes.length}</a>
+      </button>
+    )
+  }
+
+  const COMMENTBTN = () => {
+    return (
+      <button className='modal-btn' onClick={showComments}> <FontAwesomeIcon icon={faComment} />
+        <a> {modalData?.comments.length} </a>
+      </button>
+    )
+  }
+
+  const DELETEBTN = () => {
+    return modalData?.me?
+      <button className="modal-btn" onClick={deletePost}> <FontAwesomeIcon icon={faTrash} /></button> : null
   }
 
   useEffect(() => {
-    createCards()
-  }, [props.data])
-  
+    if( props.modalId) {
+      getModalData(props.modalId)
+    }
+  }, [props.modalId])
+
   return (
     <div className="modal-background" id="PostModal" onClick={closeModal}>
 
       <div className='modal-div' onClick={e => e.stopPropagation()}>
-        <img className='modal-img' src={props.data?.image} id='imgPrev'></img>
+        <img className='modal-img' src={modalData?.image} id='imgPrev'></img>
 
         <div className="modal-info" id='commentPrev'>
           <div className="modal-desc">
-            <p> {props.data?.text} </p>
-            <a className="date"> {formatDate(props.data?.date)} </a>
+            <p> {modalData?.text}</p>
+            <a className="date"> {formatDate(modalData?.date)} </a>
 
             <div className='comments-div'>
-              <div className='new-comment'>
-                <input type='text' placeholder='Novo comentario' className='input-new-comment' value={getComment}
-                  onChange={(e) => setComment(e.target.value)} >
+                <input 
+                  type='text' placeholder='Novo comentario' className='input-new-comment' value={getComment}
+                  onChange={(e) => setComment(e.target.value)} onKeyDown={submitNewComment}>
                 </input>
-                <button className='btn-new-comment' onClick={addComment}>
-                  <FontAwesomeIcon icon={faCaretRight} />
-                </button>
-              </div>
               {getCards}
             </div>
           </div>
         </div>
 
         <div className="modal-align-name">
-          <div className='align-nick'>
-            <img className="modal-user-img" src={props.data?.user.profile?.image} ></img>
-            <a className="modal-username"> {props.data?.user.username} </a>
+          
+          <div className='align-nick' onClick={goToProfile}>
+            <img className="modal-user-img" src={modalData?.user.profile.image} ></img>
+            <a className="modal-username"> {modalData?.user.username} </a>
           </div>
 
           <div className="modal-align-btns">
-            <button className='modal-btn' onClick={followUser} style={{ display: props.data?.your ? 'none' : 'block' }}>
-              {props.data?.user.follow ?
-                <FontAwesomeIcon icon={faUserMinus} /> :
-                <FontAwesomeIcon icon={faUserPlus} />}
-            </button>
-
-            <button className='modal-btn' onClick={changeLike}>
-              {props.data?.liked ?
-                <FontAwesomeIcon icon={faThumbsUp} /> :
-                <FontAwesomeIcon icon={faThumbsUp_r} />
-              }<a>{props.data?.likes}</a>
-            </button>
-
-            <button className='modal-btn' onClick={showComments}> <FontAwesomeIcon icon={faComment} />
-              <a> {props.data?.comments.length} </a>
-            </button>
-
-            {props.data?.your ?
-              <button className="modal-btn" onClick={deletePost}> <FontAwesomeIcon icon={faTrash} /></button> :
-              ''
-            }
+            {FOLLOWBTN()}
+            {LIKEBTN()}
+            {COMMENTBTN()}
+            {DELETEBTN()}
           </div>
         </div>
       </div>

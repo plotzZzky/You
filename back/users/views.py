@@ -42,6 +42,7 @@ class RegisterView(ModelViewSet):
                 token = create_new_token(user)
                 answer_hashed = make_password(answer)  # salva a respota ja protegida por hash
                 Profile.objects.create(user=user, question=question, answer=answer_hashed, image=image)
+
                 return Response({"token": token.key}, status=200)
             else:
                 raise ValueError()
@@ -96,6 +97,7 @@ class UpdateProfile(ModelViewSet):
             image = request.data.get('image', None)
             question = request.data.get('question', None)
             answer = request.data.get('answer', None)
+            desc = request.data.get("desc", None)
 
             if image is not None:
                 imghdr.what(None, image.read())
@@ -115,6 +117,8 @@ class UpdateProfile(ModelViewSet):
             if password == pwd:
                 if validate_password(password, pwd):
                     user.set_password(password)
+            if desc:
+                user.profile.desc = desc
             else:
                 user.save()
                 user.profile.save()
@@ -127,6 +131,7 @@ class UpdateProfile(ModelViewSet):
 
 
 class YourProfile(ModelViewSet):
+    """ Retorna o perfil do usuario """
     permission_classes = [IsAuthenticated]
     queryset = []
     serializer_class = UserSerializer
@@ -134,13 +139,14 @@ class YourProfile(ModelViewSet):
     def list(self, request, *args, **kwargs):
         try:
             user = request.user
-            serializer = self.get_serializer(user)
+            serializer = self.get_serializer(user, many=False, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({'error': 'Usuario não existe!'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class RecoveryPassword(ModelViewSet):
+    """ Recupera a senha """
     permission_classes = [IsAuthenticated]
     queryset = []
     serializer_class = ProfileSerializer
@@ -167,8 +173,8 @@ class RecoveryPassword(ModelViewSet):
             return Response({"error": "Resposta incorreta!"}, status=500)
 
 
-# Envia a question do usuario para o front para fazer a recuperação de senha
 class ReceiverYourQuestion(ModelViewSet):
+    """ Envia a question do usuario para o front para fazer a recuperação de senha """
     serializer_class = ProfileSerializer
     queryset = []
 

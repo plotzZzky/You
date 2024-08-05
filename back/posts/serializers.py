@@ -1,56 +1,89 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from django.contrib.auth.models import User
 
-from .models import Post
-from users.serializer import UserSerializer
 from comments.serializer import CommentSerializer
+from users.serializer import UserSerializer
+from users.models import Profile
+from .models import Post
 
 
-def modal_serializer(item, request):
-    user = request.user
-    post_id = item.id
-    text = item.text
-    image = item.image
-    date = item.date
-    follow = True if item.user in user.profile.follows.all() else False
-    user_id = item.user.id
-    username = item.user.username
-    pic = item.user.profile.image
-    liked = True if user in item.likes.all() else False
-    likes = len(item.likes.all())
-    me = True if request.user == user else False
+# Serializer of Followees
+class ImageProfileSerializer(ModelSerializer):
+    """ Serializa a imgem de perfil dos usuarios seguidos """
+    class Meta:
+        model = Profile
+        fields = ['image']
 
-    user_dict = {"id": user_id, "username": username, "img": pic, "follow": follow, "me": me}
 
-    comments = [{"id": x.id, "text": x.text, "username": x.user.username, "date": x.date,
-                 'your': check_your(request, x.user)} for x in item.comments.all()]
+class FolloweeSerializer(ModelSerializer):
+    """ serializa o perfil dos usuario seguido """
+    profile = ImageProfileSerializer()
 
-    post = {"user": user_dict, 'id': post_id, "text": text, "image": image, "date": date, "liked": liked, "likes": likes,
-            "comments": comments, 'your': check_your(request, item.user)}
-    return post
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'profile']
+
+
+# Serializer do usuario
+class ProfileSerializer(ModelSerializer):
+    follows = FolloweeSerializer(many=True)
+
+    class Meta:
+        model = Profile
+        fields = ['image', 'desc', 'follows']
+
+
+class UserProfileSerializer(ModelSerializer):
+    profile = ProfileSerializer()
+    me = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'me', 'profile']
+
+    def get_me(self, obj):
+        request = self.context.get('request')
+        if request is not None:
+            return check_if_my_profile(request, obj)
+        return False
 
 
 class ModalSerializer(ModelSerializer):
     user = UserSerializer()
     comments = CommentSerializer(many=True)
-    your = SerializerMethodField()
+    me = SerializerMethodField()
+    following = SerializerMethodField()
 
     class Meta:
         model = Post
         fields = '__all__'
 
-    def get_your(self, obj):
+    def get_me(self, obj):
         request = self.context.get('request')
         if request is not None:
-            return check_your(request, obj.user)
+            return check_if_my_profile(request, obj.user)
         return False
 
-
-def check_your(request, user):
-    result = True if request.user == user else False
-    return result
+    def get_following(self, obj):
+        request = self.context.get('request')
+        if request is not None:
+            return check_if_following(request, obj.user)
+        return False
 
 
 class PostSerializer(ModelSerializer):
     class Meta:
         model = Post
         fields = '__all__'
+
+
+def check_if_my_profile(request, user):
+    return request.user.id == user.id
+
+
+def check_if_following(request, user):
+    follows = request.user.profile.follows
+    if user in follows.all():
+        return True
+    else:
+        return False

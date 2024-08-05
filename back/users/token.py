@@ -11,6 +11,5 @@ def create_new_token(user):
         pass
 
     new_token = Token.objects.create(user=user)  # type: ignore
-    new_token.expires = datetime.now() + timedelta(minutes=10)
     new_token.save()
     return new_token

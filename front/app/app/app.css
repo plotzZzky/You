@@ -1,27 +1,33 @@
-.app-navbar {
+.app-bar {
   position: fixed;
-  inset: 0 0 auto 0;
+  inset: 0 0 auto;
   padding: 2px 0 0;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   background-color: var(--color_accent);
   box-shadow: var(--shadow);
   z-index: 999;
 }
 
-.app-navbar-icon-div {
+.app-bar div {
+  display: flex;
+  flex: 0 1 33.3%;
+}
+
+.app-bar span {
   display: flex;
   flex-direction: column;
   position: relative;
-  padding: 4px clamp( 5px, 2vw, 15px) 0;
+  padding: 4px 1.2vw 0;
+  font-size: clamp(0.7em, 0.6vw, 1em);
   cursor: pointer;
   z-index: 1;
 }
 
-.app-navbar-icon-div::before {
+.app-bar span::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 0 0.5vw;
   transform-origin: bottom;
   transform: scaleY(0);
   transition: transform .15s ease-in-out;
@@ -31,25 +37,19 @@
   z-index: -1;
 }
 
-.app-navbar-icon-div:hover::before {
+.app-bar span:hover::before {
   transform-origin: bottom;
   transform: scaleY(1);
 }
 
-
-.app-icon {
-  font-size: clamp(0.9em, 1.8vw, 1.2em);
-}
-
-.app-name {
-  font-size: clamp(0.7em, 0.6vw, 1em);
+.app-icon * {
+  font-size: clamp(1em, 2vw, 1.5em);
 }
 
 /* Posts */
-.view-posts {
-  max-width: 1000px;
-  margin: auto;
-  padding-top: 1vh;
+.posts {
+  max-width: 800px;
+  margin: -6px auto 0;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -58,7 +58,7 @@
 
 .card-margin {
   flex: 0 0 50%;
-  aspect-ratio: 1/ 1.3;
+  aspect-ratio: 1/ 1.25;
 }
 
 .card {
@@ -76,6 +76,77 @@
   object-fit: fill;
 }
 
+/* profile */
+.profile {
+  width: 100%;
+  padding: 5px;
+  display: flex;
+  gap: 0 10px;
+  background-color: var(--color_accent);
+}
+
+.profile-img {
+  width: 8vw;
+  min-width: 120px;
+  height: 100%; 
+  object-fit: fill;
+  aspect-ratio: 1/1.2;
+  background-color: white;
+}
+
+.profile-desc {
+  margin: 0.5vh 0 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1vh 0;
+}
+
+.align-name {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.name {
+  font-size: clamp(1em, 2vw, 1.5em);
+  font-weight: bold;
+}
+
+.desc {
+  width: calc(100% - 15px);
+  height: 8vh;
+  margin-right: 5px;
+  padding: 5px;
+  text-align: left;
+  font-size: clamp(0.8em, 1vw, 1em);
+  border: 1px solid rgba(255, 255, 255, 0.281);
+}
+
+.align-follow {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.follow-icon {
+  width: 26px;
+  height: 32px;
+}
+
+.edit-desc {
+  width: calc(100% - 3vw);
+  height: 9vh;
+  margin: 1vh 1vw;
+  padding: 0.5vw;
+  text-align: left;
+  font-size: clamp(0.8em, 1vw, 1em);
+  color: #333;
+  border: 1px solid rgba(255, 255, 255, 0.281);
+}
+
 /* Modal */
 .modal-background {
   display: none;
@@ -83,15 +154,25 @@
   inset: 0;
   background-color: #000000F2;
   z-index: 999;
+} 
+
+.modal-div {
+  width: clamp(310px, 96vw, 900px);
+  margin: 1vh auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--background)
 }
 
 .modal-img {
   width: 100%;
-  height: 100%;
+  height: 94vh;
   object-fit: fill;
 }
 
 .modal-align-name {
+  height: 4vh;
   padding: 2px 5px 0;
   display: inline-flex;
   align-items: center;
@@ -105,6 +186,7 @@
   align-items: center;
   justify-content: center;
   gap: 0 5px;
+  cursor: pointer;
 }
 
 .align-nick * {
@@ -185,45 +267,17 @@
   flex-direction: column;
 }
 
-.new-comment {
-  width: calc(100% - 2px);
-  height: 32px;
-  display: inline-flex;
-  border: 1px solid grey;
-  border-radius: 2px;
-}
-
 .input-new-comment {
-  width: calc(100% - 32px);
-  border: 0;
+  padding: 5px;
   color: var(--fontColor_pri);
   background-color: transparent;
   border: 1px solid var(--color_accent);
   font-size: clamp(0.8em, 1.5vw, 1em);
+  outline: none;
 }
 
 .input-new-comment::placeholder {
   font-size: clamp(0.8em, 1.5vw, 1em);
-}
-
-.btn-new-comment {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background-color: var(--color_accent);
-  color: var(--fontColor_pri);
-}
-
-.btn-new-comment::before {
-  padding: 0;
-  inset: 1px;
-  border-radius: 0;
-}
-
-.btn-new-comment * {
-  color: var(--fontColor_pri);
 }
 
 .comment-card {
@@ -254,18 +308,6 @@
 }
 
 /* NewPosts */
-.modal-div {
-  width: clamp(310px, 92vw, 800px);
-  height: clamp(340px, 96vh, 900px);
-  margin: 2vh auto auto;
-  padding: 0 0 5px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  background-color: var(--background);
-  position: relative;
-}
-
 .img-preview {
   width: 98%;
   height: 90%;

@@ -5,8 +5,7 @@ import InputPwd from '@comps/inputs/inputPwd';
 import InputUser from '@comps/inputs/inputUser';
 import InputAnswer from '@comps/inputs/inputAnswer';
 
-export default function Login() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+export default function Recovery() {
   const [getVisibility, setVisibility] = useState(false)
   const router = useRouter();
 
@@ -22,24 +21,23 @@ export default function Login() {
   const [Pwd2Valid, setPwd2Valid] = useState(false)
   const [AnswerValid, setAnswerValid] = useState(false)
 
-  // Redireciona para a pagina de login
   function redirectToLogin() {
+    // Redireciona para a pagina de login
     router.push('/login');
   };
 
-  // Função para verificar se o usuario terminou de digitar o username e então buscar a question
   function receiveQuestionTimer (value) {
-    // Timer para buscar o username
-    let timerId;
+    // Função para verificar se o usuario terminou de digitar o username e então buscar a question
+    let timerId;  // Timer para buscar o username
     clearTimeout(timerId);
     timerId = setTimeout(() => {
       receiveQuestion(value);
     }, 500);
   }
 
-  // Função que busca a question do usuario para recuperar a senha
   function receiveQuestion(value) {
-    let url = 'http://127.0.0.1:8000/users/question/'
+    // Função que busca a question do usuario para recuperar a senha
+    const url = 'http://127.0.0.1:8000/users/question/'
 
     const formData = new FormData();
     formData.append("username", value || getUsername)
@@ -59,9 +57,9 @@ export default function Login() {
     })
   };
 
-  // Função de login
   function recoveyFunc() {
-    let url = 'http://127.0.0.1:8000/users/recovery/'
+    // Função que faz login
+    const url = 'http://127.0.0.1:8000/users/recovery/'
 
     const formData = new FormData();
     formData.append("username", getUsername);
@@ -88,11 +86,11 @@ export default function Login() {
       <div className='page'>
         <div className="login-page">
 
-          <div className='login-div' id='signupTab'>
-            <p className='login-title'> Recuperar senha </p>
+          <div id='signupTab'>
+            <h2> Recuperar senha </h2>
 
             <div className='align-input'>
-              <p> {question} </p>
+              <span> {question} </span>
               <InputUser username={setUsername} valid={UserValid} setValid={setUserValid} tip='recoveryTip' action={receiveQuestionTimer}></InputUser>
               <div style={{visibility: getVisibility? 'visible' : 'hidden'}}>
                 <InputAnswer answer={setAnswer} valid={AnswerValid} setValid={setAnswerValid} tip='recoveryTip'></InputAnswer>
@@ -101,11 +99,11 @@ export default function Login() {
               </div>
             </div>
 
-            <a className='login-tip' id='recoveryTip'> </a>
+            <h3 id='recoveryTip'> </h3>
 
-            <button className='btn btn-login' onClick={recoveyFunc}> Recuperar </button>
+            <button className='btn-login' onClick={recoveyFunc}> Recuperar </button>
 
-            <p className='login-link' onClick={redirectToLogin}> Entrar </p>
+            <p onClick={redirectToLogin}> Entrar </p>
           </div>
         </div>
       </div>

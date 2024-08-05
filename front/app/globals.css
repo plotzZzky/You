@@ -11,7 +11,7 @@
 
   --color_pri: #dfdfdf;
   --color_sec: rgb(29, 29, 29);
-  --color_accent: #6583d4;
+  --color_accent: #627eca;
   --color_navbar_font_hover: black;
 
   --background: #2e2d2d;
@@ -127,7 +127,7 @@ button:hover::before {
 
 /* FAQ */
 details {
-  padding: 0 2vw;
+  padding: 1vh 2vw;
   margin: 2vh 2vw;
   border: 1px solid var(--color_accent);
   border-radius: 4px;

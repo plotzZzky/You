@@ -1,14 +1,14 @@
-import { useState } from 'react'
+import { useAuth } from './authContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function CommentCard(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
 
   function delComment() {
     const commentId = props.data.id
-    const url = `http://127.0.0.1:8000/comment/${commentId}/`
+    const url = `http://127.0.0.1:8000/comments/${commentId}/`
 
     const data = {
       method: 'DELETE',
@@ -17,8 +17,13 @@ export default function CommentCard(props) {
 
     fetch(url, data)
       .then(() => {
-        props.updateModal()
+        props.getAllComments()
       })
+  }
+
+  const DELETEBTN = () => {
+    return props.data?.your ?
+    <a className="post-delete" onClick={delComment}> <FontAwesomeIcon icon={faTrash} /></a> : null
   }
 
   return (
@@ -29,10 +34,7 @@ export default function CommentCard(props) {
       </div>
       <div className="post-align-btns">
         <a className="date"> {props.formatDate(props.data?.date)} </a>
-        {props.data?.your ?
-          <a className="post-delete" onClick={delComment}> <FontAwesomeIcon icon={faTrash} /></a> :
-          ''
-        }
+        {DELETEBTN()}
       </div>
     </div>
   )

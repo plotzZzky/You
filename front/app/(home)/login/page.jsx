@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@comps/authContext';
 import InputPwd from '@comps/inputs/inputPwd';
 import InputEmail from '@comps/inputs/inputEmail';
 import InputUser from '@comps/inputs/inputUser';
@@ -10,7 +11,7 @@ import userPicDefault from '../../../public/user.png'
 
 export default function Login() {
   const [getLogin, setLogin] = useState(true);
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [Token, setToken] = useAuth();
   const router = useRouter();
 
   const [getUsername, setUsername] = useState("");
@@ -31,18 +32,18 @@ export default function Login() {
   const [AnswerValid, setAnswerValid] = useState(false)
 
   function checkLogin() {
-    if (getToken !== '') {
+    if (Token !== null && typeof Token === 'string') {
       router.push("/app/");
     }
   }
 
-  // Função para o usuario clickar na imagem e simular o click no input
   function clickInput() {
+    // Função para o usuario clickar na imagem e simular o click no input
     const input = document.getElementById("selectImgUser").click()
   }
 
-  // Carrega a imagem em duas const, a const image para ser enviada pelo form e a file para ser visualizada pelo usuario
   function changeImage(event) {
+    // Carrega a imagem em duas const, a const image para ser enviada pelo form e a file para ser visualizada pelo usuario
     const file = event.target.files[0];
     setImageUser(file)
     const reader = new FileReader();
@@ -53,22 +54,22 @@ export default function Login() {
     reader.readAsDataURL(file);
   }
 
-  // Alterna entre a pagina de login e registro
   function showLogin() {
-    let login = document.getElementById('loginTab');
-    let signup = document.getElementById('signupTab');
-    login.style.display = getLogin? 'none' : 'flex'
-    signup.style.display = getLogin? 'flex' : 'none'
+    // Alterna entre a pagina de login e registro
+    const login = document.getElementById('loginTab');
+    const signup = document.getElementById('signupTab');
+    login.style.display = getLogin? 'none' : 'block'
+    signup.style.display = getLogin? 'block' : 'none'
     setLogin(getLogin? false : true)
   }
 
-  // Redireciona para a pagina de recuperação de senha
   function showRecovery() {
+    // Redireciona para a pagina de recuperação de senha
     router.push('/login/recovery')
   }
 
-  // Verifica se os campos de login estão preenchidas com informções validas
   function checkIfLoginIsvalid() {
+    // Verifica se os campos de login estão preenchidas com informções validas
     if (Pwd1Valid && UserValid) {
       loginFunc()
     } else {
@@ -77,21 +78,22 @@ export default function Login() {
     }
   }
 
-  // Função para fazer login
   function loginFunc() {
-    let url = `http://127.0.0.1:8000/users/login/`
+    // Função para fazer login
+    const url = `http://127.0.0.1:8000/users/login/`
 
     const formData = new FormData();
     formData.append("username", getUsername)
     formData.append("password", getPassword)
-    let info = {method: 'POST',
+
+    const info = {method: 'POST',
                 body: formData}
 
     fetch(url, info)
       .then((res) => res.json())
       .then((data) => {
         if (data.token) {
-          sessionStorage.setItem("token", data["token"])
+          setToken(data.token)
           router.push('/app')
         } else {
           const tip = document.getElementById("LoginTip")
@@ -100,8 +102,8 @@ export default function Login() {
     })
   }
 
-  // Verifica se os campos de cadastro estão preenchidas com informções validas
   function checkIfSignIsValid() {
+    // Verifica se os campos de cadastro estão preenchidas com informções validas
     if (UserValid && EmailValid && Pwd1Valid && Pwd2Valid && Pwd1Valid === Pwd2Valid) {
       SignUpFunc()
     } else {
@@ -110,8 +112,8 @@ export default function Login() {
     }
   }
 
-  // Função para registar um novo usuario, envia o form com as informações (exceto imagem) e recebe o nome randonizado da imagem do usuario
   function SignUpFunc() {
+    // Função para registar um novo usuario, envia o form com as informações (exceto imagem) e recebe o nome randonizado da imagem do usuario
     const url = `http://127.0.0.1:8000/users/register/`
 
     const formData = new FormData();
@@ -135,7 +137,7 @@ export default function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.token) {
-          sessionStorage.setItem("token", data.token)
+          setToken(data.token)
           router.push('/app')
         } else {
           const tip = document.getElementById("SignTip")
@@ -146,31 +148,31 @@ export default function Login() {
 
   useEffect(() => {
     checkLogin()
-  }, [getToken]);
+  }, [Token]);
 
 
   return (
     <>
       <div className='page'>
         <div className="login-page">
-          <div className='login-div' id='loginTab'>
-            <p className='login-title'> Bem vindo de volta!</p>
+          <div id='loginTab'>
+            <h2> Bem vindo de volta!</h2>
 
             <div className='align-input'>
               <InputUser username={setUsername} valid={UserValid} setValid={setUserValid} tip='LoginTip'></InputUser>
               <InputPwd password={setPassword} valid={Pwd1Valid} setValid={setPwd1Valid} placeholder="Digite a senha" tip='LoginTip'></InputPwd>
             </div>
 
-            <a className='login-tip' id='LoginTip'> </a>
+            <h3 id='LoginTip'> </h3>
 
-            <button className='btn btn-login' onClick={checkIfLoginIsvalid}> Entrar </button>
+            <button className='btn-login' onClick={checkIfLoginIsvalid}> Entrar </button>
 
-            <p className='login-link' onClick={showLogin}> Cadastre-se </p>
-            <p className='login-link' onClick={showRecovery}> Recuperar senha </p>
+            <p onClick={showLogin}> Cadastre-se </p>
+            <p onClick={showRecovery}> Recuperar senha </p>
           </div>
 
-          <div className='login-div' id='signupTab' style={{display: 'none'}}>
-            <p className='login-title'> Junte-se a nós! </p>
+          <div id='signupTab' style={{display: 'none'}}>
+            <h2> Junte-se a nós! </h2>
 
             <div className='align-input'>
               <div>
@@ -187,12 +189,12 @@ export default function Login() {
 
             </div>
 
-            <a className='login-tip' id='SignTip'> </a>
+            <h3 id='SignTip'> </h3>
 
-            <button className='btn btn-login' onClick={checkIfSignIsValid}> Cadastrar </button>
+            <button className='btn-login' onClick={checkIfSignIsValid}> Cadastrar </button>
 
-            <p className='login-link' onClick={showLogin}> Entrar </p>
-            <p className='login-link' onClick={showRecovery}> Recuperar senha </p>
+            <p onClick={showLogin}> Entrar </p>
+            <p onClick={showRecovery}> Recuperar senha </p>
           </div>
         </div>
       </div>

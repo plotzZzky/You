@@ -1,19 +1,19 @@
 'use client'
-import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faBars, faImage, faHome, faQuestion, faUsers } from '@fortawesome/free-solid-svg-icons'
 import './navbar.css'
 
 
 export default function NavBar() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [getToken, setToken] = useAuth();
   const router = useRouter();
   const getPath = usePathname();
 
-  // Função que abre o menu no modo responsivo
   function openResponsiveMenu() {
-    let navbar = document.getElementsByClassName("menu")[0];
+    // Função que abre o menu no modo responsivo
+    const navbar = document.getElementById('menu');
     if (navbar.className == "menu") {
       navbar.classList.add("responsive");
     } else {
@@ -21,38 +21,38 @@ export default function NavBar() {
     }
   };
 
-  // Função que fecha o menu no modo responsivo
   function closeResponsiveMenu() {
-    let navbar = document.getElementsByClassName("menu")[0];
+    // Função que fecha o menu no modo responsivo
+    const navbar = document.getElementById("menu");
     navbar.classList.remove("responsive");
   };
 
   // Criam os item na navbar dependendo da pagina acessada
   const ABOUT = () => {
     return getPath === '/' ? (
-      <div className="menu-item" onClick={goAbout}>
-        <a><FontAwesomeIcon icon={faUsers} className='icon-menu' /> Sobre </a>
-      </div>
+      <span onClick={goAbout}>
+        <FontAwesomeIcon icon={faUsers}/> Sobre
+      </span>
     ) : null
   };
 
   const FAQ = () => {
     return getPath === '/' ? (
-      <div className="menu-item" onClick={goFaq}>
-        <a><FontAwesomeIcon icon={faQuestion} className='icon-menu' /> Dúvidas </a>
-      </div>
+      <span onClick={goFaq}>
+      <FontAwesomeIcon icon={faQuestion}/> Dúvidas
+      </span>
     ) : null
   };
 
   const LOGIN = () => {
-    return getToken === ''? (
-      <div className="menu-item" onClick={goApp}>
-        <a><FontAwesomeIcon icon={faUser} className='icon-menu' /> Entrar </a>
-      </div>
+    return !getToken? (
+      <span onClick={goApp}>
+        <FontAwesomeIcon icon={faUser}/> Entrar
+      </span>
     ) : (
-      <div className="menu-item" onClick={goApp}>
-        <a><FontAwesomeIcon icon={faImage} className='icon-menu' /> App </a>
-      </div>
+      <span onClick={goApp}>
+        <FontAwesomeIcon icon={faImage}/> App
+      </span>
     )
   };
 
@@ -76,9 +76,9 @@ export default function NavBar() {
     closeResponsiveMenu();
   }
 
-  // Se possui token redireciona para pagina do app, se não, para pagina do login
   function goApp() {
-    if (getToken === '') {
+    // Se possui token redireciona para pagina do app, se não, para pagina do login
+    if (!getToken) {
       router.push("/login/")
     } else {
       router.push("/app/")
@@ -88,24 +88,22 @@ export default function NavBar() {
 
   return (
     <nav>
-      <div className='navbar-align'>
-        <div className="menu" id="menu">
+      <div className="menu" id="menu">
 
-          <a className="menu-icon" onClick={openResponsiveMenu}>
-            <FontAwesomeIcon icon={faBars} />
-          </a>
+        <span id='menuBtn' onClick={openResponsiveMenu}>
+          <FontAwesomeIcon icon={faBars} />
+        </span>
 
-          <div className="menu-item" onClick={goHome}>
-            <a><FontAwesomeIcon icon={faHome} className='icon-menu' /> Inicio </a>
-          </div>
+        <span onClick={goHome}>
+          <FontAwesomeIcon icon={faHome}/> Inicio
+        </span>
 
-          {ABOUT()}
+        {ABOUT()}
 
-          {FAQ()}
+        {FAQ()}
 
-          {LOGIN()}
+        {LOGIN()}
 
-        </div>
       </div>
     </nav>
   )

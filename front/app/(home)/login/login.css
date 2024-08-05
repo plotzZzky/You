@@ -1,4 +1,4 @@
-.login-div {
+.login-page {
   display: block;
   max-width: 460px;
   margin: 2vh auto 0;
@@ -10,13 +10,13 @@
   flex-direction: column;
 }
 
-.login-title {
+.login-page h2 {
   color: var(--color_accent);
   font-weight: bold;
   font-size: clamp(1em, 2.4vw, 1.6em);
 }
 
-.login-link {
+.login-page p {
   font-size: clamp(0.8em, 1.5vw, 1em);
   margin: 1vh auto 0;
   color: var(--fontColor_pri);
@@ -90,7 +90,7 @@
   font-size: 4em;
 }
 
-.login-tip {
+.login-page h3 {
   font-size: clamp(0.8em, 1.5vw, 1em);
   font-weight: bold;
   color: var(--fontColor_pri);

@@ -15,8 +15,8 @@ def get_file_path(instance, filename):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_file_path)
+    desc = models.CharField(max_length=512, null=True, blank=True)
     follows = models.ManyToManyField(User, related_name='users_friend', blank=True)
-    likes = models.ManyToManyField(Post, blank=True)
     question = models.CharField(max_length=500)
     answer = models.CharField(max_length=255)
 

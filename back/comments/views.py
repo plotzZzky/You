@@ -11,8 +11,20 @@ from .serializer import CommentSerializer
 
 class CommentClassView(ModelViewSet):
     permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'delete']
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        post_id = kwargs['pk']  # Id do post
+        post = Post.objects.get(pk=post_id)
+        query = Comment.objects.filter(post=post)
+        serializer = self.get_serializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def list(self, request, *args, **kwargs):
+        """ Desativado por não ser necessario """
+        return Response(status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         try:

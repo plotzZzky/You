@@ -1,87 +1,81 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@comps/authContext';
 import EditUser from '@comps/ModalEditUser';
 import ModalViewPost from '@comps/ModalViewPost';
+import EditDesc from '@comps/ModalEditDesc';
 import NewPost from '@comps/ModalNewPost';
 import PostCard from '@comps/postCard';
-import AppNavBar from '../components/appNavbar';
+import AppNavBar from '@comps/appNavbar';
+import Profile from '@comps/profile';
+
 
 export default function App() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : undefined);
+  const [Token, setToken] = useAuth();
   const router = useRouter();
+  const [cardsPage, setCardsPage] = useState();
+  const [modalId, setModalId] = useState();
 
-  const [Cards, setCards] = useState([]);
-  const [modalData, setModalData] = useState({'user': '', 'comments': ''})
-
-  // Verifica se possui o token 
   function checkLogin() {
-    if (getToken === '') {
-      router.push("/login/");
+    // Verifica se possui o token 
+    if (Token !== null && typeof Token === 'string') {
+      createFolloweePage()
     } else {
-      recivePosts();
+      router.push("/login");
     }
   }
 
-  // Busca os posts no backend e executa a função que cria os cards
-  function recivePosts(value = 'Friends') {
-    const url = "http://127.0.0.1:8000/post/all/"
-    const form = new FormData()
-    form.append('type', value)
-
-    const data = {
-      method: 'POST',
-      headers: { Authorization: 'Token ' + getToken },
-      body: form
-    }
-    fetch(url, data)
-      .then((res) => res.json())
-      .then((data) => {
-        createCards(data)
-      })
+  function showModal(value){
+    setModalId(value)
   }
 
-  // Cria os cards das postagens 
-  function createCards(value) {
-    setCards(
-      value.map((data, index) => (
-        <PostCard key={index} data={data} update={recivePosts} get_info={() => getModalInfo(data.id)}></PostCard>
-      )))
+  function createFolloweePage() {
+    // Cria a pagina com os posts dos followee
+    const url = "http://127.0.0.1:8000/posts/followee/"
+    baseReceivePosts(url).then((data) => {
+      createCards(data, null)
+    })
   }
 
-  // Busca info(comentarios, likes etc) de um post 
-  function getModalInfo(post_id) {
-    const url = `http://127.0.0.1:8000/post/${post_id}/`
+  function createAllPostsPage() {
+    // Cria a pagina com todos os posts
+    const url = "http://127.0.0.1:8000/posts/"
+    baseReceivePosts(url).then((data) => {
+      createCards(data, null)
+    })
+  }
 
+  function createProfilePage(userId=0) {
+    // Cria a pagina do perfil de um usuario
+    const url = `http://127.0.0.1:8000/posts/user/${userId}/`
+    baseReceivePosts(url).then((data) => {
+      createCards(data.posts, data.user)
+    })
+  }
+
+  async function baseReceivePosts(url) {
+    // Função base para buscar os posts no backend
     const data = {
       method: 'GET',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + Token },
     }
 
-    fetch(url, data)
-      .then((res) => res.json())
-      .then((data) => { 
-        setModalData(data)
-        console.log(data)
-      })
-      .then(() => {
-        changeVisiblityModalDivs()
-      })
+    const res = await fetch(url, data);
+    return await res.json();
   }
 
-  // Sempre que abrir o modal exibe a imagem e ocualt os comentarios
-  function changeVisiblityModalDivs() {
-    const modal = document.getElementById("PostModal")
-    const modalVisibility = modal.style.display
-    
-    if (modalVisibility !== 'flex') {
-    const img = document.getElementById("imgPrev")
-    const div_comment = document.getElementById("commentPrev")
+  function createCards(data, userData) {
+    // Cria os cards da pagina
+    setCardsPage(
+      <div className="posts">
+        {userData? <Profile data={userData} showProfile={createProfilePage}></Profile> : null}
 
-    modal.style.display = "flex"
-    img.style.display = 'block';
-    div_comment.style.display = 'none';
-    }
+        {data.map((data, index) => (
+          <PostCard key={index} data={data} update={createFolloweePage} showModal={() => showModal(data.id)}></PostCard>
+        ))}
+      </div>
+    )
   }
 
   useEffect(() => {
@@ -90,19 +84,17 @@ export default function App() {
 
   return (
     <div className='page'>
-      <AppNavBar getPosts={recivePosts}></AppNavBar>
+      <AppNavBar followeePage={createFolloweePage} allPostsPage={createAllPostsPage} profilePage={createProfilePage} ></AppNavBar>
 
-      <div className='app-page'>
-        <div className="view-posts">
-          {Cards}
-        </div>
-      </div>
+      {cardsPage}
 
-      <EditUser></EditUser>
+      <EditUser updateProfile={createProfilePage}></EditUser>
 
-      <ModalViewPost data={modalData} updatePosts={recivePosts} updateModal={getModalInfo}></ModalViewPost>
+      <EditDesc updateProfile={createProfilePage}></EditDesc>
+
+      <ModalViewPost updatePosts={createFolloweePage} modalId={modalId} setModalId={setModalId} showProfile={createProfilePage}></ModalViewPost>
       
-      <NewPost get_posts={recivePosts}></NewPost>
+      <NewPost getPosts={createFolloweePage}></NewPost>
     </div>
   )
 }
