@@ -21,6 +21,7 @@ class PostClassView(ModelViewSet):
             instance = self.get_object()
             serializer = ModalSerializer(instance, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
+
         except (TypeError, ValueError, ObjectDoesNotExist):
             return Response({'error': 'Post não encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -35,16 +36,20 @@ class PostClassView(ModelViewSet):
     @action(detail=False, methods=['GET'], url_path=r'user/(?P<pk>\d+)')
     def posts_from_users(self, request, *args, **kwargs):
         """ Retorna a lista de posts de um usuario especifico """
-        user_id = kwargs['pk']  # id do perfil
-        if user_id == r'0':
-            user = request.user
-        else:
-            user = User.objects.get(pk=user_id)
-        posts = Post.objects.filter(user=user).order_by("-id")
-        serializer = self.get_serializer(posts, many=True)
-        user_serializer = UserProfileSerializer(user, context={'request': request})
-        result = {'posts': serializer.data, 'user': user_serializer.data}
-        return Response(result, status=status.HTTP_200_OK)
+        try:
+            user_id = kwargs['pk']  # id do perfil
+            if user_id == r'0':
+                user = request.user
+            else:
+                user = User.objects.get(pk=user_id)
+            posts = Post.objects.filter(user=user).order_by("-id")
+            serializer = self.get_serializer(posts, many=True)
+            user_serializer = UserProfileSerializer(user, context={'request': request})
+            result = {'posts': serializer.data, 'user': user_serializer.data}
+            return Response(result, status=status.HTTP_200_OK)
+
+        except (KeyError, ValueError):
+            return Response(status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['GET'], url_path='followee')
     def posts_from_followee(self, request, *args, **kwargs):
@@ -63,8 +68,8 @@ class PostClassView(ModelViewSet):
             text = request.data.get('text', '')
             image = request.data['image']
             post = Post.objects.create(user=request.user, image=image, text=text)
-
             return Response({"postId": post.id}, status=status.HTTP_200_OK)
+
         except (KeyError, ValueError):
             return Response({"msg": "Post incorreto"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -74,19 +79,13 @@ class PostClassView(ModelViewSet):
             post_id = kwargs['pk']
             post = Post.objects.get(pk=post_id, user=user)
             post.delete()
-
             return Response({"msg": "Post deletado!"}, status=status.HTTP_200_OK)
+
         except (KeyError, ValueError, ObjectDoesNotExist):
             return Response({"msg": "Post não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class LikeClassView(ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    http_method_names = ['post']
-    queryset = []
-    serializer_class = PostSerializer
-
-    def create(self, request, *args, **kwargs):
+    @action(methods=["POST"], url_path="like")
+    def like(self, request, *args, **kwargs):
         try:
             post_id = request.data['id']
             post = Post.objects.get(pk=post_id)
@@ -96,17 +95,12 @@ class LikeClassView(ModelViewSet):
             else:
                 post.likes.add(request.user)
             return Response({'msg': 'Like!'}, status=status.HTTP_200_OK)
+
         except (ObjectDoesNotExist, KeyError, ValueError):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
-class FollowClassView(ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    http_method_names = ['post']
-    queryset = []
-    serializer_class = PostSerializer
-
-    def create(self, request, *args, **kwargs):
+    @action(methods=["POST"], url_path="follow")
+    def follow(self, request, *args, **kwargs):
         try:
             user_id = request.data['id']  # Id do usuario a ser seguido
             follow_user = User.objects.get(pk=user_id)
@@ -121,5 +115,12 @@ class FollowClassView(ModelViewSet):
                 else:
                     friends.add(follow_user)
                 return Response({'msg': 'Follow!'}, status=status.HTTP_200_OK)
+
         except (ObjectDoesNotExist, KeyError, ValueError):
             return Response({'msg': 'UnFollow!'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response(status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status.HTTP_405_METHOD_NOT_ALLOWED)

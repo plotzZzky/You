@@ -16,15 +16,15 @@ class CommentClassView(ModelViewSet):
     serializer_class = CommentSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        post_id = kwargs['pk']  # Id do post
-        post = Post.objects.get(pk=post_id)
-        query = Comment.objects.filter(post=post)
-        serializer = self.get_serializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            post_id = kwargs['pk']  # Id do post
+            post = Post.objects.get(pk=post_id)
+            query = Comment.objects.filter(post=post)
+            serializer = self.get_serializer(query, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def list(self, request, *args, **kwargs):
-        """ Desativado por não ser necessario """
-        return Response(status=status.HTTP_200_OK)
+        except (ValueError, ObjectDoesNotExist, KeyError):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request, *args, **kwargs):
         try:
@@ -33,7 +33,8 @@ class CommentClassView(ModelViewSet):
             text = request.data.get('comment', '')
             comment = Comment(user=request.user, post=post, text=text)
             comment.save()
-            return Response({"msg": "Comentario feito!"}, status=status.HTTP_200_OK)
+            return Response("Comentario feito!", status=status.HTTP_201_CREATED)
+
         except (ObjectDoesNotExist, KeyError, ValueError):
             return Response({'msg': 'Não foi possível criar seu comentario!'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -43,6 +44,17 @@ class CommentClassView(ModelViewSet):
             comment_id = kwargs['pk']
             post = Comment.objects.get(pk=comment_id, user=user)
             post.delete()
-            return Response({"msg": "Comentario deletado!"}, status=status.HTTP_200_OK)
-        except (KeyError, ValueError, ObjectDoesNotExist):
-            return Response({"msg": "Comentario não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response("Comentario deletado!", status=status.HTTP_200_OK)
+
+        except (ValueError, ObjectDoesNotExist, KeyError):
+            return Response("Comentario não encontrado", status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        return Response(status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response(status.HTTP_405_METHOD_NOT_ALLOWED)
+
