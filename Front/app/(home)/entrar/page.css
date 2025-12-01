@@ -1,0 +1,53 @@
+#login {
+  display: block;
+  max-width: 600px;
+  margin: 6vh auto auto;
+  padding: 1vh 1vw;
+  height: 72vh;
+  box-shadow: var(--shadow);
+  border: var(--border);
+  display: flex;
+  flex-direction: column;
+
+  #loginAlert {
+    padding: .5vh 2vw;
+    border-bottom: var(--border);
+
+    span {
+      font-size: clamp(0.9em, 2vw, 1.2em);
+      color: var(--color-accent);
+    }
+  }
+
+  #loginAlign {
+    display: block;
+    padding: 2vh 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5vh;
+
+    p {
+      font-size: clamp(0.8em, 1.5vw, 1em);
+      margin: 1vh auto 0;
+      color: var(--font-color);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    h3 {
+      color: var(--font-color);
+    }
+  }
+  
+  #loginTip {
+    width: 100%;
+    font-size: clamp(0.8em, 1.5vw, 1em);
+    font-weight: bold;
+    color: var(--font-color);
+    text-decoration: none;
+  }
+
+  button {
+    font-size: clamp(1em, 2vw, 1.1em);
+  }
+}

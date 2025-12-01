@@ -1,0 +1,128 @@
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.decorators import action
+from django.contrib.auth import authenticate, logout
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
+from datetime import timedelta
+
+from .token import create_token_response, create_logout_response
+from .models import CustomUser
+from .serializer import UserSerializer
+from .auth import CookieTokenAuthentication
+
+
+class LoginView(ModelViewSet):
+    http_method_names = ['post', "get"]
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        """ Função para fazer login """
+        try:
+            username = request.data['username']
+            password = request.data['password']
+            user = authenticate(request, username=username, password=password)
+
+            if user:
+                return create_token_response(user)
+
+            else:
+                return Response(data="Usuário ou senha incorretos", status=status.HTTP_401_UNAUTHORIZED)
+
+        except (KeyError, ValueError, TypeError, ObjectDoesNotExist) as error:
+            print(error)
+            return Response(data="Formulário incorreto!", status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):  # Usado list para não precisar passar o id
+        """
+            Função de logout (usado o mesmo view do login para evitar código desnecessário)
+            Sobrescreve o token no front por um vazio fazendo logout
+         """
+        logout(request)
+        return create_logout_response()
+
+    def retrieve(self, request, *args, **kwargs):
+        """ Desativado para evitar erros com o get """
+        return Response(status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class RegisterView(ModelViewSet):
+    http_method_names = ['post']
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = UserSerializer(data=request.data)
+
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                return create_token_response(user)
+
+            else:
+                print(serializer.errors)
+                return Response(data="Informações incorretas.", status=status.HTTP_400_BAD_REQUEST)
+
+        except (KeyError, ValueError, TypeError, AttributeError) as error:
+            print(error)
+            return Response(data="Formulário incorreto.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except IntegrityError as error:
+            field = "Username" if "users_customuser_username_key" in str(error) else "E-mail"
+            msg = f"{field} já cadastrado."
+            print(msg)
+            return Response(data=msg, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class RecoveryPassword(ModelViewSet):
+    http_method_names = ['post']
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+            Retorna a question para recuperação de senha
+        """
+        try:
+            username = request.data['username']
+            user = CustomUser.objects.get(username=username)
+            question = user.question
+            return Response({"question": question}, status=status.HTTP_200_OK)
+
+        except (KeyError, ValueError, TypeError, AttributeError, ObjectDoesNotExist):
+            return Response(data="Formulário incorreto!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=["POST"], url_path="set")
+    def update_password(self, request):
+        """ Faz a alteração das senhas se o usuário passar a resposta (answer) correta """
+        try:
+            serializer = UserSerializer(instance=request.user, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                return create_token_response(user)
+
+            else:
+                print(serializer.errors)
+                return Response(data="Informações incorretas.", status=status.HTTP_400_BAD_REQUEST)
+
+        except (KeyError, ValueError, TypeError, AttributeError, ObjectDoesNotExist) as error:
+            print(error)
+            return Response(data="Formulário incorreto.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserMeMinimalView(APIView):
+    """ Usado para o front verificar se o usuário está logado. """
+    http_method_names = ["get"]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [ CookieTokenAuthentication ]
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        """
+            Usado para o front verificar se o token é valido
+            Usado list para não precisar passar o id
+        """
+        lifetime = timedelta(minutes=30) # Tempo para fazer uma nova consulta
+        return Response(lifetime, status=status.HTTP_200_OK)
