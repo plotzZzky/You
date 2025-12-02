@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useApi } from '@hooks/useApi';
+import { useAuth } from '@comps/authContext';
 import { useGenericGoPage } from '@hooks/useGoPage';
 import { useGoLoginPage } from '@hooks/useGoLogin';
 import InputPwd from '@inputs/inputPwd';
@@ -12,6 +13,7 @@ import './page.css'
 
 
 export default function AuthPage() {
+  const { setTokenLifetime } = useAuth();
   const goPage = useGenericGoPage();
   const goLoginPage = useGoLoginPage();
   const fetchApi = useApi();
@@ -71,9 +73,10 @@ export default function AuthPage() {
     */
     if (pwd1Valid && userValid) {
       const requestData = createRequestDataAndForm();
-      const response = await genericHTTPRequest("LOGIN", requestData);
+      const response = await genericHTTPRequest("LOGIN", requestData, true);
 
       if (response) {
+        setTokenLifetime(response)
         goPage("CARDS");
       }
       
@@ -147,6 +150,8 @@ export default function AuthPage() {
     form.append("password", getPassword);
 
     if (register) {
+      form.set('enctype', 'multipart/form-data');
+      form.append("picture", getImageUser, getImageUser.name);
       form.append("pwd", getpwd);
       form.append("question", getQuestion);
       form.append("answer", getAnswer);
@@ -207,7 +212,7 @@ export default function AuthPage() {
             <InputUser value={getUsername} setValue={setUsername} valid={userValid} setValid={setUserValid}/>
             <InputPwd value={getPassword} setValue={setPassword} valid={pwd1Valid} setValid={setPwd1Valid}/>
 
-            <button onClick={registerFunction}> Cadastrar </button>
+            <button onClick={loginFunction}> Entrar </button>
 
             <p onClick={showRegisterPage}> Registar </p>
             <p onClick={showRecoveryPage}> Recuperar senha </p>
@@ -232,7 +237,7 @@ export default function AuthPage() {
             <InputAnswer value={getAnswer} setValue={setAnswer} valid={answerValid} setValid={setAnswerValid}/>
 
             <button onClick={registerFunction}> Cadastrar </button>
-            
+
             <p onClick={showLoginPage}> Entrar </p>
             <p onClick={showRecoveryPage}> Recuperar senha </p>
           </div>
@@ -269,9 +274,8 @@ export default function AuthPage() {
     }
   };
 
-
   return (
-    <section id="Banner">
+    <section>
       <div id='login'>
 
         {alertMsg()}

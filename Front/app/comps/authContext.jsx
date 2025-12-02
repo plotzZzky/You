@@ -15,7 +15,9 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = useCallback(async () => {
 
+    console.log(tokenLifetime)
     if (currentTime < tokenLifetime) {
+      setIsAuthenticated(true);
       return;  // Se o tempo não expirou encerra a verificação
     }
 

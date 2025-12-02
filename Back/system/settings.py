@@ -43,10 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'auth',
-    'comments',
+    'accounts',
     'posts',
-    'chats',
 ]
 
 REST_FRAMEWORK = {
@@ -154,4 +152,4 @@ CORS_ALLOWED_ORIGINS = [
     os.getenv("FRONT_URL"),
 ]
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'accounts.CustomUser'

@@ -15,7 +15,7 @@ export const useApi = () => {
       RECOVERY: process.env.NEXT_PUBLIC_RECOVERY_URL,
       SET_PWD: process.env.NEXT_PUBLIC_SET_PWD_URL,
       ME: process.env.NEXT_PUBLIC_ME_URL,
-      LOGOUT: process.env.NEXT_PUBLIC_LOGIN_URL,
+      LOGOUT: process.env.NEXT_PUBLIC_LOGOUT_URL,
     }
 
     if (typeof endpoint === 'string' && pages[endpoint]) {

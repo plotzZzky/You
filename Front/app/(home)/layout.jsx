@@ -4,7 +4,7 @@ import NavBar from '@comps/navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Timeline - You!',
+  title: 'Inicio - You!',
 }
 
 export default function Layout({ children }) {

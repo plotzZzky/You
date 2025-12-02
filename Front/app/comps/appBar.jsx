@@ -26,19 +26,19 @@ export default function AppBar(props) {
 
   return(
     <nav id="AppBar">
-      <span >
+      <span onClick={props.showNewPostModal}>
         <FontAwesomeIcon icon={faSquarePlus}/> Novo
       </span>
 
-      <span >
+      <span onClick={props.showFolloweePosts}>
         <FontAwesomeIcon icon={faImage}/> Amigos
       </span>
 
-      <span >
+      <span onClick={props.showAllPosts}>
         <FontAwesomeIcon icon={faMagnifyingGlass}/> Horizonte
       </span>
       
-      <span >
+      <span onClick={props.showProfilePage}>
         <FontAwesomeIcon icon={faUser}/> Perfil
       </span>
 

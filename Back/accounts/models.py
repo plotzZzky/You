@@ -11,9 +11,8 @@ def get_file_path(instance, filename):
 
 
 class CustomUser(AbstractUser):
-    image = models.ImageField(upload_to=get_file_path)
-    desc = models.CharField(max_length=512, null=True, blank=True)
-    # follows = models.ManyToManyField(User, related_name='users_friend', blank=True)
+    picture = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+    desc = models.CharField(max_length=512, null=True, blank=True, default="")
     email = None  # remove o campo email
     question = models.CharField(blank=False, null=False, max_length=128)
     answer = models.CharField(blank=False, null=False, max_length=128)

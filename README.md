@@ -8,14 +8,12 @@
 ![you](https://github.com/plotzZzky/You/assets/12895974/e1f0c898-784c-4ea1-82e8-263e18341c95)
 ![you_d](https://github.com/plotzZzky/You/assets/12895974/27ca6777-7112-4472-ac01-418a983fe44a)
 
-
-
-## Caracteristicas:
-
-- [x] Sistema de login e usuarios;
-- [x] Permite postar imagens;
-- [x] Likes e comentarios nas postagens;
-- [x] Permite seguir contatos;
-- [ ] Mais em breve... 
-
+<span>
+  <h3> Tecnologias: </h3>
+  <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green" />
+  <img src="https://img.shields.io/badge/django%20rest-ff1709?style=for-the-badge&logo=django&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white" />
+</span>
 

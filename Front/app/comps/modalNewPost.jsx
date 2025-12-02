@@ -17,13 +17,12 @@ export default function NewPostModal(props) {
     setPostText("");
   };
 
-  function setTextFromPost(event) {
-    // Salva o texto da postagem no useState
+  function setPostText(event) {
     const value = event.target.value;
     setPostText(value);
   };
 
-  function submitNewPost() {
+  function validateNewPost() {
     // Verifica se o post possui uma imagem
     if (postImg) {
       createNewPost();
@@ -33,10 +32,10 @@ export default function NewPostModal(props) {
     }
   };
 
-  function createNewPost() {
+  async function createNewPost() {
   // Cria um novo post
     const requetData = createNewRequestData();
-    const response = requestApi("POSTS", requetData, false);
+    const response = await requestApi("POSTS", requetData, false);
 
     if (response.ok) {
       closeModal();
@@ -61,11 +60,12 @@ export default function NewPostModal(props) {
     return (
       <div id="NewPostModal" onClick={closeModal}>
         <div className='modal' onClick={e => e.stopPropagation()}>
+          
           <SelectPostImg/>
 
-          <input type="text" placeholder="Diga algo" className="input-text-desc" value={postText} onChange={setTextFromPost}></input>
+          <input type="text" placeholder="Diga algo" className="input-text-desc" value={postText} onChange={setPostText}></input>
 
-          <button className="btn-mini" onClick={submitNewPost}> Publicar </button>
+          <button className="btn-mini" onClick={validateNewPost}> Publicar </button>
 
         </div>
       </div>

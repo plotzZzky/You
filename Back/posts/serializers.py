@@ -1,45 +1,16 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from django.contrib.auth.models import User
 
-from comments.serializer import CommentSerializer
-from users.serializer import UserSerializer
-from users.models import Profile
+from accounts.models import CustomUser
+from accounts.serializer import CreateUserSerializer
 from .models import Post
 
 
-# Serializer of Followees
-class ImageProfileSerializer(ModelSerializer):
-    """ Serializa a imgem de perfil dos usuarios seguidos """
-    class Meta:
-        model = Profile
-        fields = ['image']
-
-
-class FolloweeSerializer(ModelSerializer):
-    """ serializa o perfil dos usuario seguido """
-    profile = ImageProfileSerializer()
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'profile']
-
-
-# Serializer do usuario
-class ProfileSerializer(ModelSerializer):
-    follows = FolloweeSerializer(many=True)
-
-    class Meta:
-        model = Profile
-        fields = ['image', 'desc', 'follows']
-
-
 class UserProfileSerializer(ModelSerializer):
-    profile = ProfileSerializer()
     me = SerializerMethodField()
 
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'me', 'profile']
+        model = CustomUser
+        fields = ['id', 'username', 'me']
 
     def get_me(self, obj):
         request = self.context.get('request')
@@ -49,8 +20,7 @@ class UserProfileSerializer(ModelSerializer):
 
 
 class ModalSerializer(ModelSerializer):
-    user = UserSerializer()
-    comments = CommentSerializer(many=True)
+    user = CreateUserSerializer()
     me = SerializerMethodField()
     following = SerializerMethodField()
 
