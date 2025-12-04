@@ -101,38 +101,35 @@
 }
 
 /* Modal */
-#NewPostModal {
-  display: none;
+#NewPostModal,
+#ViewPostModal {
   position: fixed;
   inset: 0;
   background-color: #000000F2;
   z-index: 999;
+
+  .modal {
+    width: clamp(320px, 96vw, 800px);
+    margin: 4vh auto auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: var(--color-back)
+  }
+
+  img {
+    width: 100%;
+    height: 80vh;
+    object-fit: fill;
+  }
+
+  button {
+    margin: .5vh auto;
+    padding: clamp(4px, 1%, 16px) clamp(4px, 2%, 16px);
+    font-size: clamp(.8em, 1.2vw, 1.2em);
+  }
 } 
 
-.modal {
-  width: clamp(310px, 96vw, 900px);
-  margin: 1vh auto;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  background-color: var(--background)
-}
-
-.modal-img {
-  width: 100%;
-  height: 94vh;
-  object-fit: fill;
-}
-
-.modal-align-name {
-  height: 4vh;
-  padding: 2px 5px 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid gray;
-  background-color: #313131da;
-}
 
 .align-nick {
   display: inline-flex;
@@ -140,54 +137,27 @@
   justify-content: center;
   gap: 0 5px;
   cursor: pointer;
-}
 
-.align-nick * {
-  color: var(--fontColor_pri);
-  font-weight: bold;
-}
+  * {
+    color: var(--fontColor_pri);
+    font-weight: bold;
+  }
 
-.modal-align-btns {
-  display: inline-flex;
-  align-items: center;
-  gap: 0 5px;
-}
+  .user-pic {
+    width: 36px;
+    height: 32px;
+    border-radius: 50%;
+  }
 
-.modal-btn {
-  width: clamp(48px, 5vw, 64px);
-  height: clamp(32px, 3vh, 40px);
-  padding: 3px 16px;
-  font-size: clamp(1em, 3vw, 1.3em);
-  font-weight: bold;
-  border-radius: 2px;
-  border: 1px solid var(--color_accent);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0 4px;
-  color: var(--fontColor_pri);
-  background-color: var(--color_accent);
-}
+  .username {
+    font-size: clamp(0.9em, 2vw, 1.2em);
+  }
 
-.modal-btn::before {
-  padding: 3px 16px;
-  inset: 0;
-  border-radius: 2px;
-}
-
-.modal-btn * {
-  font-size: clamp(0.9em, 1vw, 1.1em);
-}
-
-.modal-user-img {
-  width: 36px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.modal-username {
-  font-size: clamp(0.9em, 2vw, 1.2em);
+  .btns {
+    display: inline-flex;
+    align-items: center;
+    gap: 0 5px;
+  }
 }
 
 .modal-info {

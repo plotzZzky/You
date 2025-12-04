@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useApi } from '@hooks/useApi';
-import { useAuth } from '@comps/authContext';
 import { useGenericGoPage } from '@hooks/useGoPage';
 import { useGoLoginPage } from '@hooks/useGoLogin';
 import InputPwd from '@inputs/inputPwd';
@@ -13,13 +12,11 @@ import './page.css'
 
 
 export default function AuthPage() {
-  const { setTokenLifetime } = useAuth();
   const goPage = useGenericGoPage();
   const goLoginPage = useGoLoginPage();
   const fetchApi = useApi();
 
   // Show inputs and pages
-  const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showRecovery, setShowRecovery] = useState(false);
   const [showAlert, setShowAlert] = useState("");
@@ -73,12 +70,13 @@ export default function AuthPage() {
     */
     if (pwd1Valid && userValid) {
       const requestData = createRequestDataAndForm();
-      const response = await genericHTTPRequest("LOGIN", requestData, true);
+      const response = await genericHTTPRequest("LOGIN", requestData, false);
 
-      if (response) {
-        setTokenLifetime(response)
+      if (response.ok) {
         goPage("CARDS");
       }
+
+      setShowAlert("Usuário ou senha incorretos.");
       
     } else {
       setShowAlert("Prencha os dados de login corretamente");
@@ -106,9 +104,11 @@ export default function AuthPage() {
       const requestData = createRequestDataAndForm(true);
       const response = await genericHTTPRequest(url, requestData);
 
-      if (response) {
+      if (response.ok) {
         goPage("CARDS");
       }
+
+      setShowAlert("Usuário ou senha incorretos.");
 
     } else {
       setShowAlert("Prencha os dados corretamente para se registar.");

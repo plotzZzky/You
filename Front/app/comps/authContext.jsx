@@ -6,30 +6,20 @@ import { useApi } from '@hooks/useApi';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-
   const requestApi = useApi();
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [tokenLifetime, setTokenLifetime] = useState(null);
-  const currentTime = Date.now();
 
   const checkAuthStatus = useCallback(async () => {
-
-    console.log(tokenLifetime)
-    if (currentTime < tokenLifetime) {
-      setIsAuthenticated(true);
-      return;  // Se o tempo não expirou encerra a verificação
-    }
 
     try {
       // Verifica se está logado, se sim, retorna 200
       const response = await requestApi('ME'); 
-      const data = await response.json();
 
       if (response.ok) {
         setIsAuthenticated(true);
-        setTokenLifetime(data);
-      };
+      } else {
+        setIsAuthenticated(false);
+      }
 
     } catch (error) {
       setIsAuthenticated(false);
@@ -44,9 +34,7 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(() => ({
     isAuthenticated,
     checkAuthStatus,
-    tokenLifetime,
-    setTokenLifetime,
-  }), [isAuthenticated, checkAuthStatus, tokenLifetime, setTokenLifetime]);
+  }), [isAuthenticated, checkAuthStatus]);
 
   return (
     <AuthContext.Provider value={value}>

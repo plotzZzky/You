@@ -11,13 +11,13 @@ export default function NewPostModal(props) {
   const [postFile, setPostFile] = useState();
 
   function closeModal() {
-    props.setShowNewPostModal(false);
+    props.setShowNewPost(false);
     setPostFile(null);
     setPostImg(null);
     setPostText("");
   };
 
-  function setPostText(event) {
+  function setPostTextValue(event) {
     const value = event.target.value;
     setPostText(value);
   };
@@ -34,8 +34,9 @@ export default function NewPostModal(props) {
 
   async function createNewPost() {
   // Cria um novo post
-    const requetData = createNewRequestData();
-    const response = await requestApi("POSTS", requetData, false);
+    const requestData = createNewRequestData();
+    const response = await requestApi("POSTS", false, requestData);
+    console.log(response)
 
     if (response.ok) {
       closeModal();
@@ -56,16 +57,18 @@ export default function NewPostModal(props) {
     return requestData;
   };
 
-  if (props.shoNewPostModal) {
+  if (props.showNewPost) {
     return (
       <div id="NewPostModal" onClick={closeModal}>
         <div className='modal' onClick={e => e.stopPropagation()}>
           
-          <SelectPostImg/>
+          <SelectPostImg postFile={postFile} setPostFile={setPostFile} setPostImg={setPostImg} />
 
-          <input type="text" placeholder="Diga algo" className="input-text-desc" value={postText} onChange={setPostText}></input>
+          <div className='div-input'>
+            <input type="text" placeholder="Diga algo" value={postText} onChange={setPostTextValue}/>
+          </div>
 
-          <button className="btn-mini" onClick={validateNewPost}> Publicar </button>
+          <button onClick={validateNewPost}> Publicar </button>
 
         </div>
       </div>

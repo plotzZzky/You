@@ -2,7 +2,6 @@
 nav {
   position: fixed;
   inset: 0 0 auto 0;
-  margin: 0;
   padding: .2vh 0;
   display: flex;
   justify-content: center;

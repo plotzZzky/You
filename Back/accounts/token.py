@@ -2,14 +2,12 @@ from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework import status
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 def create_token_response(user):
     """ Retorna o response com o cookie httponly com o token """
-    now = datetime.now()
-    lifetime = now + timedelta(minutes=30)
-    response = Response(data=lifetime, status=status.HTTP_200_OK)
+    response = Response(status=status.HTTP_200_OK)
     create_auth_cookie(user, response)  # Cria o cookie http only com o token dentro
     return response
 

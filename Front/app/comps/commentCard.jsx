@@ -1,4 +1,4 @@
-import { useAuth } from './authContextt';
+import { useAuth } from './authContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 

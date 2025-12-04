@@ -1,10 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useAuth } from '@comps/authContext';
-import { useApi } from '@comps/hooks/useApi';
+import { useApi } from '@hooks/useApi';
 import { useGenericGoPage } from '@hooks/useGoPage';
 import PostCard from '@comps/postCard';
 import AppBar from '@comps/appBar';
+import NewPostModal from '@comps/modalNewPost';
+import ViewPostModal from '@comps/ModalViewPost';
+import './page.css'
 
 
 export default function ViewPage() {
@@ -14,31 +17,26 @@ export default function ViewPage() {
 
   const [cardsPage, setCardsPage] = useState();
   const [showNewPost, setShowNewPost] = useState(false);
-  const [showViewPostModal, setShowViewPostModal] = useState(false);
+
+  const [showViewPost, setShowViewPost] = useState(false);
+  const [viewPostData, setViewPostData] = useState([]);
+
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
-    checkIsAuthenticated()
-  }, [])
-
-  function checkIsAuthenticated() {
-    if (isAuthenticated) {  // Verifica se possui o token 
-      showFolloweePosts();
-
-    } else {
+    if (!isAuthenticated) {  // Verifica se possui o token 
       goPage("AUTH");
-    }
-  };
+    } 
+
+    showFolloweePosts();
+  }, [])
 
   function showNewPostModal(){
     setShowNewPost(true);
   };
 
-  function showViewPostModal() {
-    setShowViewPostModal(true);
-  }
-
   async function showFolloweePosts() {
-    const response = await requestApi("FOLLOWEE", true);
+    const response = await requestApi("USERS", true);
     createCards(response);
   }
 
@@ -48,38 +46,53 @@ export default function ViewPage() {
   }
 
   async function showProfilePage() {
-    return;
+    setShowProfile(true);
   }
 
-  function createCards(data) {
+  function showViewPostModal() {
+    setShowViewPost(true);
+  }
+
+  function createCards(value) {
     // Cria os cards da pagina
-    setCardsPage(
-      data.map(({image, id}, index) => (
-        <PostCard
-          key={index}
-          image={image}
-          update={showFolloweePosts}
-          showModal={() => showModal(id)}
-        />
-      ))
-    )
+    if (value) {
+      setCardsPage(
+        value.map(({image, id}, index) => (
+          <PostCard
+            key={index}
+            image={image}
+            update={showFolloweePosts}
+            showPost={() => getModalData(id)}
+          />
+        ))
+      )
+    }
   };
+
+  async function getModalData(postId) {
+    // Busca informações de um post
+
+    showViewPostModal();
+  }
 
   if (isAuthenticated) {
     return (
       <>
         <AppBar
           showNewPostModal={showNewPostModal}
-          showAllPosts={showAllPosts}
           showFolloweePosts={showFolloweePosts}
+          showAllPosts={showAllPosts}
           showProfilePage={showProfilePage}
         />
 
         <section>
           <div id='Cards'>
-            {cardsPage}
+            {cardsPage || <h3>Carregando...</h3>}
           </div>
         </section>
+
+        <NewPostModal showNewPost={showNewPost} setShowNewPost={setShowNewPost} />
+        <ViewPostModal showViewPost={showViewPost} setShowViewPost={setShowViewPost} modalData={viewPostData} />
       </>
     )
   }

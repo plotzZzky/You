@@ -10,7 +10,7 @@ from .serializers import PostSerializer, ModalSerializer, UserProfileSerializer
 
 
 class PostClassView(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [ IsAuthenticated ]
     http_method_names = ['get', 'post', 'delete']
     serializer_class = PostSerializer
     queryset = Post.objects.all()
@@ -86,13 +86,13 @@ class UsersPostsClassView(ModelViewSet):
     def list(self, request, *args, **kwargs):
         """ Retorna a lista de posts de quem você segue """
         user = request.user
-        friends = user.profile.follows.all()
+        # friends = user.follows.all()
 
-        posts = Post.objects.filter(user__in=friends)
+        # posts = Post.objects.filter(user__in=friends)
         user_posts = Post.objects.filter(user=request.user)
-        all_posts = posts.union(user_posts).order_by("-id")
+        # all_posts = posts.union(user_posts).order_by("-id")
 
-        serializer = self.get_serializer(all_posts, many=True)
+        serializer = self.get_serializer(user_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

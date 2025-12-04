@@ -15,7 +15,6 @@ export default function NavBar() {
   const [isClient, setIsClient] = useState(false);
   const { isAuthenticated } = useAuth();
   const pathname = usePathname();
-
   const requestApi = useApi();
   const goLoginPage = useGoLoginPage();
   const goPage = useGenericGoPage();
@@ -27,21 +26,18 @@ export default function NavBar() {
 
   // * * * Funções de navegação pelas paginas * * *
   function goHomePage() {
-    if (isClient) {
-      if (pathname !== '/') {
-        goPage("HOME");
+    if (pathname !== '/') {
+      goPage("HOME");
+    };
 
-      } else {
-        document.getElementById('Start').scrollIntoView();
-      }
-    }
+    document.getElementById('Start').scrollIntoView();
   };
 
-  function goAbout() {
+  function goAboutPage() {
     document.getElementById('About').scrollIntoView();
   };
 
-  function goFaq() {
+  function goFaqPage() {
     document.getElementById('Faq').scrollIntoView();
   };
 
@@ -66,7 +62,7 @@ export default function NavBar() {
   const ABOUT_LINK = () => {
     if (isClient) {
       return pathname === '/' ? (
-        <span onClick={goAbout}>
+        <span onClick={goAboutPage}>
           <FontAwesomeIcon icon={faUsers} /> Sobre
         </span>
       ) : null
@@ -76,7 +72,7 @@ export default function NavBar() {
   const FAQ_LINK = () => {
     if (isClient) {
       return pathname === '/' ? (
-        <span onClick={goFaq}>
+        <span onClick={goFaqPage}>
           <FontAwesomeIcon icon={faQuestion} /> Dúvidas
         </span>
       ) : null

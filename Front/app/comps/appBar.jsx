@@ -25,7 +25,7 @@ export default function AppBar(props) {
   };
 
   return(
-    <nav id="AppBar">
+    <nav>
       <span onClick={props.showNewPostModal}>
         <FontAwesomeIcon icon={faSquarePlus}/> Novo
       </span>

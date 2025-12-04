@@ -6,11 +6,13 @@ from django.conf.urls.static import static
 
 from posts.urls import posts_router
 from accounts.urls import users_router
+from accounts.views import UserMeMinimalView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include(users_router.urls)),
     path('', include(posts_router.urls)),
+    path('me/', UserMeMinimalView.as_view()),
     path('media/<path:path>/', serve, {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

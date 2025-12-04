@@ -8,8 +8,10 @@ export const useApi = () => {
     
     const pages = {
       BASE: process.env.NEXT_PUBLIC_BASE_URL,
-      CARDS: process.env.NEXT_PUBLIC_CARDS_URL,
-      FOLLOWEE: process.env.NEXT_PUBLIC_FOLLOWEE_URL,
+      POSTS: process.env.NEXT_PUBLIC_POSTS_URL,
+      FOLLOW: process.env.NEXT_PUBLIC_FOLLOW_URL,
+      USERS: process.env.NEXT_PUBLIC_USERS_URL,
+
       LOGIN: process.env.NEXT_PUBLIC_LOGIN_URL,
       REGISTER: process.env.NEXT_PUBLIC_REGISTER_URL,
       RECOVERY: process.env.NEXT_PUBLIC_RECOVERY_URL,
