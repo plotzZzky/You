@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useAuth } from './authContext'
 import { useGenericGoPage} from '@hooks/useGoPage'
-import { useGoLoginPage } from '@hooks/useGoLogin'
+import { useGoLoginPage } from './hooks/useGoLogin'
 import { useGenericGoLogout } from './hooks/useLogout'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'react-tooltip'
@@ -42,7 +42,7 @@ export default function NavBar() {
     document.getElementById('Faq').scrollIntoView();
   };
 
-  function cardPagePage() {
+  function cardPage() {
     goPage("CARDS");
   };
 
@@ -68,7 +68,7 @@ export default function NavBar() {
 
   const APP_LINK = () => {
     return isAuthenticated? (
-      <span onClick={cardPagePage}>
+      <span onClick={cardPage}>
         <FontAwesomeIcon icon={faImage}/> Ver
       </span>
     ) : 

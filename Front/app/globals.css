@@ -57,6 +57,10 @@ body {
     display: flex;
     justify-content: space-between;
     margin: 0;
+
+    div {
+      padding-top: 16vh;
+    }
   }
 
   #Start,
@@ -76,7 +80,8 @@ body {
 }
 
 #About {
-  p, strong {
+  p, 
+  strong {
     font-size: clamp(.8em, 2vw, 1.4em);
   }
 }

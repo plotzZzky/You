@@ -8,9 +8,7 @@ export function useGoLoginPage() {
   const goPage = useGenericGoPage();
 
   const go = () => {
-    const url = isAuthenticated ? "CARDS" : "AUTH";
-
-    goPage(url);
+    goPage(isAuthenticated? "CARDS" : "AUTH");
   };
 
   return go;

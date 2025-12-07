@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react';
+import { useAuth } from '@comps/authContext';
 import { useApi } from '@hooks/useApi';
 import { useGenericGoPage } from '@hooks/useGoPage';
-import { useGoLoginPage } from '@hooks/useGoLogin';
 import InputPwd from '@inputs/inputPwd';
 import InputUser from '@inputs/inputUser';
 import InputAnswer from '@inputs/inputAnswer';
@@ -12,8 +12,8 @@ import './page.css'
 
 
 export default function AuthPage() {
-  const goPage = useGenericGoPage();
-  const goLoginPage = useGoLoginPage();
+  const { isAuthenticated, loading } = useAuth();
+  const goFrontPage = useGenericGoPage();
   const fetchApi = useApi();
 
   // Show inputs and pages
@@ -39,8 +39,11 @@ export default function AuthPage() {
 
 
   useEffect(() => {
-    goLoginPage(); // Se já tiver o token redireciona para pagina com os cards
-  }, [])
+    if (loading, isAuthenticated) {
+      goFrontPage("CARDS");
+    };
+
+  }, [loading])
 
   // * * * Funções que controlam os inputs exibidos na pagina * * *
   function showLoginPage() { // Exibe os inputs para login
@@ -70,10 +73,10 @@ export default function AuthPage() {
     */
     if (pwd1Valid && userValid) {
       const requestData = createRequestDataAndForm();
-      const response = await genericHTTPRequest("LOGIN", requestData, false);
+      const response = await genericHTTPRequest("auth/login/", requestData, false);
 
       if (response.ok) {
-        goPage("CARDS");
+        goFrontPage("CARDS");
       }
 
       setShowAlert("Usuário ou senha incorretos.");
@@ -84,11 +87,11 @@ export default function AuthPage() {
   };
 
   function registerFunction() {
-    genericRegisterOrRecoveryFunction("REGISTER");
+    genericRegisterOrRecoveryFunction("auth/register/");
   }
 
   function recoveryFunction() {
-    genericRegisterOrRecoveryFunction("SET_PWD");
+    genericRegisterOrRecoveryFunction("auth/recovery/set/");
   }
 
   async function genericRegisterOrRecoveryFunction(url) {
@@ -105,7 +108,7 @@ export default function AuthPage() {
       const response = await genericHTTPRequest(url, requestData);
 
       if (response.ok) {
-        goPage("CARDS");
+        goFrontPage("CARDS");
       }
 
       setShowAlert("Usuário ou senha incorretos.");
@@ -121,7 +124,7 @@ export default function AuthPage() {
     */
     if (userValid) {
       const requestData = createRequestDataAndForm();
-      const response = await genericHTTPRequest("RECOVERY", requestData, true);
+      const response = await genericHTTPRequest("auth/recovery/", requestData, true);
 
       if (response) {
         setQuestion(response.question);

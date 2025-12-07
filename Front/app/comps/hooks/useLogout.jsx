@@ -9,7 +9,7 @@ export function useGenericGoLogout() {
 
   const logoutAccount = async () => {
     try {
-      const response = await requestApi("LOGOUT");
+      const response = await requestApi("auth/login/");
 
       if (!response.ok) {
         throw "Não foi possivel deslogar";

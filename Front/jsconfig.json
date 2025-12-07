@@ -6,6 +6,7 @@
       "@comps/*": ["./app/comps/*"],
       "@inputs/*": ["./app/comps/inputs/*"],
       "@hooks/*": ["./app/comps/hooks/*"],
+      "@posts/*": ["./app/comps/posts/*"],
     }
   }
 }

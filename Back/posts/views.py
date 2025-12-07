@@ -2,11 +2,12 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from django.contrib.auth.models import User
+from accounts.models import CustomUser
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
 from .serializers import SimplePostSerializer, FullPostSerializer
+from accounts.serializer import PublicUserSerializer
 
 
 class PostClassView(ModelViewSet):
@@ -28,6 +29,7 @@ class PostClassView(ModelViewSet):
         try:
             instance = self.get_object()
             serializer = FullPostSerializer(instance, context={'request': request})
+            print(serializer.data)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
 
         except (TypeError, ValueError, TypeError, ObjectDoesNotExist):
@@ -36,9 +38,10 @@ class PostClassView(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+
+            serializer = FullPostSerializer(data=request.data, context={'request': request})
             if serializer.is_valid(raise_exception=True):
-                serializer.save()
+                serializer.save(user=request.user)
                 return Response(data="Post criado", status=status.HTTP_200_OK)
 
             else:
@@ -70,13 +73,16 @@ class UsersPostsClassView(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         """ Retorna a lista de posts de um usuário específico """
         try:
-            user = User.objects.get(pk=request.user.id)
+            pk: int = kwargs['pk']
+            user_id = request.user.id if pk == '0' else pk
+
+            user = CustomUser.objects.get(pk=user_id)
             posts = Post.objects.filter(user=user).order_by("-id")
 
             serializer = self.get_serializer(posts, many=True)
-            # user_serializer = UserProfileSerializer(user, context={'request': request})
+            user_serializer = PublicUserSerializer(user, context={'request': request})
 
-            result = {'posts': serializer.data}
+            result = {'posts': serializer.data, "user": user_serializer.data}
             return Response(data=result, status=status.HTTP_200_OK)
 
         except (KeyError, ValueError, TypeError) as error:
@@ -86,23 +92,24 @@ class UsersPostsClassView(ModelViewSet):
     def list(self, request, *args, **kwargs):
         """ Retorna a lista de posts de quem você segue """
         user = request.user
-        # friends = user.follows.all()
+        followers = user.followers.all()
+        print(followers)
 
-        # posts = Post.objects.filter(user__in=friends)
+        posts = Post.objects.filter(user__in=followers)
         user_posts = Post.objects.filter(user=request.user)
-        # all_posts = posts.union(user_posts).order_by("-id")
+        all_posts = posts.union(user_posts).order_by("-id")
 
-        serializer = self.get_serializer(user_posts, many=True)
+        serializer = self.get_serializer(all_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LikeClassView(ModelViewSet):
     permission_classes = [IsAuthenticated]
-    http_method_names = ['post']
+    http_method_names = ['get']
 
-    def create(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
         try:
-            post_id = request.data['id']
+            post_id = kwargs['id']
             post = Post.objects.get(pk=post_id)
 
             if request.user in post.likes.all():
@@ -120,12 +127,12 @@ class LikeClassView(ModelViewSet):
 
 class FollowClassView(ModelViewSet):
     permission_classes = [IsAuthenticated]
-    http_method_names = ['post']
+    http_method_names = ['get']
 
     def create(self, request, *args, **kwargs):
         try:
             user_id = request.data['id']  # Id do usuário a ser seguido
-            follow_user = User.objects.get(pk=user_id)
+            follow_user = CustomUser.objects.get(pk=user_id)
             you = request.user
             friends = you.profile.follows
 

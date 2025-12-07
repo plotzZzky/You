@@ -2,8 +2,15 @@ import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faGears} from '@fortawesome/free-solid-svg-icons'
 
-export default function Profile(props) {
+export default function ProfileCard(props) {
+  const profileImage = props.data?.image;
+  const itsMe = props.data.me;
+
   const [getCards, setCards] = useState();
+
+  useEffect(() => {
+    createFolloweeCards();
+  }, [])
 
   function showEditUser() {
     // Mostra o modal para editar o perfil do usuario
@@ -19,13 +26,16 @@ export default function Profile(props) {
 
   function createFolloweeCards() {
     // Cria os cards dos cards dos followees
-    const value = props.data.profile.follows
-    setCards(
-      value.map((data, index) => (
-        <div className='align-follow' key={index} onClick={() => goFolloweeProfile(data.id)}>
-          <img className="follow-icon" src={data.profile.image} ></img>
-        </div>
-    )))
+    const value = props.data.followers;
+
+    if (value) {
+      setCards(
+        value.map((data, index) => (
+          <div className='align-follow' key={index} onClick={() => goFolloweeProfile(data.id)}>
+            <img className="follow-icon" src={data.profile.image} ></img>
+          </div>
+      )))
+    }
   }
 
   function goFolloweeProfile(userId) {
@@ -33,28 +43,25 @@ export default function Profile(props) {
   }
 
   const USEREDITICON = () => {
-    return props.data?.me?
-      <FontAwesomeIcon className='app-icon' icon={faGears} style={{cursor: 'pointer'}} onClick={showEditUser}/> : null
+    return itsMe?
+      <FontAwesomeIcon icon={faGears} onClick={showEditUser}/> : null
   }
 
   const DESCEDITICON = () => {
-    return props.data?.me?
-      <FontAwesomeIcon className='app-icon' icon={faEdit} style={{cursor: 'pointer'}} onClick={showEditDesc}/> : null
+    return itsMe?
+      <FontAwesomeIcon icon={faEdit} onClick={showEditDesc}/> : null
   }
-
-  useEffect(() => {
-    createFolloweeCards()
-  }, [])
 
   return(
     <div className="profile">
-      <img className="profile-img" src={props.data?.profile.image} alt="" />
+      <img className="profile-img" src={profileImage} alt="" />
       
       <div className="profile-desc">
         <div className="align-name">
           <span className="name"> {props.data.username} </span>
-          <div style={{display: 'flex', gap: '15px'}}>
+          <div>
             {DESCEDITICON()}
+            
             {USEREDITICON()}
           </div>
         </div>

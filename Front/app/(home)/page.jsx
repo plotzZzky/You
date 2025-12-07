@@ -42,6 +42,7 @@ export default function HomePage() {
     <>
       <section id='Start'>
         <div className='align-home-page'>
+
             <div>
               <h1> Bem-vindo à You! </h1>
               <h2 id='subtitle'> A You é a plataforma para compartilhar o que importa na sua vida com amigos, familiares e o mundo... </h2>
@@ -49,18 +50,21 @@ export default function HomePage() {
             </div>
 
           <img className='img-background' src={'background_a.jpg'} loading='lazy'/>
+          
         </div>   
       </section>
 
       <section id='About'>
         <div className='align-home-page-midle'>
+
           <img className='img-background' src={'background_c.jpg'} loading='lazy'></img>
 
-          <div className='div-align-text-home'>
+          <div>
             <h2> Sobre... </h2>
             <p> A You é uma plataforma para compartilhamento de fotos, é ideal para quem quer compartilhar suas experiências com o mundo. Aqui você pode criar uma galeria pessoal, seguir amigos e descobrir novas tendências e temas que são importantes para você. Com a You, você nunca perde um momento importante e pode reviver suas lembranças sempre que quiser.</p>
             <p>Junte-se à comunidade You hoje mesmo!</p>
           </div>
+
         </div>      
       </section>
 

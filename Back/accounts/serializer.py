@@ -1,6 +1,7 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from .models import CustomUser
+
 
 
 class CreateUserSerializer(ModelSerializer):
@@ -22,8 +23,16 @@ class CreateUserSerializer(ModelSerializer):
 
 
 class PublicUserSerializer(ModelSerializer):
+    followers = SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'desc']
+        fields = ['id', 'username', 'picture', 'followers']
+
+    def get_followers(self, obj):
+        user = self.context.get('request').user
+        followers = obj.followers.filter(followers=user)
+
+        return PublicUserSerializer(followers, many=True).data
+
 

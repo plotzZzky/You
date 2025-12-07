@@ -3,17 +3,17 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@comps/authContext';
 import { useApi } from '@hooks/useApi';
 import { useGenericGoPage } from '@hooks/useGoPage';
-import PostCard from '@comps/postCard';
+import PostCard from '../comps/posts/postCard';
 import AppBar from '@comps/appBar';
-import NewPostModal from '@comps/modalNewPost';
-import ViewPostModal from '@comps/ModalViewPost';
+import NewPostModal from '@posts/modalNewPost';
+import ViewPostModal from '@posts/ModalViewPost';
 import './page.css'
 
 
 export default function ViewPage() {
-  const { isAuthenticated } = useAuth();
-  const goPage = useGenericGoPage();
-  const requestApi = useApi();
+  const { isAuthenticated, loading } = useAuth();
+  const goFrontPage = useGenericGoPage();
+  const fetchApi = useApi();
 
   const [cardsPage, setCardsPage] = useState();
   const [showNewPost, setShowNewPost] = useState(false);
@@ -22,62 +22,92 @@ export default function ViewPage() {
   const [viewPostData, setViewPostData] = useState([]);
 
   const [showProfile, setShowProfile] = useState(false);
+  const [profileData, setProfileData] = useState({});
 
   useEffect(() => {
-    if (!isAuthenticated) {  // Verifica se possui o token 
-      goPage("AUTH");
-    } 
+    if (loading) return; // Não busca os cards até terminar a consulta do token em "back/me/"
+
+    if (!isAuthenticated) { 
+      goFrontPage("AUTH"); // Se não tiver token envia para pagina de login
+    };
 
     showFolloweePosts();
-  }, [])
+  }, [loading])
+
+  useEffect(() => {
+    // Exibe o new post modal se receber os dados
+    setShowViewPost(viewPostData.image? true : false); // se tiver a imagem exibe o modal
+
+  }, [viewPostData])
 
   function showNewPostModal(){
+    /**
+     * Exibe o modal para criar um novo post
+     */
     setShowNewPost(true);
   };
 
   async function showFolloweePosts() {
-    // Exibe os posts das pessoas que o usuario segue
-    const response = await requestApi("USERS", true);
-    createCards(response);
+    // Exibe os posts das pessoas que o usuario segue e do usuario
+    setProfileData({}) // Escinde o card do perfil do usario
+
+    const response = await fetchApi("users/", true);
+    
+    if (response) {
+      createCards(response);
+    }
   };
 
   async function showAllPosts() {
     // Exibe o horizonte (posts de pessoas desconhecidas)
-    const response = await requestApi("POSTS", true);
-    createCards(response);
+    setProfileData({}) // Escinde o card do perfil do usario
+
+    const response = await fetchApi("posts/", true);
+
+    if (response) {
+      createCards(response);
+    }
   };
 
   async function showProfilePage() {
     // Exibe o perfil do usuario e os seus posts
-    setShowProfile(true);
+    const url = "users/0/" // 0 retorna os posts do usuario atual
+    const response = await fetchApi(url, true);
+
+    if (response) {
+      createCards(response.posts);
+      setProfileData(response.user)
+    }
   };
 
   async function receiveViewPostModalData(postId) {
     // Busca informações de um post para ser exibido no viewpost modal
-    const response = await requestApi(postId, true);
-    setViewPostData(response);
-    showViewPostModal();
-  };
-
-  function showViewPostModal() {
-    // Exibe o modal com os detalhes de um post
-    setShowViewPost(true);
+    const url = `posts/${postId}/`
+    const response = await fetchApi(url, true);
+    setViewPostData(response); // Salva as informações no useState e aciona o useEffect 
   };
 
   function createCards(value) {
     // Cria os cards da pagina
-    if (value) {
+    if (value.length > 0 && typeof value === 'object') {
       setCardsPage(
         value.map(({image, id}, index) => (
           <PostCard
             key={index}
             image={image}
-            update={showFolloweePosts}
             showPost={() => receiveViewPostModalData(id)}
           />
       )))
     }
   };
+
+  const PROFILE_PAGE = () => {
+    return profileData? (
+      <>
+        <a>{profileData.username}</a>
+      </>
+    ) : null
+  }
 
   if (isAuthenticated) {
     return (
@@ -91,12 +121,15 @@ export default function ViewPage() {
 
         <section>
           <div id='Cards'>
+            {PROFILE_PAGE()}
+
             {cardsPage || <h3>Carregando...</h3>}
+
           </div>
         </section>
 
-        <NewPostModal showNewPost={showNewPost} setShowNewPost={setShowNewPost} />
-        <ViewPostModal showViewPost={showViewPost} setShowViewPost={setShowViewPost} modalData={viewPostData} />
+        <NewPostModal showNewPost={showNewPost} setShowNewPost={setShowNewPost} showFolloweePosts={showFolloweePosts} />
+        <ViewPostModal showViewPost={showViewPost} setShowViewPost={setShowViewPost} modalData={viewPostData} update={showFolloweePosts} />
       </>
     )
   }

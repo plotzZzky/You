@@ -2,29 +2,30 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { useApi } from '@hooks/useApi';
 
-
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const requestApi = useApi();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const checkAuthStatus = useCallback(async () => {
-
     try {
-      // Verifica se está logado, se sim, retorna 200
-      const response = await requestApi('ME'); 
+      const response = await requestApi('me/');
 
       if (response.ok) {
-        setIsAuthenticated(true);
+        setIsAuthenticated(true);  // Se a resposta for ok, o usuário está autenticado
+
       } else {
-        setIsAuthenticated(false);
+        setIsAuthenticated(false);  // Se não, não está autenticado
       }
 
     } catch (error) {
       setIsAuthenticated(false);
+      
+    } finally {
+      setLoading(false);
     }
-
   }, [requestApi]);
 
   useEffect(() => {
@@ -34,13 +35,14 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(() => ({
     isAuthenticated,
     checkAuthStatus,
+    loading,
   }), [isAuthenticated, checkAuthStatus]);
 
   return (
     <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 };
 
 // Hook para acessar os useStates

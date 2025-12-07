@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useApi } from "./hooks/useApi";
-import SelectPostImg from "./selecPostImg";
+import { useApi } from "../hooks/useApi";
+import SelectPostImg from "../selecPostImg";
+import '../inputs/inputs.css'
 
 
 export default function NewPostModal(props) {
@@ -10,7 +11,7 @@ export default function NewPostModal(props) {
   const [postImg, setPostImg] = useState();
   const [postFile, setPostFile] = useState();
 
-  function closeModal() {
+  function closeThisModal() {
     props.setShowNewPost(false);
     setPostFile(null);
     setPostImg(null);
@@ -35,11 +36,11 @@ export default function NewPostModal(props) {
   async function createNewPost() {
   // Cria um novo post
     const requestData = createNewRequestData();
-    const response = await requestApi("POSTS", false, requestData);
-    console.log(response)
+    const response = await requestApi("posts/", false, requestData);
 
     if (response.ok) {
-      closeModal();
+      props.showFolloweePosts();
+      closeThisModal();
     };
   };
 
@@ -59,7 +60,7 @@ export default function NewPostModal(props) {
 
   if (props.showNewPost) {
     return (
-      <div id="NewPostModal" onClick={closeModal}>
+      <div id="NewPostModal" onClick={closeThisModal}>
         <div className='modal' onClick={e => e.stopPropagation()}>
           
           <SelectPostImg postFile={postFile} setPostFile={setPostFile} setPostImg={setPostImg} />
