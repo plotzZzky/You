@@ -6,13 +6,13 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
-from .serializers import PostSerializer, ModalSerializer, UserProfileSerializer
+from .serializers import SimplePostSerializer, FullPostSerializer
 
 
 class PostClassView(ModelViewSet):
     permission_classes = [ IsAuthenticated ]
     http_method_names = ['get', 'post', 'delete']
-    serializer_class = PostSerializer
+    serializer_class = SimplePostSerializer
     queryset = Post.objects.all()
 
     def list(self, request, *args, **kwargs):
@@ -27,7 +27,7 @@ class PostClassView(ModelViewSet):
         """ Retorna um post especifico """
         try:
             instance = self.get_object()
-            serializer = ModalSerializer(instance, context={'request': request})
+            serializer = FullPostSerializer(instance, context={'request': request})
             return Response(data=serializer.data, status=status.HTTP_200_OK)
 
         except (TypeError, ValueError, TypeError, ObjectDoesNotExist):
@@ -65,7 +65,7 @@ class PostClassView(ModelViewSet):
 class UsersPostsClassView(ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get']
-    serializer_class = PostSerializer
+    serializer_class = SimplePostSerializer
 
     def retrieve(self, request, *args, **kwargs):
         """ Retorna a lista de posts de um usuário específico """
@@ -74,9 +74,9 @@ class UsersPostsClassView(ModelViewSet):
             posts = Post.objects.filter(user=user).order_by("-id")
 
             serializer = self.get_serializer(posts, many=True)
-            user_serializer = UserProfileSerializer(user, context={'request': request})
+            # user_serializer = UserProfileSerializer(user, context={'request': request})
 
-            result = {'posts': serializer.data, 'user': user_serializer.data}
+            result = {'posts': serializer.data}
             return Response(data=result, status=status.HTTP_200_OK)
 
         except (KeyError, ValueError, TypeError) as error:

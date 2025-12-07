@@ -203,7 +203,7 @@ export default function AuthPage() {
   };
 
   const LOGIN_PAGE = () => {
-    if (!showRegister) {
+    if (!showRegister && !showRecovery) {
       return (
         <>
           <div id='loginAlign'>
@@ -223,7 +223,7 @@ export default function AuthPage() {
   };
 
   const REGISTER_PAGE = () => {
-    if (showRegister) {
+    if (showRegister && !showRecovery) {
       return (
         <>
           <div id='loginAlign'>
@@ -281,9 +281,11 @@ export default function AuthPage() {
         {alertMsg()}
 
         {LOGIN_PAGE()}
-        {REGISTER_PAGE()}
-        {RECOVERY_PAGE()}
 
+        {REGISTER_PAGE()}
+
+        {RECOVERY_PAGE()}
+        
       </div>
     </section>
   )

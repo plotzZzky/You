@@ -7,26 +7,31 @@ export default function CommentsPage() {
     if (event.key === 'Enter') {
       createNewComment();
     }
-  }
+  };
 
   function createNewComment() {
     // Função que cria um novo comentario
-  }
+  };
 
   function getAllComments(){
     // Busca os commentarios no backend
-  }
+
+    createCommentsCards(value);
+  };
 
   function createCommentsCards(value) {
     // Cria os cards dos comentarios 
     if (value) {
       setCards(
         value.map((data, index) => (
-          <CommentCard key={index} data={data} formatDate={formatDate} getAllComments={getAllComments}/>
-        ))
-      )
+          <CommentCard 
+            key={index}
+            data={data}
+            getAllComments={getAllComments}
+          />
+      )))
     }
-  }
+  };
 
   return (
     <div>

@@ -1,28 +1,12 @@
 'use client'
-import { useApi } from "@hooks/useApi"
-import { useGenericGoPage } from "@hooks/useGoPage"
+import { useGenericGoLogout } from "./hooks/useLogout"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser, faImage, faMagnifyingGlass, faSquarePlus, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
 import './navbar.css'
 
 
 export default function AppBar(props) {
-  const goPage = useGenericGoPage()
-  const requestApi = useApi();
-
-  async function logoutAccount() {
-    try {
-      const response = await requestApi("LOGOUT");
-      if (!response.ok) {
-        throw "Não foi possivel deslogar";
-      };
-
-      goPage("HOME");
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const goLogout = useGenericGoLogout();
 
   return(
     <nav>
@@ -42,7 +26,7 @@ export default function AppBar(props) {
         <FontAwesomeIcon icon={faUser}/> Perfil
       </span>
 
-      <span onClick={logoutAccount}>
+      <span onClick={goLogout}>
         <FontAwesomeIcon icon={faRightFromBracket}/> Sair
       </span>
     </nav>

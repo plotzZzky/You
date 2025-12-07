@@ -24,7 +24,7 @@ export const useApi = () => {
       url = `${pages["BASE"]}${pages[endpoint]}`;
       
     } else {
-      url = `${pages["BASE"]}${pages["CARDS"]}${endpoint}/`; // o endpoint deve ser um id ex "backend/pets/{id}/"
+      url = `${pages["BASE"]}${pages["POSTS"]}${endpoint}/`; // o endpoint deve ser um id ex "backend/pets/{id}/"
     }
 
     const defaultOptions = {

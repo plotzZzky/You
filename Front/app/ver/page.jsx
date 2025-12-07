@@ -36,22 +36,33 @@ export default function ViewPage() {
   };
 
   async function showFolloweePosts() {
+    // Exibe os posts das pessoas que o usuario segue
     const response = await requestApi("USERS", true);
     createCards(response);
-  }
+  };
 
   async function showAllPosts() {
+    // Exibe o horizonte (posts de pessoas desconhecidas)
     const response = await requestApi("POSTS", true);
     createCards(response);
-  }
+  };
 
   async function showProfilePage() {
+    // Exibe o perfil do usuario e os seus posts
     setShowProfile(true);
-  }
+  };
+
+  async function receiveViewPostModalData(postId) {
+    // Busca informações de um post para ser exibido no viewpost modal
+    const response = await requestApi(postId, true);
+    setViewPostData(response);
+    showViewPostModal();
+  };
 
   function showViewPostModal() {
+    // Exibe o modal com os detalhes de um post
     setShowViewPost(true);
-  }
+  };
 
   function createCards(value) {
     // Cria os cards da pagina
@@ -62,18 +73,11 @@ export default function ViewPage() {
             key={index}
             image={image}
             update={showFolloweePosts}
-            showPost={() => getModalData(id)}
+            showPost={() => receiveViewPostModalData(id)}
           />
-        ))
-      )
+      )))
     }
   };
-
-  async function getModalData(postId) {
-    // Busca informações de um post
-
-    showViewPostModal();
-  }
 
   if (isAuthenticated) {
     return (

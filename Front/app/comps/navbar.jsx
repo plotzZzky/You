@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useAuth } from './authContext'
-import { useApi } from './hooks/useApi'
 import { useGenericGoPage} from '@hooks/useGoPage'
 import { useGoLoginPage } from '@hooks/useGoLogin'
+import { useGenericGoLogout } from './hooks/useLogout'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'react-tooltip'
 import { faUser, faHome, faQuestion, faUsers, faRightFromBracket, faImage } from '@fortawesome/free-solid-svg-icons'
@@ -15,9 +15,9 @@ export default function NavBar() {
   const [isClient, setIsClient] = useState(false);
   const { isAuthenticated } = useAuth();
   const pathname = usePathname();
-  const requestApi = useApi();
   const goLoginPage = useGoLoginPage();
   const goPage = useGenericGoPage();
+  const goLogout = useGenericGoLogout();
 
   useEffect(() => {
     // Se executado indica estar no cliente
@@ -28,9 +28,10 @@ export default function NavBar() {
   function goHomePage() {
     if (pathname !== '/') {
       goPage("HOME");
-    };
 
-    document.getElementById('Start').scrollIntoView();
+    } else {
+      document.getElementById('Start').scrollIntoView();
+    }
   };
 
   function goAboutPage() {
@@ -43,20 +44,6 @@ export default function NavBar() {
 
   function cardPagePage() {
     goPage("CARDS");
-  };
-
-  async function logoutAccount() {
-    try {
-      const response = await requestApi("LOGOUT");
-      if (!response.ok) {
-        throw "Não foi possivel deslogar";
-      };
-
-      goPage("HOME");
-
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const ABOUT_LINK = () => {
@@ -94,7 +81,7 @@ export default function NavBar() {
         <FontAwesomeIcon icon={faUser} /> Entrar
       </span>
     ) : ( 
-      <span onClick={logoutAccount}>
+      <span onClick={goLogout}>
         <FontAwesomeIcon icon={faRightFromBracket}/> Sair
       </span>     
     )

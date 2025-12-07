@@ -19,6 +19,7 @@
 
   --border: 2px solid var(--color-accent);
   --border-sec: 1px solid var(--font-color);
+  --border-cards: 1px solid var(--color-accent);
 
   --padding: 2% 5%;
 

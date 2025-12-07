@@ -1,9 +1,9 @@
 #login {
   display: block;
   max-width: 600px;
-  margin: 6vh auto auto;
+  margin: 4vh auto auto;
   padding: 1vh 1vw;
-  height: 72vh;
+  min-height: 78vh;
   box-shadow: var(--shadow);
   border: var(--border);
   display: flex;

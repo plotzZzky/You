@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from './authContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faThumbsUp, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp as faThumbsUp_r } from '@fortawesome/free-regular-svg-icons'
-import CommentCard from './commentCard'
 import CommentsPage from './commentsPage'
 
 
@@ -27,36 +26,28 @@ export default function ViewPostModal(props) {
   const username = props.modalData?.user?.username || null;
   const userPicture = props.modalData?.user?.image || null;
 
-  function closeModal() {
+  function closeThisModal() {
     props.setShowViewPost(false);
-  }
-
-  function formatDate(value) {
-    // Formata a data para ser exibida 
-    if (value) {
-      const date = value.split("-");
-      return `${date[2]}/${date[1]}/${date[0]}`;
-    }
   }
 
   function goToProfile() {
     // redireciona para o perfil de um outro usuario
-    const userId = modalData.user.id
-    props.showProfile(userId)
-    closeModal()
-  }
+    const userId = props.modalData?.user.id;
+    props.showProfile(userId);
+    closeThisModal();
+  };
 
   function deletePost() {
     // Deleta esse post
-  }
+  };
 
   function changeLike() {
     // Função para dar like ou dislike
-  }
+  };
 
   function followUser() {
     // Função para dar follow ou unfollow
-  }
+  };
 
   // Btns
   const FOLLOW_BTN = () => {
@@ -67,30 +58,29 @@ export default function ViewPostModal(props) {
         }
       </button>
     : null
-  }
+  };
 
   const LIKE_BTN = () => {
     return (
-      <button className='modal-btn' onClick={changeLike}>
+      <button onClick={changeLike}>
         {liked? <FontAwesomeIcon icon={faThumbsUp}/> : <FontAwesomeIcon icon={faThumbsUp_r}/>}
         <a>{likes}</a>
       </button>
     )
-  }
+  };
 
   const COMMENT_BTN = () => {
     return (
-      <button className='modal-btn' onClick={() => showComments(true)}> <FontAwesomeIcon icon={faComment} />
+      <button onClick={() => showComments(true)}> <FontAwesomeIcon icon={faComment} />
         <a> {comments} </a>
       </button>
     )
-  }
+  };
 
   const DELETE_BTN = () => {
     return postMine?
-      <button className="modal-btn" onClick={deletePost}> <FontAwesomeIcon icon={faTrash} /></button>
-      : null
-  }
+      <button onClick={deletePost}> <FontAwesomeIcon icon={faTrash} /></button> : null
+  };
 
   const CONTENT_PAGE = () => {
     return showComments? (
@@ -98,20 +88,20 @@ export default function ViewPostModal(props) {
       ) : (
         <img src={postImg} />
     )
-  }
+  };
 
   if (props.showViewPost) {
     return (
-      <div id="ViewPostModal" onClick={closeModal}>
+      <div id="ViewPostModal" onClick={closeThisModal}>
         <div className='modal' onClick={e => e.stopPropagation()}>
 
           {CONTENT_PAGE()}
 
-          <div>
+          <div className='modal-data'>
             
             <div className='align-nick' onClick={goToProfile}>
               <img className="user-pic" src={userPicture} />
-              <a className="username"> {username} </a>
+              <a className="username"> {username} "sjsjjsjsj" </a>
             </div>
 
             <div className="btns">
