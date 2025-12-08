@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await requestApi('me/');
 
       if (response.ok) {
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = useMemo(() => ({
     isAuthenticated,
+    setIsAuthenticated,
     checkAuthStatus,
     loading,
   }), [isAuthenticated, checkAuthStatus]);

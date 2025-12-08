@@ -24,6 +24,7 @@ export default function NavBar() {
     setIsClient(true) // Usado para evitar erros de api do navegador não disponivel
   }, [])
 
+
   // * * * Funções de navegação pelas paginas * * *
   function goHomePage() {
     if (pathname !== '/') {

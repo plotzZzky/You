@@ -16,5 +16,6 @@ class Post(models.Model):
     text = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateField(auto_now_add=True)
     likes = models.ManyToManyField(CustomUser, related_name='likes', blank=True)
+    liked = models.BooleanField(default=False)
 
     objects = models.Manager()

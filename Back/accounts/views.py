@@ -111,6 +111,7 @@ class RecoveryPassword(ModelViewSet):
     def update_password(self, request):
         """ Faz a alteração das senhas se o usuário passar a resposta (answer) correta """
         try:
+            print(request.data)
             serializer = CreateUserSerializer(instance=request.user, data=request.data, partial=True)
 
             if serializer.is_valid(raise_exception=True):

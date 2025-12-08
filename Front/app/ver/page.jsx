@@ -21,7 +21,6 @@ export default function ViewPage() {
   const [showViewPost, setShowViewPost] = useState(false);
   const [viewPostData, setViewPostData] = useState([]);
 
-  const [showProfile, setShowProfile] = useState(false);
   const [profileData, setProfileData] = useState({});
 
   useEffect(() => {
@@ -49,7 +48,7 @@ export default function ViewPage() {
 
   async function showFolloweePosts() {
     // Exibe os posts das pessoas que o usuario segue e do usuario
-    setProfileData({}) // Escinde o card do perfil do usario
+    setProfileData({}); // Escinde o card do perfil do usario
 
     const response = await fetchApi("users/", true);
     
@@ -60,7 +59,7 @@ export default function ViewPage() {
 
   async function showAllPosts() {
     // Exibe o horizonte (posts de pessoas desconhecidas)
-    setProfileData({}) // Escinde o card do perfil do usario
+    setProfileData({}); // Escinde o card do perfil do usario
 
     const response = await fetchApi("posts/", true);
 
@@ -69,20 +68,20 @@ export default function ViewPage() {
     }
   };
 
-  async function showProfilePage() {
+  async function showProfilePage(profileID) {
     // Exibe o perfil do usuario e os seus posts
-    const url = "users/0/" // 0 retorna os posts do usuario atual
+    const url = `users/${profileID}/`;  // 0 retorna os posts do usuario atual
     const response = await fetchApi(url, true);
 
     if (response) {
       createCards(response.posts);
-      setProfileData(response.user)
+      setProfileData(response.user);
     }
   };
 
   async function receiveViewPostModalData(postId) {
     // Busca informações de um post para ser exibido no viewpost modal
-    const url = `posts/${postId}/`
+    const url = `posts/${postId}/`;
     const response = await fetchApi(url, true);
     setViewPostData(response); // Salva as informações no useState e aciona o useEffect 
   };
@@ -95,7 +94,8 @@ export default function ViewPage() {
           <PostCard
             key={index}
             image={image}
-            showPost={() => receiveViewPostModalData(id)}
+            id={id}
+            showPost={receiveViewPostModalData}
           />
       )))
     }
@@ -128,8 +128,20 @@ export default function ViewPage() {
           </div>
         </section>
 
-        <NewPostModal showNewPost={showNewPost} setShowNewPost={setShowNewPost} showFolloweePosts={showFolloweePosts} />
-        <ViewPostModal showViewPost={showViewPost} setShowViewPost={setShowViewPost} modalData={viewPostData} update={showFolloweePosts} />
+        <NewPostModal 
+          showNewPost={showNewPost} 
+          setShowNewPost={setShowNewPost} 
+          showFolloweePosts={showFolloweePosts} 
+        />
+
+        <ViewPostModal
+          showViewPost={showViewPost} 
+          setShowViewPost={setShowViewPost}
+          modalData={viewPostData}
+          receiveViewPostModalData={receiveViewPostModalData}
+          update={showFolloweePosts}
+          showProfile={showProfilePage}
+        />
       </>
     )
   }

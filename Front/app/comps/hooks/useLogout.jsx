@@ -1,11 +1,13 @@
 'use client'
 import { useApi } from "./useApi";
+import { useAuth } from "../authContext";
 import { useGenericGoPage} from '@hooks/useGoPage'
 
 
 export function useGenericGoLogout() {
   const requestApi = useApi();
   const goPage = useGenericGoPage();
+  const { checkAuthStatus } = useAuth();
 
   const logoutAccount = async () => {
     try {
@@ -13,9 +15,11 @@ export function useGenericGoLogout() {
 
       if (!response.ok) {
         throw "Não foi possivel deslogar";
-      };
 
-      goPage("HOME");
+      } else {
+        checkAuthStatus();
+        goPage("HOME");
+      }
 
     } catch (error) {
       console.log(error);

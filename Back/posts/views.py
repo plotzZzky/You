@@ -28,8 +28,10 @@ class PostClassView(ModelViewSet):
         """ Retorna um post especifico """
         try:
             instance = self.get_object()
+            if request.user in instance.likes.all():
+                instance.liked = True
+
             serializer = FullPostSerializer(instance, context={'request': request})
-            print(serializer.data)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
 
         except (TypeError, ValueError, TypeError, ObjectDoesNotExist):
@@ -93,7 +95,6 @@ class UsersPostsClassView(ModelViewSet):
         """ Retorna a lista de posts de quem você segue """
         user = request.user
         followers = user.followers.all()
-        print(followers)
 
         posts = Post.objects.filter(user__in=followers)
         user_posts = Post.objects.filter(user=request.user)
@@ -109,7 +110,7 @@ class LikeClassView(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         try:
-            post_id = kwargs['id']
+            post_id = kwargs['pk']
             post = Post.objects.get(pk=post_id)
 
             if request.user in post.likes.all():
@@ -129,12 +130,12 @@ class FollowClassView(ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get']
 
-    def create(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
         try:
-            user_id = request.data['id']  # Id do usuário a ser seguido
+            user_id = kwargs['pk']  # Id do usuário a ser seguido
             follow_user = CustomUser.objects.get(pk=user_id)
             you = request.user
-            friends = you.profile.follows
+            friends = you.followers
 
             if follow_user == you:
                 return Response(data="Não pode seguir a si mesmo", status=status.HTTP_400_BAD_REQUEST)

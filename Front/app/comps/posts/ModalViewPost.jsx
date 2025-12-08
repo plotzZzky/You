@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faThumbsUp, faComment, faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons'
@@ -10,7 +10,7 @@ export default function ViewPostModal(props) {
   const fetchApi = useApi();
   const [showComments, setShowComments] = useState(false);
 
-  const postId = props.modalData?.id || null;
+  let postId = props.modalData?.id || null;
   const postImg = props.modalData?.image || null;
   const postMine = props.modalData?.user?.me || null;
   const postFollowing = props.modalData?.following || null;
@@ -18,13 +18,18 @@ export default function ViewPostModal(props) {
   const postText = props.modalData?.text;
   const postDate = props.modalData?.date;
 
-  const liked = props.modalData?.liked || null;
-  const likes = props.modalData?.likes?.length || 0;
+  let liked = props.modalData?.liked;
+  let likes = props.modalData?.likes?.length || 0;
   const comments = props.modalData?.comments?.length  || 0;
 
   const username = props.modalData?.user?.username || null;
   const userID = props.modalData?.user?.id || null; 
   const userPicture = props.modalData?.user?.picture || null;
+
+  
+  useEffect(() => {
+
+  }, [postId])
 
   function closeThisModal() {
     props.setShowViewPost(false);
@@ -36,6 +41,7 @@ export default function ViewPostModal(props) {
 
   function goToProfile() {
     // Exibe o perfil e posts do usuario atual
+    props.showProfile(userID);
     closeThisModal();
   };
 
@@ -57,11 +63,13 @@ export default function ViewPostModal(props) {
 
   async function changeLike() {
     // Função para dar like ou dislike
-    const url = `like/${postId}/` 
-    const response = await fetchApi(url);
+    if (!postMine) {
+      const url = `like/${postId}/`;
+      const response = await fetchApi(url);
 
-    if (response.ok) {
-
+      if (response) {
+        props.receiveViewPostModalData(postId);
+      }
     }
   };
 
@@ -71,7 +79,7 @@ export default function ViewPostModal(props) {
     const response = await fetchApi(url);
 
     if (response.ok) {
-
+      props.receiveViewPostModalData(postId);
     }
   };
 
@@ -89,12 +97,12 @@ export default function ViewPostModal(props) {
   const LIKE_BTN = () => {
     const icon = liked? faThumbsUp : faThumbsUp_r;
 
-    return !postMine? (
+    return (
       <button onClick={changeLike}>
         <FontAwesomeIcon icon={icon}/>
         <a>{likes}</a>
       </button>
-    ) : null
+    )
   };
 
   const COMMENT_BTN = () => {

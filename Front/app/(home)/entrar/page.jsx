@@ -12,7 +12,7 @@ import './page.css'
 
 
 export default function AuthPage() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, checkAuthStatus } = useAuth();
   const goFrontPage = useGenericGoPage();
   const fetchApi = useApi();
 
@@ -39,11 +39,11 @@ export default function AuthPage() {
 
 
   useEffect(() => {
-    if (loading, isAuthenticated) {
+    if (isAuthenticated) {
       goFrontPage("CARDS");
     };
 
-  }, [loading])
+  }, [isAuthenticated, loading])
 
   // * * * Funções que controlam os inputs exibidos na pagina * * *
   function showLoginPage() { // Exibe os inputs para login
@@ -76,7 +76,7 @@ export default function AuthPage() {
       const response = await genericHTTPRequest("auth/login/", requestData, false);
 
       if (response.ok) {
-        goFrontPage("CARDS");
+        checkAuthStatus();
       }
 
       setShowAlert("Usuário ou senha incorretos.");
@@ -108,7 +108,7 @@ export default function AuthPage() {
       const response = await genericHTTPRequest(url, requestData);
 
       if (response.ok) {
-        goFrontPage("CARDS");
+        checkAuthStatus();
       }
 
       setShowAlert("Usuário ou senha incorretos.");
@@ -153,11 +153,14 @@ export default function AuthPage() {
     form.append("password", getPassword);
 
     if (register) {
-      form.set('enctype', 'multipart/form-data');
-      form.append("picture", getImageUser, getImageUser.name);
       form.append("pwd", getpwd);
       form.append("question", getQuestion);
       form.append("answer", getAnswer);
+
+      if (getImageUser) {
+        form.set('enctype', 'multipart/form-data');
+        form.append("picture", getImageUser, getImageUser.name);
+      }
     };
 
     const requestData = {
@@ -251,28 +254,32 @@ export default function AuthPage() {
 
   const RECOVERY_PAGE = () => {
     if (showRecovery) {
-      return (
-        <>
-          <div id='loginAlign'>
-            <h3>Recuperar senha </h3>
+      return getQuestion? (
+        <div id='loginAlign'>
+          <h3> Recuperar senha </h3>
 
-            <InputUser value={getUsername} setValue={setUsername} valid={userValid} setValid={setUserValid}/>
-            <InputPwd value={getPassword} setValue={setPassword} valid={pwd1Valid} setValid={setPwd1Valid}/>
-            <InputPwd value={getpwd} setValue={setPwd} valid={pwd2Valid} setValid={setPwd2Valid} confirm={true}/>
-            <InputQuestion value={getQuestion} setValue={setQuestion} valid={questionValid} setValid={setQuestionValid}/>
-            <InputAnswer value={getAnswer} setValue={setAnswer} valid={answerValid} setValid={setAnswerValid}/>
+          <InputUser value={getUsername} setValue={setUsername} valid={userValid} setValid={setUserValid}/>
+          <InputPwd value={getPassword} setValue={setPassword} valid={pwd1Valid} setValid={setPwd1Valid}/>
+          <InputPwd value={getpwd} setValue={setPwd} valid={pwd2Valid} setValid={setPwd2Valid} confirm={true}/>
+          <InputQuestion value={getQuestion} setValue={setQuestion} valid={questionValid} setValid={setQuestionValid}/>
+          <InputAnswer value={getAnswer} setValue={setAnswer} valid={answerValid} setValid={setAnswerValid}/>
 
-            { getQuestion? (
-                <button onClick={recoveryFunction}> Atualizar </button>
-              ) : ( 
-                <button onClick={receiveQuestion}> Recuperar </button>
-              )
-            }
+          <button onClick={recoveryFunction}> Recuperar senha </button>
 
-            <p onClick={showLoginPage}> Entrar </p>
-            <p onClick={showRegisterPage}> Cadastre-se </p>
-          </div>
-        </>
+          <p onClick={showLoginPage}> Entrar </p>
+          <p onClick={showRegisterPage}> Cadastre-se </p>
+        </div>
+      ) : (
+        <div id='loginAlign'>
+          <h3> Buscar perfil </h3>
+
+          <InputUser value={getUsername} setValue={setUsername} valid={userValid} setValid={setUserValid}/>
+
+          <button onClick={receiveQuestion}> Buscar </button>
+
+          <p onClick={showLoginPage}> Entrar </p>
+          <p onClick={showRegisterPage}> Cadastre-se </p>
+        </div>
       )
     }
   };

@@ -22,7 +22,7 @@ export default function AppBar(props) {
         <FontAwesomeIcon icon={faMagnifyingGlass}/> Horizonte
       </span>
       
-      <span onClick={props.showProfilePage}>
+      <span onClick={() => props.showProfilePage(0)}>
         <FontAwesomeIcon icon={faUser}/> Perfil
       </span>
 

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts',
     'posts',
+    'comments',
 ]
 
 REST_FRAMEWORK = {
