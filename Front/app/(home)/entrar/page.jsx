@@ -77,10 +77,11 @@ export default function AuthPage() {
 
       if (response.ok) {
         checkAuthStatus();
+
+      } else {
+        setShowAlert("Usuário ou senha incorretos.");
       }
 
-      setShowAlert("Usuário ou senha incorretos.");
-      
     } else {
       setShowAlert("Prencha os dados de login corretamente");
     };
@@ -109,9 +110,10 @@ export default function AuthPage() {
 
       if (response.ok) {
         checkAuthStatus();
-      }
 
-      setShowAlert("Usuário ou senha incorretos.");
+      } else {
+        setShowAlert("Usuário ou senha incorretos.");
+      }
 
     } else {
       setShowAlert("Prencha os dados corretamente para se registar.");

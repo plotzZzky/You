@@ -7,6 +7,7 @@ import PostCard from '../comps/posts/postCard';
 import AppBar from '@comps/appBar';
 import NewPostModal from '@posts/modalNewPost';
 import ViewPostModal from '@posts/ModalViewPost';
+import ProfileCard from '@posts/profileCard';
 import './page.css'
 
 
@@ -102,10 +103,14 @@ export default function ViewPage() {
   };
 
   const PROFILE_PAGE = () => {
-    return profileData? (
-      <>
-        <a>{profileData.username}</a>
-      </>
+    return profileData.username? (
+      <ProfileCard 
+        username={profileData.username}
+        itsMe={profileData.me}
+        picture={profileData.picture}
+        desc={profileData.desc}
+        followers={profileData.followers}
+      />
     ) : null
   }
 

@@ -1,11 +1,11 @@
 /* Posts */
 #Cards {
   max-width: 800px;
-  margin: -6px auto 0;
+  margin: -2vh auto 0;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: start;
 
   article {
     flex: 0 0 50%;
@@ -14,7 +14,7 @@
 
     div {
       height: calc(100% - 8px);
-      margin: 4px;
+      margin: .2vw;
       display: flex;
       border: var(--border-cards);
       position: relative;
@@ -32,12 +32,14 @@
 /* profile */
 .profile {
   width: 100%;
-  padding: 5px;
+  margin: .2vw;
+  padding: .5vw;
   display: flex;
-  gap: 0 10px;
-  background-color: var(--color-accent);
+  gap: 0 .5vw;
+  background-color:transparent;
+  border: var(--border-cards);
 
-  .profile-img {
+  img {
     width: 8vw;
     min-width: 120px;
     height: 100%; 
@@ -46,57 +48,67 @@
     background-color: white;
   }
 
-  .profile-desc {
-    margin: 0.5vh 0 0;
+  .profile-data {
+    margin: .5vh 0 0;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 1vh 0;
-  }
 
-  .align-name {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    .align-name {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
-  .name {
-    font-size: clamp(1em, 2vw, 1.5em);
-    font-weight: bold;
-  }
+      a {
+        font-size: clamp(1em, 2vw, 1.5em);
+        font-weight: bold;
+        color: var(--color-accent);
+      }
 
-  .desc {
-    width: calc(100% - 15px);
-    height: 8vh;
-    margin-right: 5px;
-    padding: 5px;
-    text-align: left;
-    font-size: clamp(0.8em, 1vw, 1em);
-    border: 1px solid rgba(255, 255, 255, 0.281);
-  }
+      div {
+        display: flex;
+        gap: 0 1vw;
 
-  .align-follow {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-  }
+        * {
+          cursor: pointer;
+          color: var(--color-accent);
+        }
+      }
+    }
 
-  .follow-icon {
-    width: 26px;
-    height: 32px;
-  }
+    .desc {
+      width: calc(100% - 10px);
+      height: 8vh;
+      padding: 5px;
+      text-align: left;
+      font-size: clamp(0.8em, 1vw, 1em);
+      border-top: var(--border-cards);
+    }
 
-  .edit-desc {
-    width: calc(100% - 3vw);
-    height: 9vh;
-    margin: 1vh 1vw;
-    padding: 0.5vw;
-    text-align: left;
-    font-size: clamp(0.8em, 1vw, 1em);
-    color: #333;
-    border: 1px solid rgba(255, 255, 255, 0.281);
+    .follower {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+
+      img {
+        width: 26px;
+        height: 32px;
+      }
+    }
+
+    .edit-desc {
+      width: calc(100% - 3vw);
+      height: 9vh;
+      margin: 1vh 1vw;
+      padding: 0.5vw;
+      text-align: left;
+      font-size: clamp(0.8em, 1vw, 1em);
+      color: #333;
+      border: 1px solid rgba(255, 255, 255, 0.281);
+    }
   }
 }
 

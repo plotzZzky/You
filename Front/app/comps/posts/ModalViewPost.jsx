@@ -75,7 +75,7 @@ export default function ViewPostModal(props) {
 
   async function followUser() {
     // Função para dar follow ou unfollow
-    const url = `follow/${userID}/` 
+    const url = `follow/${userID}/`;
     const response = await fetchApi(url);
 
     if (response.ok) {

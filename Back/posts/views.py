@@ -85,6 +85,7 @@ class UsersPostsClassView(ModelViewSet):
             user_serializer = PublicUserSerializer(user, context={'request': request})
 
             result = {'posts': serializer.data, "user": user_serializer.data}
+            print(result['user'])
             return Response(data=result, status=status.HTTP_200_OK)
 
         except (KeyError, ValueError, TypeError) as error:
