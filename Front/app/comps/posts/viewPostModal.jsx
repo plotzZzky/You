@@ -20,7 +20,7 @@ export default function ViewPostModal(props) {
 
   let liked = props.modalData?.liked;
   let likes = props.modalData?.likes?.length || 0;
-  const comments = props.modalData?.comments?.length  || 0;
+  const comments = props.modalData?.comments || 0;
 
   const username = props.modalData?.user?.username || null;
   const userID = props.modalData?.user?.id || null; 
@@ -32,6 +32,7 @@ export default function ViewPostModal(props) {
   }, [postId])
 
   function closeThisModal() {
+    setShowComments(false);
     props.setShowViewPost(false);
   };
   
@@ -121,7 +122,7 @@ export default function ViewPostModal(props) {
 
   const CONTENT_PAGE = () => {
     return showComments? (
-        <CommentsPage text={postText} date={postDate} />
+        <CommentsPage text={postText} date={postDate} postId={postId} />
       ) : (
         <img src={postImg} />
     )

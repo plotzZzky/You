@@ -1,34 +1,47 @@
+import { useApi } from '@hooks/useApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function CommentCard(props) {
-  const username = props.data?.username;
-  const text = props.data?.text;
-  const date = props.data?.date;
+  const fetchApi = useApi();
 
-  function deleteThisComment() {
-    props.getAllComments();
+  async function deleteThisComment() {
+    const url = `comments/${props.id}/`;
+
+    const requestData = {
+      method: "DELETE",
+    };
+
+    const response = await fetchApi(url, false, requestData);
+
+    if (response) {
+      props.getAllComments();
+    }
   }
 
   const DELETEBTN = () => {
-    const your = props.data?.your;
+    const your = props?.your;
     
     return your?
-    <span onClick={deleteThisComment}> <FontAwesomeIcon icon={faTrash} /></span> : null
+    <a onClick={deleteThisComment}> <FontAwesomeIcon icon={faTrash} /></a> : null
   };
 
   return (
     <div className='comment-card'>
-      <a className="comment-username"> {username} </a>
 
       <div className='comment'>
-         {text}
+        {props.text}
       </div>
 
-      <div className="post-align-btns">
-        <a className="date"> {props.formatDate(date)} </a>
-        {DELETEBTN()}
+      <div className="comment-align">
+        <a> {props.username} </a>
+
+        <div>
+          <a className="date"> {props.formatDate(props.date)} </a>
+
+          {DELETEBTN()}
+        </div>
       </div>
 
     </div>

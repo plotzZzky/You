@@ -28,6 +28,7 @@ class PostClassView(ModelViewSet):
         """ Retorna um post especifico """
         try:
             instance = self.get_object()
+
             if request.user in instance.likes.all():
                 instance.liked = True
 

@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@comps/authContext';
 import { useApi } from '@hooks/useApi';
 import { useGenericGoPage } from '@hooks/useGoPage';
-import PostCard from '../comps/posts/postCard';
+import PostCard from '@comps/posts/postCard';
 import AppBar from '@comps/appBar';
-import NewPostModal from '@posts/modalNewPost';
-import ViewPostModal from '@posts/ModalViewPost';
+import NewPostModal from '@/app/comps/posts/newPostModal';
+import ViewPostModal from '@/app/comps/posts/viewPostModal';
 import ProfileCard from '@posts/profileCard';
-import './page.css'
+import './page.css';
 
 
 export default function ViewPage() {

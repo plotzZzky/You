@@ -1,15 +1,19 @@
-import { useState } from "react";
-import { useApi } from "../hooks/useApi";
+import { useState, useEffect } from "react";
+import { useApi } from "@hooks/useApi";
+import CommentCard from "./commentCard";
 
 
 export default function CommentsPage(props) {
   const fetchApi = useApi();
-
-  const [getComment, setComment] = useState();
+  const [getNewComment, setNewComment] = useState();
   const [getCards, setCards] = useState([]);
 
   const commentText = props.text;
   const date = formatDate(props.date);
+
+  useEffect(() => {
+    getAllComments();
+  }, [])
 
   function formatDate(value) {
   // Formata a data para ser exibida 
@@ -21,7 +25,7 @@ export default function CommentsPage(props) {
 
   function handleCommentText(event) {
     const text = event.target.value;
-    setComment(text);
+    setNewComment(text);
   };
 
   const submitNewComment = (event) => {
@@ -32,24 +36,44 @@ export default function CommentsPage(props) {
   };
 
   async function createNewComment() {
-    const url = ""
-    const response = await fetchApi("")
+    const form = new FormData();
+    form.append("text", getNewComment);
+    form.append("post", props.postId);
+
+    const requestData = {
+      method: "POST",
+      body: form,
+    }
+
+    const response = await fetchApi("comments/", false, requestData)
+
+    if (response.ok) {
+      getAllComments();
+    };
   };
 
-  function getAllComments(){
+  async function getAllComments(){
     // Busca os commentarios no backend
+    const url = `comments/${props.postId}/`
+    const response = await fetchApi(url, true);
 
-    createCommentsCards(value);
+    if (response) {
+      createCommentsCards(response);
+    }
   };
 
   function createCommentsCards(value) {
     // Cria os cards dos comentarios 
     if (value) {
       setCards(
-        value.map((data, index) => (
+        value.map(({id, username, text, date, your}, index) => (
           <CommentCard 
             key={index}
-            data={data}
+            id={id}
+            username={username}
+            text={text}
+            date={date}
+            your={your}
             getAllComments={getAllComments}
             formatDate={formatDate}
           />
@@ -67,7 +91,7 @@ export default function CommentsPage(props) {
           type='text'
           placeholder='Novo comentario'
           className='input-new-comment'
-          value={getComment}
+          value={getNewComment}
           onChange={handleCommentText}
           onKeyDown={submitNewComment}>
         </input>

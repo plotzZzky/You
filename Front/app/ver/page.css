@@ -114,7 +114,8 @@
 
 /* Modal */
 #NewPostModal,
-#ViewPostModal {
+#ViewPostModal,
+#EditUserModal {
   position: fixed;
   inset: 0;
   background-color: #000000F2;
@@ -199,65 +200,75 @@
   }
 } 
 
+.comment-page {
+  display: flex;
+  flex-direction: column;
+
+  a {
+    font-size: clamp(0.6em, 1vw, 0.8em);
+  }
+
+  a * {
+    cursor: pointer;
+  }
+
+  .date {
+    text-align: right;
+    margin: auto 1vw 0 auto;
+  }
+
+  .comments-div {
+    width: 98%;
+    height: 100%;
+    margin: auto;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+
+    .input-new-comment {
+      padding: 5px;
+      color: var(--font-color);
+      background-color: transparent;
+      border: 1px solid var(--color-accent);
+      font-size: clamp(0.8em, 1.5vw, 1em);
+      outline: none;
+
+      ::placeholder {
+      font-size: clamp(0.8em, 1.5vw, 1em);
+      }
+    }
+
+    .comment-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      margin: .5vh .5vw;
+      padding: .5vh .5vw;
+      border-bottom: var(--border-sec);
+      font-size: clamp(0.8em, 1.5vw, 1em);
+
+      .comment {
+        text-align: left;
+        margin: 0 0 1vh;
+        font-size: clamp(0.8em, 1.5vw, 1em);
+      }
+
+      .comment-align {
+        display: inline-flex;
+        justify-content: space-between;
+
+        span {
+          font-weight: bold;
+          color: var(--color-accent);
+        }
+      }
+    }
+  }
+}
+
 .modal-desc {
   display: flex;
   flex-direction: column;
-}
-
-.date {
-  text-align: right;
-  margin: auto 1vw 0 0;
-  font-size: clamp(0.6em, 1vw, 0.8em);
-}
-
-.comments-div {
-  width: 98%;
-  height: 100%;
-  margin: auto;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.input-new-comment {
-  padding: 5px;
-  color: var(--font-color);
-  background-color: transparent;
-  border: 1px solid var(--color-accent);
-  font-size: clamp(0.8em, 1.5vw, 1em);
-  outline: none;
-}
-
-.input-new-comment::placeholder {
-  font-size: clamp(0.8em, 1.5vw, 1em);
-}
-
-.comment-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  margin: 2px;
-  border-bottom: 1px solid grey;
-  font-size: clamp(0.8em, 1.5vw, 1em);
-
-  .comment-username {
-    text-align: center;
-    font-size: clamp(0.9em, 1.5vw, 1.1em);
-    font-weight: bold;
-  }
-
-  .comment {
-    text-align: left;
-    margin: 0 5px;
-    font-size: clamp(0.8em, 1.5vw, 1em);
-  }
-}
-
-
-.post-align-btns {
-  margin: 0 5px;
-  display: inline-flex;
-  justify-content: space-between;
 }
 
 /* NewPosts */

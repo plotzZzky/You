@@ -1,4 +1,3 @@
-from django.template.context_processors import request
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from .models import CustomUser

@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faGears, faUserMinus, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faUserMinus, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import EditUserModal from './editUserModal';
 
 
 export default function ProfileCard(props) {
   const [followersCards, setFollowersCards] = useState();
-  const profileUsername = props.username[0].toUpperCase() + props.username.slice(1);
+  const [showEditUserModal, setShowEditUserModal] = useState();
+
+  const profileUsername = props.username[0].toUpperCase() + props.username.slice(1); // Deixa a primeria letra em maiusculo
   const profileDec =  props.desc || `${profileUsername} ainda não disse nada sobre si...`;
 
   useEffect(() => {
@@ -26,14 +29,6 @@ export default function ProfileCard(props) {
     }
   };
 
-  function showEditUsernameModal() {
-    // Mostra o modal para editar o perfil do usuario
-  }
-
-  function showEditDescModal() {
-    // Mostra o modal para editar o perfil do usuario
-  }
-
   function goFolloweeProfile(userId) {
     props.showProfile(userId);
   };
@@ -48,6 +43,10 @@ export default function ProfileCard(props) {
     }
   };
 
+  function showEditUserModalFunc() {
+    setShowEditUserModal(showEditUserModal? false : true);
+  }
+
   const FOLLOW_BTN = () => {
     const icon = false? faUserMinus : faUserPlus;
 
@@ -55,14 +54,9 @@ export default function ProfileCard(props) {
       <FontAwesomeIcon icon={icon} onClick={followUser}/> : null
   };
 
-  const USEREDITICON = () => {
+  const EDIT_USER = () => {
     return props.itsMe?
-      <FontAwesomeIcon icon={faGears} onClick={showEditUsernameModal}/> : null
-  }
-
-  const DESCEDITICON = () => {
-    return props.itsMe?
-      <FontAwesomeIcon icon={faEdit} onClick={showEditDescModal}/> : null
+      <FontAwesomeIcon icon={faEdit} onClick={showEditUserModalFunc}/> : null
   }
 
   return(
@@ -77,9 +71,8 @@ export default function ProfileCard(props) {
           <div>
             {FOLLOW_BTN()}
 
-            {DESCEDITICON()}
+            {EDIT_USER()}
             
-            {USEREDITICON()}
           </div>
         </div>
 
@@ -88,6 +81,8 @@ export default function ProfileCard(props) {
         {followersCards}
 
       </div>
+
+      <EditUserModal showEditUserModal={showEditUserModal} showEditUserModalFunc={showEditUserModalFunc} />
     </div>
   )
 }

@@ -1,9 +1,9 @@
-from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField, ValidationError
 
-from .models import Comment
+from .models import Comment, Post
 
 
-class CommentSerializer(ModelSerializer):
+class PublicCommentSerializer(ModelSerializer):
     username = CharField(source='user.username', read_only=True)
     your = SerializerMethodField()
 
@@ -15,10 +15,13 @@ class CommentSerializer(ModelSerializer):
         request = self.context.get('request')
 
         if request is not None:
-            return check_your(request, obj.user)
+            return True if request.user == obj.user else False
+
         return False
 
 
-def check_your(request, user):
-    result = True if request.user == user else False
-    return result
+class CreateCommentSerializer(ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ['text', 'post']

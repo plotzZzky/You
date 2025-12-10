@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useApi } from "../hooks/useApi";
-import SelectPostImg from "../selecPostImg";
-import '../inputs/inputs.css'
+import { useApi } from "@hooks/useApi";
+import SelectPostImg from "./selecPostImg";
+import '@inputs/inputs.css'
 
 
 export default function NewPostModal(props) {

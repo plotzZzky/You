@@ -18,17 +18,22 @@ class UserProfileSerializer(ModelSerializer):
 
     def get_me(self, obj):
         request = self.context.get('request')
+
         if request is not None:
-            return check_if_my_profile(request, obj)
+            return request.user.id == obj.id
+
         return False
 
 
 class FullPostSerializer(ModelSerializer):
     user = UserProfileSerializer(read_only=True)
+    comments = SerializerMethodField()
 
     class Meta:
         model = Post
         fields = '__all__'
 
-def check_if_my_profile(request, user):
-    return request.user.id == user.id
+    def get_comments(self, obj):
+        amount = obj.comments.all()
+        return len(amount)
+
