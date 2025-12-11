@@ -124,7 +124,7 @@ export default function ViewPostModal(props) {
     return showComments? (
         <CommentsPage text={postText} date={postDate} postId={postId} />
       ) : (
-        <img src={postImg} />
+        <img id='postImg' src={postImg} />
     )
   };
 

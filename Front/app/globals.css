@@ -48,7 +48,7 @@ body {
 
   section {
     padding: 8vh 2vw 0;
-    height: 100vh;
+    min-height: 100vh;
     box-sizing: content-box;
   }
 
@@ -141,6 +141,7 @@ button {
     content: '';
     position: absolute;
     inset: .25vh;
+    border-radius: 4px;
     transform-origin: center;
     transform: scaleX(0);
     transition: var(--animation);

@@ -19,7 +19,7 @@ export default function ImgInput(props) {
 
   return (
     <div>
-      <img onClick={clickInput} src={props.getFileUser} />
+      <img id='imgPreview' onClick={clickInput} src={props.getFileUser} />
       <input type="file" id='selectImgUser' onChange={changeImage} />
     </div>
   )   

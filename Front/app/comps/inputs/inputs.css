@@ -91,11 +91,3 @@ textarea {
 input[type=file] {
   display: none;
 }
-
-#login img {
-  width: clamp(96px, 16vw, 180px);
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  background-color: white;
-  cursor: pointer;
-}

@@ -9,7 +9,7 @@ export default function PostCard(props) {
   return (
     <article>
       <div onClick={showThisPostOnModal}>
-        <img src={image} loading='lazy'/>
+        <img className="card-img" src={image} loading='lazy'/>
       </div>
     </article>
   )

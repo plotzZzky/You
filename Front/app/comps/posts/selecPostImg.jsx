@@ -19,7 +19,7 @@ export default function SelectPostImg(props) {
 
   return (
     <div>
-      <img onClick={clickInput} src={props.postFile} />
+      <img id="postImg" onClick={clickInput} src={props.postFile} />
       <input type="file" id='selectImgUser' onChange={changeImage} />
     </div>
   )   

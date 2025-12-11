@@ -7,7 +7,7 @@ import InputPwd from '@inputs/inputPwd';
 import InputUser from '@inputs/inputUser';
 import InputAnswer from '@inputs/inputAnswer';
 import InputQuestion from '@inputs/inputQuestion';
-import ImgInput from '@inputs/imgInput';
+import ImgInput from '@/app/comps/inputs/inputImg';
 import './page.css'
 
 

@@ -86,7 +86,6 @@ class UsersPostsClassView(ModelViewSet):
             user_serializer = PublicUserSerializer(user, context={'request': request})
 
             result = {'posts': serializer.data, "user": user_serializer.data}
-            print(result['user'])
             return Response(data=result, status=status.HTTP_200_OK)
 
         except (KeyError, ValueError, TypeError) as error:
@@ -140,7 +139,9 @@ class FollowClassView(ModelViewSet):
             friends = you.followers
 
             if follow_user == you:
-                return Response(data="Não pode seguir a si mesmo", status=status.HTTP_400_BAD_REQUEST)
+                data = "Não pode seguir a si mesmo"
+                print(data)
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
             else:
                 if follow_user in friends.all():

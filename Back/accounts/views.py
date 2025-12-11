@@ -12,7 +12,7 @@ from datetime import timedelta
 
 from .token import create_token_response, create_logout_response
 from .models import CustomUser
-from .serializer import CreateUserSerializer
+from .serializer import CreateUserSerializer, UpdateUserSerializer
 from .authentication import CookieTokenAuthentication
 
 
@@ -112,6 +112,24 @@ class RecoveryPassword(ModelViewSet):
         """ Faz a alteração das senhas se o usuário passar a resposta (answer) correta """
         try:
             serializer = CreateUserSerializer(instance=request.user, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                return create_token_response(user)
+
+            else:
+                print(serializer.errors)
+                return Response(data="Informações incorretas.", status=status.HTTP_400_BAD_REQUEST)
+
+        except (KeyError, ValueError, TypeError, AttributeError, ObjectDoesNotExist) as error:
+            print(error)
+            return Response(data="Formulário incorreto.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=["POST"], url_path="update")
+    def update_user(self, request):
+        """ Atualiza o usuário se passar a resposta (answer) correta """
+        try:
+            serializer = UpdateUserSerializer(instance=request.user, data=request.data, partial=True)
 
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
