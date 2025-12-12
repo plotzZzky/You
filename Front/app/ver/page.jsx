@@ -73,9 +73,10 @@ export default function ViewPage() {
 
   async function showProfilePage(profileID) {
     // Exibe o perfil do usuario e os seus posts
+    checkAuthStatus();
+
     const url = `users/${profileID}/`;  // 0 retorna os posts do usuario atual
     const response = await fetchApi(url, true);
-    checkAuthStatus();
 
     if (response) {
       createCards(response.posts);
@@ -149,6 +150,7 @@ export default function ViewPage() {
 
         <section>
           <div id='Cards'>
+
             {PROFILE_PAGE()}
 
             {CARDS_PAGE()}

@@ -11,6 +11,7 @@ export default function EditUserModal(props) {
   const [getUsername, setUsername] = useState(props.username);
   const [getQuestion, setQuestion] = useState(props.question);
   const [getAnswer, setAnswer] = useState("");
+  const [getDesc, setDesc] = useState("");
   const [getImageUser, setImageUser] = useState("");
   const [getFileUser, setFileUser] = useState(props.picture);
 
@@ -18,6 +19,12 @@ export default function EditUserModal(props) {
   const [userValid, setUserValid] = useState(false);
   const [questionValid, setQuestionValid] = useState(false)
   const [answerValid, setAnswerValid] = useState(false)
+
+  function handleDesc(event) {
+    const value = event.target.value;
+
+    setDesc(value);
+  };
 
   async function updateUserFunction() {
     /**
@@ -61,6 +68,10 @@ export default function EditUserModal(props) {
             <InputUser value={getUsername} setValue={setUsername} valid={userValid} setValid={setUserValid}/>
             <InputQuestion value={getQuestion} setValue={setQuestion} valid={questionValid} setValid={setQuestionValid}/>
             <InputAnswer value={getAnswer} setValue={setAnswer} valid={answerValid} setValid={setAnswerValid}/>
+
+            <div className="div-input">
+              <textarea value={getDesc} onChange={handleDesc}/>
+            </div>
 
             <button onClick={updateUserFunction}> Salvar </button>
         </div>

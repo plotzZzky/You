@@ -92,7 +92,7 @@ export default function AuthPage() {
   }
 
   function recoveryFunction() {
-    genericRegisterOrRecoveryFunction("auth/recovery/set/");
+    genericRegisterOrRecoveryFunction("auth/recovery/update/");
   }
 
   async function genericRegisterOrRecoveryFunction(url) {

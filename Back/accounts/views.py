@@ -12,13 +12,12 @@ from datetime import timedelta
 
 from .token import create_token_response, create_logout_response
 from .models import CustomUser
-from .serializer import CreateUserSerializer, UpdateUserSerializer
+from .serializer import UpdateUserSerializer
 from .authentication import CookieTokenAuthentication
 
 
 class LoginView(ModelViewSet):
     http_method_names = ['post', "get"]
-    serializer_class = CreateUserSerializer
 
     def create(self, request, *args, **kwargs):
         """ Função para fazer login """
@@ -52,7 +51,6 @@ class LoginView(ModelViewSet):
 
 class RegisterView(ModelViewSet):
     http_method_names = ['post']
-    serializer_class = CreateUserSerializer
 
     def create(self, request, *args, **kwargs):
         try:
@@ -92,7 +90,6 @@ class RegisterView(ModelViewSet):
 
 class RecoveryPassword(ModelViewSet):
     http_method_names = ['post']
-    serializer_class = CreateUserSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -107,31 +104,15 @@ class RecoveryPassword(ModelViewSet):
         except (KeyError, ValueError, TypeError, AttributeError, ObjectDoesNotExist):
             return Response(data="Formulário incorreto!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=["POST"], url_path="set")
-    def update_password(self, request):
-        """ Faz a alteração das senhas se o usuário passar a resposta (answer) correta """
-        try:
-            serializer = CreateUserSerializer(instance=request.user, data=request.data, partial=True)
-
-            if serializer.is_valid(raise_exception=True):
-                user = serializer.save()
-                return create_token_response(user)
-
-            else:
-                print(serializer.errors)
-                return Response(data="Informações incorretas.", status=status.HTTP_400_BAD_REQUEST)
-
-        except (KeyError, ValueError, TypeError, AttributeError, ObjectDoesNotExist) as error:
-            print(error)
-            return Response(data="Formulário incorreto.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     @action(detail=False, methods=["POST"], url_path="update")
     def update_user(self, request):
         """ Atualiza o usuário se passar a resposta (answer) correta """
         try:
-            serializer = UpdateUserSerializer(instance=request.user, data=request.data, partial=True)
+            print(request.data)
+            user = CustomUser.objects.get(username=request.data['username'])
+            serializer = UpdateUserSerializer(instance=user, data=request.data, partial=True)
 
-            if serializer.is_valid(raise_exception=True):
+            if serializer.is_valid():
                 user = serializer.save()
                 return create_token_response(user)
 

@@ -13,18 +13,18 @@ export default function ViewPostModal(props) {
   let postId = props.modalData?.id || null;
   const postImg = props.modalData?.image || null;
   const postMine = props.modalData?.user?.me || null;
-  const postFollowing = props.modalData?.following || null;
 
   const postText = props.modalData?.text;
   const postDate = props.modalData?.date;
 
   let liked = props.modalData?.liked;
-  let likes = props.modalData?.likes?.length || 0;
+  let likes = props.modalData?.likes || 0;
   const comments = props.modalData?.comments || 0;
 
   const username = props.modalData?.user?.username || null;
   const userID = props.modalData?.user?.id || null; 
   const userPicture = props.modalData?.user?.picture || null;
+  const userFollowed = props.modalData?.user?.followed || null;
 
   
   useEffect(() => {
@@ -86,7 +86,7 @@ export default function ViewPostModal(props) {
 
   // * * * Btns * * *
   const FOLLOW_BTN = () => {
-    const icon = postFollowing? faUserMinus : faUserPlus;
+    const icon = userFollowed? faUserMinus : faUserPlus;
 
     return !postMine?
       <button className='modal-btn' onClick={followUser}>

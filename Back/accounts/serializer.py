@@ -1,20 +1,39 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
-
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, CharField
+from django.contrib.auth.hashers import make_password
 from .models import CustomUser
 
 
-
-class CreateUserSerializer(ModelSerializer):
+class UpdateUserSerializer(ModelSerializer):
+    """ Usado para atualizar um perfil do usuário """
+    username = CharField(max_length=150, required=False, allow_blank=True)
+    password = CharField(write_only=True, required=False, allow_null=True)
+    pwd = CharField(write_only=True, required=False, allow_null=True)
 
     class Meta:
         model = CustomUser
         fields = '__all__'
 
     def update(self, instance, new_user_data):
-        password = new_user_data.pop('password')
-        pwd = new_user_data.pop('pwd')
+        username = new_user_data.pop('username', None)
+        password = new_user_data.pop('password', None)
+        pwd = new_user_data.pop('pwd', None)
+        desc = new_user_data.get('desc', None)
+        question = new_user_data.get('question', None)
+        answer = new_user_data.get('answer', None)
 
-        if password == pwd:
+        if username:
+            instance.username = username
+
+        if desc:
+            instance.desc = desc
+
+        if question:
+            instance.question = question
+
+        if answer:
+            instance.answer = make_password(answer)
+
+        if password and password == pwd:
             instance.set_password(password)
 
         instance.save()
@@ -22,31 +41,27 @@ class CreateUserSerializer(ModelSerializer):
         return instance
 
 
-class UpdateUserSerializer(ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = '__all__'
-
-
-class PublicUserSerializer(ModelSerializer):
-    followers = SerializerMethodField()
-    followed = SerializerMethodField()
+class SimpleUserSerializer(ModelSerializer):
+    """ Serializer simplificado para ser usado nos seguidores de um perfil """
     me = SerializerMethodField()
+    followed = SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'picture', 'me', 'followers', 'followed', 'question']
-
-    def get_followers(self, obj):
-        # print(self.context.get('request').user)
-        followers = obj.followers.filter(followers=obj)
-
-        return PublicUserSerializer(followers, many=True).data
-
-    def get_followed(self, obj):
-        me = self.context.get('request').user
-        return True if obj in me.followers.all() else False
+        fields = ['id', 'username', 'picture', 'me', 'followed']
 
     def get_me(self, obj):
         user = self.context.get('request').user
-        return True if obj.id == user.id else False
+        return obj.id == user.id
+
+    def get_followed(self, obj):
+        me = self.context.get('request').user
+        return obj in me.followers.all()
+
+
+class UserProfileSerializer(SimpleUserSerializer):
+    """ Serializer para o perfil de um usuário """
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'picture', 'me', 'followed', 'question']

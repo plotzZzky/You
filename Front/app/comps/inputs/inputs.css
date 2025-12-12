@@ -83,7 +83,7 @@ textarea {
   height: 7vh;
   resize: none;
   background-color: transparent;
-  border: var(--border-sec);
+  border: none;
   outline: none;
   overflow-y: auto;
 }

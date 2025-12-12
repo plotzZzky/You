@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
 from .serializers import SimplePostSerializer, FullPostSerializer
-from accounts.serializer import PublicUserSerializer
+from accounts.serializer import UserProfileSerializer
 
 
 class PostClassView(ModelViewSet):
@@ -83,7 +83,7 @@ class UsersPostsClassView(ModelViewSet):
             posts = Post.objects.filter(user=user).order_by("-id")
 
             serializer = self.get_serializer(posts, many=True)
-            user_serializer = PublicUserSerializer(user, context={'request': request})
+            user_serializer = UserProfileSerializer(user, context={'request': request})
 
             result = {'posts': serializer.data, "user": user_serializer.data}
             return Response(data=result, status=status.HTTP_200_OK)
