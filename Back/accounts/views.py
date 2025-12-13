@@ -108,7 +108,6 @@ class RecoveryPassword(ModelViewSet):
     def update_user(self, request):
         """ Atualiza o usuário se passar a resposta (answer) correta """
         try:
-            print(request.data)
             user = CustomUser.objects.get(username=request.data['username'])
             serializer = UpdateUserSerializer(instance=user, data=request.data, partial=True)
 

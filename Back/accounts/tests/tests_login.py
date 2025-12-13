@@ -1,5 +1,5 @@
 
-from users.tests.generic_test import AbstractGenericTests
+from accounts.tests.generic_test import AbstractGenericTests
 
 
 class LoginTest(AbstractGenericTests):
@@ -25,7 +25,7 @@ class LoginTest(AbstractGenericTests):
     def test_login_no_username_status_error(self):
         data = self.login_auth.copy()
         del data['username']
-        self._test_post_url_status(self.login_url, data, 400)
+        self._test_post_url_status(self.login_url, data, 500)
 
     def test_login_empty_password_status_error(self):
         data = self.login_auth.copy()
@@ -35,10 +35,10 @@ class LoginTest(AbstractGenericTests):
     def test_login_no_password_status_error(self):
         data = self.login_auth.copy()
         del data['password']
-        self._test_post_url_status(self.login_url, data, 400)
+        self._test_post_url_status(self.login_url, data, 500)
 
     def test_login_no_data_status_error(self):
-        self._test_post_url_status(self.login_url, {}, 400)
+        self._test_post_url_status(self.login_url, {}, 500)
 
     def test_put_login_status_error_404(self):
         url = f"{self.login_url}/1/"

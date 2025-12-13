@@ -1,12 +1,31 @@
-# folders
+# IDEs
 .idea/
+
+# Ambiente Virtual
 /venv/
-*/__pycache__/*
-*/migrations/__pycache__/*
-*/migrations/*
+
+# Arquivos de migração
+**/migrations/
+
+# Arquivos de Cache do Python
+**/__pycache__/
+
+# Arquivos de Banco de Dados
+*.sqlite3
+
+# Arquivos de Log
+*.log
+
+# Arquivos de Migração (exceto o __init__.py)
 !*/migrations/__init__.py
+
+# Arquivos de Mídia
 /media/posts/*
 /media/
 
-# files
+# Arquivos Python compilados
+*.pyc
+
+# Arquivos de Inicialização
 *_initial.py
+

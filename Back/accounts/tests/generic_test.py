@@ -2,14 +2,14 @@ from django.test import TestCase
 from django.contrib.auth.hashers import make_password
 from rest_framework.test import APIClient
 
-from users.models import CustomUser
+from accounts.models import CustomUser
 
 
 class AbstractGenericTests(TestCase):
     login_url: str = "/auth/login/"
     register_url: str = "/auth/register/"
     recovery_url: str = "/auth/recovery/"
-    set_pwd_url: str = "/auth/recovery/set/"
+    set_pwd_url: str = "/auth/recovery/update/"
 
     login_auth = {
         'username': 'temporary',

@@ -41,9 +41,8 @@ class PostClassView(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-
             serializer = FullPostSerializer(data=request.data, context={'request': request})
-            if serializer.is_valid(raise_exception=True):
+            if serializer.is_valid():
                 serializer.save(user=request.user)
                 return Response(data="Post criado", status=status.HTTP_200_OK)
 
@@ -126,6 +125,9 @@ class LikeClassView(ModelViewSet):
             print(error)
             return Response(data="Erro no servidor", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 class FollowClassView(ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -155,3 +157,6 @@ class FollowClassView(ModelViewSet):
         except (ObjectDoesNotExist, KeyError, ValueError, AttributeError) as error:
             print(error)
             return Response(data='Erro no servidor', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

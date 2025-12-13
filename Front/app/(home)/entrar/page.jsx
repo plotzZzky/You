@@ -235,7 +235,7 @@ export default function AuthPage() {
       return (
         <>
           <div id='loginAlign'>
-            <h3> Criar nova conta </h3>
+            <h3> Criar uma nova conta </h3>
 
             <ImgInput setImageUser={setImageUser} getFileUser={getFileUser} setFileUser={setFileUser}/>
             <InputUser value={getUsername} setValue={setUsername} valid={userValid} setValid={setUserValid}/>
@@ -258,7 +258,7 @@ export default function AuthPage() {
     if (showRecovery) {
       return getQuestion? (
         <div id='loginAlign'>
-          <h3> Recuperar senha </h3>
+          <h3> Recuperar sua senha </h3>
 
           <InputUser value={getUsername} setValue={setUsername} valid={userValid} setValid={setUserValid}/>
           <InputPwd value={getPassword} setValue={setPassword} valid={pwd1Valid} setValid={setPwd1Valid}/>
