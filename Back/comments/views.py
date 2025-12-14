@@ -55,5 +55,6 @@ class CommentClassView(ModelViewSet):
             post.delete()
             return Response(data="Comentario deletado!", status=status.HTTP_200_OK)
 
-        except (KeyError, ValueError, ObjectDoesNotExist):
+        except (KeyError, ValueError, ObjectDoesNotExist) as error:
+            print(error)
             return Response(data="Comentario não encontrado", status=status.HTTP_400_BAD_REQUEST)
