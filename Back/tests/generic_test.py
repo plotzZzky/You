@@ -237,4 +237,3 @@ class AbstractGenericTests(AbstractBasicTests):
         item = self.create_new_item()
         test_url: str = f"{self.basic_url}{item.id}/"  # type: ignore
         self.basic_test_delete_url_compare_response_content(test_url, value)
-
